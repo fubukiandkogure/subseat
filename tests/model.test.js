@@ -1,16 +1,22 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { monthlyYen, seatPlan, totals, upcoming, relativeLabel, savings, chooseUnit, DEFAULT_SETTINGS } from '../js/model.js';
+import {
+  monthlyYen, yearlyYen, totals, upcoming, relativeLabel, savings, DEFAULT_SETTINGS, squarify, planRooms, housePlan,
+  tatami, sizeLabel, paidSince, formerSaved, inspectionDue, occurrencesInRange, recordPrice, recentRaise
+} from '../js/model.js';
+import { migrate, SCHEMA } from '../js/migrate.js';
 import { buildIcs, fold } from '../js/ics.js';
 import { addMonths, rollForward } from '../js/dates.js';
 
+const TODAY = '2026-10-05';
 const settings = (s = {}) => ({ ...DEFAULT_SETTINGS, usdJpy: 150, ...s });
-const sub = (f) => ({ id: f.name, currency: 'JPY', cycle: 'month', status: 'keep', trial: { on: false }, ...f });
+const sub = (f) => ({ id: f.name, currency: 'JPY', cycle: 'month', status: 'keep', trial: { on: false }, history: [], ...f });
 
-test('月あたりの額：ドルは円に、年払いは12で割る、未確定は null', () => {
+test('月・年あたりの額：ドルは円に、年払いは12で割る、未確定は null', () => {
   assert.equal(monthlyYen(sub({ amount: 980 }), 150), 980);
   assert.equal(monthlyYen(sub({ amount: 20, currency: 'USD' }), 150), 3000);
   assert.equal(monthlyYen(sub({ amount: 12000, cycle: 'year' }), 150), 1000);
+  assert.equal(yearlyYen(sub({ amount: 980 }), 150), 11760);
   assert.equal(monthlyYen(sub({ amount: null }), 150), null);
 });
 
@@ -22,42 +28,115 @@ test('合計には未確定を入れず、件数だけ数える', () => {
   assert.equal(t.free, 129000);
 });
 
-test('席：前からサブスク → 固定費の順に埋まり、残りが空席', () => {
-  const p = seatPlan({ settings: settings({ takeHome: 10000, rent: 3000, seatUnit: 1000 }), contracts: [sub({ name: 'a', amount: 1500, category: 'video' }), sub({ name: 'b', amount: 300, category: 'music' })] });
-  assert.equal(p.unit, 1000);
-  assert.equal(p.seats.length, 10);
-  assert.deepEqual(p.seats[0].segs, [{ id: 'a', frac: 1 }]);
-  assert.deepEqual(p.seats[1].segs, [{ id: 'a', frac: 0.5 }, { id: 'b', frac: 0.3 }, { id: 'fixed:rent', frac: 0.2 }]);
-  const filled = p.seats.reduce((a, s) => a + s.segs.reduce((x, g) => x + g.frac, 0), 0);
-  assert.ok(Math.abs(filled - 4.8) < 1e-9);
-  assert.equal(p.seats.filter((s) => !s.segs.length).length, 5);
+test('畳：1畳＝年1万円。広さの例え', () => {
+  assert.equal(tatami(36000, 10000), 3.6);
+  assert.equal(tatami(36000, 20000), 1.8);
+  assert.equal(sizeLabel(2), '押入れくらい');
+  assert.equal(sizeLabel(18.5), '1LDKくらい');
+  assert.equal(sizeLabel(30), '2LDKくらい');
+  assert.equal(sizeLabel(80), '一軒家くらい');
 });
 
-test('手取りが未入力なら、サブスクの席だけ（固定費は出さない）', () => {
-  const p = seatPlan({ settings: settings({ rent: 70000, seatUnit: 1000 }), contracts: [sub({ name: 'a', amount: 2500 })] });
-  assert.equal(p.takeHome, null);
-  assert.equal(p.seats.length, 3);
-  assert.ok(p.items.every((i) => i.kind === 'sub'));
+test('間取り（squarify）：面積は値に比例し、枠からはみ出さず、重ならない', () => {
+  const items = [{ value: 36000 }, { value: 36000 }, { value: 26268 }, { value: 19080 }, { value: 11760 }, { value: 4800 }, { value: 2400 }];
+  const W = 400, H = 500;
+  const r = squarify(items, 0, 0, W, H);
+  assert.equal(r.length, items.length);
+  const total = items.reduce((a, i) => a + i.value, 0);
+  for (const x of r) {
+    assert.ok(Math.abs((x.w * x.h) / (W * H) - x.value / total) < 1e-9, '面積の割合');
+    assert.ok(x.x >= -1e-9 && x.y >= -1e-9 && x.x + x.w <= W + 1e-6 && x.y + x.h <= H + 1e-6, '枠の中');
+  }
+  for (let i = 0; i < r.length; i++) for (let j = i + 1; j < r.length; j++) {
+    const a = r[i], b = r[j];
+    const overlap = Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+    assert.ok(overlap < 1e-6, '重ならない');
+  }
+  assert.ok(r[0].x === 0 && r[0].y === 0, 'いちばん大きい部屋は左上');
 });
 
-test('手取りを超えたら、はみ出した席に印をつける', () => {
-  const p = seatPlan({ settings: settings({ takeHome: 2000, seatUnit: 1000 }), contracts: [sub({ name: 'a', amount: 3000 })] });
-  assert.equal(p.seats.length, 3);
-  assert.deepEqual(p.seats.map((s) => s.over), [false, false, true]);
+test('サブスク荘の部屋：年額の大きい順。金額未確定は部屋にしない。札の材料も持つ', () => {
+  const st = {
+    settings: settings(),
+    contracts: [
+      sub({ name: 'small', amount: 400 }),
+      sub({ name: 'big', amount: 20, currency: 'USD', trial: { on: true, endDate: '2026-10-10' } }),
+      sub({ name: 'unknown', amount: null }),
+      sub({ name: 'raised', amount: 1590, history: [{ date: '2026-01-01', amount: 1490, currency: 'JPY', cycle: 'month' }, { date: '2026-09-01', amount: 1590, currency: 'JPY', cycle: 'month' }] })
+    ]
+  };
+  const rooms = planRooms(st, TODAY);
+  assert.deepEqual(rooms.map((r) => r.name), ['big', 'raised', 'small']);
+  assert.equal(rooms[0].jo, 3.6);
+  assert.equal(rooms[0].trial, true);
+  assert.deepEqual(rooms[1].raise, { from: 1490, to: 1590, date: '2026-09-01' });
 });
 
-test('1席の額は、席が多くなりすぎないよう自動で決める', () => {
-  assert.equal(chooseUnit(200000, 'auto'), 1000);
-  assert.equal(chooseUnit(300000, 'auto'), 2000);
-  assert.equal(chooseUnit(300000, '1000'), 1000);
+test('手取りの家：家賃・通信費・サブスク棟・リビング（自由）。使いすぎも分かる', () => {
+  const st = { settings: settings({ takeHome: 200000, rent: 70000, phone: 3000 }), contracts: [sub({ name: 'a', amount: 2000 })] };
+  const h = housePlan(st, TODAY);
+  assert.deepEqual(h.blocks.map((b) => b.id), ['free', 'fixed:rent', 'fixed:phone', 'wing']);
+  assert.equal(h.free, (200000 - 70000 - 3000 - 2000) * 12);
+  assert.equal(h.jo, 240);
+  const over = housePlan({ settings: settings({ takeHome: 50000, rent: 70000 }), contracts: [] }, TODAY);
+  assert.equal(over.over, 20000 * 12);
+  assert.ok(!over.blocks.some((b) => b.id === 'free'));
+  assert.equal(housePlan({ settings: settings(), contracts: [] }, TODAY), null, '手取りが未入力なら出さない');
 });
 
-test('これをやめたら：浮く額（月・年）', () => {
+test('模様替え：退去させると浮く額と広さ（月・年・畳）', () => {
   const s = { settings: settings(), contracts: [sub({ name: 'a', amount: 1590 }), sub({ name: 'b', amount: 20, currency: 'USD' }), sub({ name: 'c', amount: 6000, cycle: 'year' })] };
-  assert.deepEqual(savings(s, new Set(['a', 'c'])), { month: 2090, year: 25080 });
+  const sv = savings(s, new Set(['a', 'c']));
+  assert.equal(sv.month, 2090);
+  assert.equal(sv.year, 25080);
+  assert.ok(Math.abs(sv.jo - 2.508) < 1e-9);
 });
 
-test('タイムライン：30日以内の支払いと無料体験の終わりを近い順に', () => {
+test('入居日からの累計（概算）', () => {
+  assert.deepEqual(paidSince(sub({ amount: 1000, since: '2026-01' }), TODAY, 150), { months: 10, count: 10, yen: 10000 });
+  assert.deepEqual(paidSince(sub({ amount: 12000, cycle: 'year', since: '2024-11' }), TODAY, 150), { months: 24, count: 2, yen: 24000 });
+  assert.equal(paidSince(sub({ amount: 1000, since: null }), TODAY, 150), null);
+});
+
+test('退去済みの記録から、浮いたお金を数える', () => {
+  const fs = formerSaved([{ ...sub({ amount: 1000 }), cancelledAt: '2026-07-05' }, { ...sub({ amount: 12000, cycle: 'year' }), cancelledAt: '2026-10-01' }], TODAY, 150);
+  assert.equal(fs.count, 2);
+  assert.equal(fs.monthly, 2000);
+  assert.equal(fs.year, 24000);
+  assert.equal(fs.saved, 1000 * 3);
+});
+
+test('金額の記録と値上げの検知（120日以内の値上がりだけ）', () => {
+  const c = sub({ amount: 1490 });
+  recordPrice(c, '2026-03-01');
+  recordPrice(c, '2026-04-01');
+  assert.equal(c.history.length, 1, '同じ額なら記録しない');
+  c.amount = 1590;
+  recordPrice(c, '2026-09-01');
+  assert.deepEqual(recentRaise(c, TODAY), { from: 1490, to: 1590, date: '2026-09-01' });
+  assert.equal(recentRaise(c, '2027-03-01'), null, '時間がたてば出さない');
+  c.amount = 990;
+  recordPrice(c, '2026-10-01');
+  assert.equal(recentRaise(c, TODAY), null, '値下げは値上げではない');
+});
+
+test('見回りは月に1回', () => {
+  const base = { contracts: [sub({ amount: 980 })] };
+  assert.equal(inspectionDue({ ...base, lastInspection: null }, TODAY), true);
+  assert.equal(inspectionDue({ ...base, lastInspection: '2026-10-01' }, TODAY), false);
+  assert.equal(inspectionDue({ ...base, lastInspection: '2026-09-28' }, TODAY), true);
+  assert.equal(inspectionDue({ contracts: [], lastInspection: null }, TODAY), false);
+});
+
+test('カレンダー：ある月に入る支払日（31日払いは月末に寄せる）', () => {
+  const c = sub({ amount: 980, nextDate: '2026-12-31' });
+  assert.deepEqual(occurrencesInRange(c, '2026-11-01', '2026-11-30'), ['2026-11-30']);
+  assert.deepEqual(occurrencesInRange(c, '2027-02-01', '2027-02-28'), ['2027-02-28']);
+  assert.deepEqual(occurrencesInRange(sub({ amount: 1, cycle: 'year', nextDate: '2027-03-04' }), '2026-03-01', '2026-03-31'), ['2026-03-04']);
+  assert.deepEqual(occurrencesInRange(sub({ amount: 1, nextDate: null }), '2026-10-01', '2026-10-31'), []);
+});
+
+test('タイムライン：30日以内の支払いと無料体験の終わりを近い順に（同じ日の支払いは内見おわりにまとめる）', () => {
   const s = {
     settings: settings(),
     contracts: [
@@ -67,14 +146,14 @@ test('タイムライン：30日以内の支払いと無料体験の終わりを
       sub({ name: 'trial', amount: 2189, nextDate: '2026-10-12', trial: { on: true, endDate: '2026-10-12' } })
     ]
   };
-  const ev = upcoming(s, '2026-10-05', 30);
+  const ev = upcoming(s, TODAY, 30);
   assert.deepEqual(ev.map((e) => `${e.date} ${e.type} ${e.contract.name}`), [
-    '2026-10-12 trialEnd trial', '2026-10-12 pay trial', '2026-10-20 pay past', '2026-10-30 pay year'
+    '2026-10-12 trialEnd trial', '2026-10-20 pay past', '2026-10-30 pay year'
   ]);
 });
 
 test('日付の言い方（今日は 2026-10-05 月曜）', () => {
-  const t = '2026-10-05';
+  const t = TODAY;
   assert.equal(relativeLabel('2026-10-05', t), '今日');
   assert.equal(relativeLabel('2026-10-06', t), '明日');
   assert.equal(relativeLabel('2026-10-07', t), 'あさって');
@@ -87,6 +166,24 @@ test('日付の言い方（今日は 2026-10-05 月曜）', () => {
 test('月末の日付をまたいでも、本来の日に戻る', () => {
   assert.equal(addMonths('2026-01-31', 1), '2026-02-28');
   assert.equal(rollForward('2026-01-31', 'month', '2026-03-01'), '2026-03-31');
+});
+
+test('保存データの移行：座席表の版（schema 1）→ 間取りの版', () => {
+  const old = {
+    settings: { takeHome: 240000, usdJpy: 150, seatUnit: 'auto', theme: 'dark' },
+    contracts: [{ id: 'x', name: 'Netflix', amount: 1590, currency: 'JPY', cycle: 'month', createdAt: '2026-10-01T00:00:00Z' }, { id: 'y', name: 'dアニメ', amount: null }],
+    candidates: [], ignored: [], ui: { mode: 'month' }
+  };
+  const m = migrate(old);
+  assert.equal(m.schema, SCHEMA);
+  assert.equal('seatUnit' in m.settings, false);
+  assert.equal(m.settings.joPrice, 10000);
+  assert.equal(m.settings.theme, 'dark');
+  assert.deepEqual(m.contracts[0].history, [{ date: '2026-10-01', amount: 1590, currency: 'JPY', cycle: 'month' }]);
+  assert.deepEqual(m.contracts[1].history, []);
+  assert.deepEqual(m.former, []);
+  assert.equal(m.ui.mode, 'month', '前の表示設定は残す');
+  assert.equal(migrate(m).contracts[0].history.length, 1, '2回かけても変わらない');
 });
 
 test('.ics：毎月・毎年の繰り返し、31日払い、前日の通知、75バイトの折り返し', () => {

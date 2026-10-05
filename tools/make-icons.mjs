@@ -1,4 +1,4 @@
-// アプリのアイコン（座席表）を PNG と SVG で作る。追加のライブラリなし（PNG は自前で書き出す）
+// アプリのアイコン（間取り図）を PNG と SVG で作る。追加のライブラリなし（PNG は自前で書き出す）
 //   node tools/make-icons.mjs
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
@@ -9,37 +9,24 @@ const out = join(dirname(fileURLToPath(import.meta.url)), '..', 'icons');
 mkdirSync(out, { recursive: true });
 
 const BG = [14, 16, 21];
-const SEATS = [
-  [227, 52, 77], [116, 87, 240], [44, 123, 224],
-  [29, 154, 92], [236, 132, 32], [38, 42, 52],
-  [38, 42, 52], [38, 42, 52], [38, 42, 52]
+const WALL = [233, 235, 240];
+// 外壁の中に、大きさの違う部屋（AI・動画・クラウド・音楽・ゲーム）。マスカブル用に中央 70% に収める
+const OUT = { x0: 0.165, y0: 0.165, x1: 0.835, y1: 0.835 };
+const ROOMS = [
+  { x0: 0.2, y0: 0.2, x1: 0.52, y1: 0.8, c: [116, 87, 240] },
+  { x0: 0.52, y0: 0.2, x1: 0.8, y1: 0.5, c: [229, 72, 77] },
+  { x0: 0.52, y0: 0.5, x1: 0.8, y1: 0.68, c: [44, 123, 224] },
+  { x0: 0.52, y0: 0.68, x1: 0.68, y1: 0.8, c: [29, 154, 92] },
+  { x0: 0.68, y0: 0.68, x1: 0.8, y1: 0.8, c: [236, 132, 32] }
 ];
-// 0〜1 の座標で：スクリーンの弧と 3×3 の席（マスカブル用に中央 80% に収める）
-const seatRect = (i) => {
-  const c = i % 3, r = Math.floor(i / 3);
-  const size = 0.17, gap = 0.045, x0 = 0.5 - (3 * size + 2 * gap) / 2, y0 = 0.39;
-  return { x: x0 + c * (size + gap), y: y0 + r * (size + gap), w: size, h: size * 0.94, rt: 0.045, rb: 0.025 };
-};
-
-function inRoundRect(px, py, s) {
-  if (px < s.x || px > s.x + s.w || py < s.y || py > s.y + s.h) return false;
-  const r = py < s.y + s.h / 2 ? s.rt : s.rb;
-  const cx = Math.min(Math.max(px, s.x + r), s.x + s.w - r);
-  const cy = Math.min(Math.max(py, s.y + r), s.y + s.h - r);
-  return (px - cx) ** 2 + (py - cy) ** 2 <= r * r;
-}
-function onScreenArc(px, py) {
-  // 楕円の上半分の弧（太さつき）
-  const cx = 0.5, cy = 0.36, rx = 0.33, ry = 0.13, t = 0.022;
-  if (py > cy) return false;
-  const d = Math.sqrt(((px - cx) / rx) ** 2 + ((py - cy) / ry) ** 2);
-  return Math.abs(d - 1) * Math.min(rx, ry) < t / 2 && Math.abs(px - cx) < rx * 0.92;
-}
+const INNER = 0.012;
 
 function pixel(px, py) {
-  for (let i = 0; i < SEATS.length; i++) if (inRoundRect(px, py, seatRect(i))) return SEATS[i];
-  if (onScreenArc(px, py)) return [227, 52, 77];
-  return BG;
+  if (px < OUT.x0 || px > OUT.x1 || py < OUT.y0 || py > OUT.y1) return BG;
+  for (const r of ROOMS) {
+    if (px >= r.x0 + INNER && px <= r.x1 - INNER && py >= r.y0 + INNER && py <= r.y1 - INNER) return r.c;
+  }
+  return WALL;
 }
 
 function png(size) {
@@ -75,11 +62,9 @@ for (const [name, size] of [['icon-192.png', 192], ['icon-512.png', 512], ['appl
 }
 
 const rgb = (c) => `rgb(${c.join(',')})`;
-const svgSeats = SEATS.map((c, i) => {
-  const s = seatRect(i);
-  return `<rect x="${(s.x * 100).toFixed(2)}" y="${(s.y * 100).toFixed(2)}" width="${(s.w * 100).toFixed(2)}" height="${(s.h * 100).toFixed(2)}" rx="${(s.rt * 100).toFixed(2)}" fill="${rgb(c)}"/>`;
-}).join('');
+const pct = (n) => (n * 100).toFixed(2);
+const svgRooms = ROOMS.map((r) => `<rect x="${pct(r.x0 + INNER)}" y="${pct(r.y0 + INNER)}" width="${pct(r.x1 - r.x0 - INNER * 2)}" height="${pct(r.y1 - r.y0 - INNER * 2)}" fill="${rgb(r.c)}"/>`).join('');
 writeFileSync(join(out, 'icon.svg'),
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="${rgb(BG)}"/>` +
-  `<path d="M20 34 Q50 14 80 34" fill="none" stroke="rgb(227,52,77)" stroke-width="2.4" stroke-linecap="round"/>${svgSeats}</svg>\n`);
+  `<rect x="${pct(OUT.x0)}" y="${pct(OUT.y0)}" width="${pct(OUT.x1 - OUT.x0)}" height="${pct(OUT.y1 - OUT.y0)}" fill="${rgb(WALL)}"/>${svgRooms}</svg>\n`);
 console.log('icons written to', out);

@@ -105,7 +105,7 @@ export function detectRecurring(transactions, { today } = {}) {
       const notes = [];
       if (service?.usd) notes.push('ドル建てで請求されることが多いサービスです');
       const base = {
-        source: 'csv', key, serviceId: service && !service.generic ? service.id : null,
+        source: 'csv', key, serviceId: service && !service.generic ? service.id : null, firstSeen: items[0].date,
         category: service?.cat ?? 'other', channel: service?.channel ?? 'direct', currency: 'JPY',
         evidence: items.slice(-6).map((t) => ({ date: t.date, amount: t.amount, merchant: t.merchant }))
       };

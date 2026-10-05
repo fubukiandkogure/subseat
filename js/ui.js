@@ -37,7 +37,7 @@ export function tile(name, size = 'm') {
 
 // ---------- 下から出るシート ----------
 let sheetCleanup = null;
-export function openSheet(title, build) {
+export function openSheet(title, build, { onClose } = {}) {
   closeSheet();
   const root = document.getElementById('sheet-root');
   const close = () => closeSheet();
@@ -53,7 +53,7 @@ export function openSheet(title, build) {
   document.body.classList.add('sheet-open');
   const onKey = (e) => { if (e.key === 'Escape') close(); };
   document.addEventListener('keydown', onKey);
-  sheetCleanup = () => document.removeEventListener('keydown', onKey);
+  sheetCleanup = () => { document.removeEventListener('keydown', onKey); onClose?.(); };
   requestAnimationFrame(() => panel.querySelector('input, select, textarea, button:not(.icon-btn)')?.focus({ preventScroll: true }));
 }
 export function closeSheet() {
@@ -62,8 +62,42 @@ export function closeSheet() {
   root.replaceChildren();
   root.hidden = true;
   document.body.classList.remove('sheet-open');
-  sheetCleanup?.();
+  const done = sheetCleanup;
   sheetCleanup = null;
+  done?.();
+}
+
+// 確認（ブラウザの confirm の代わり）。はい → true、やめる・閉じる → false
+export function ask(message, { ok = 'はい', cancel = 'やめる', danger = false, title = '確認' } = {}) {
+  return new Promise((resolve) => {
+    let answered = false;
+    openSheet(title, (close) => h('div', { class: 'form' },
+      h('p', { class: 'ask-msg' }, message),
+      h('div', { class: 'actions' },
+        h('button', { type: 'button', class: `btn ${danger ? 'danger' : 'primary'}`, onClick: () => { answered = true; close(); resolve(true); } }, ok),
+        h('button', { type: 'button', class: 'btn', onClick: close }, cancel))),
+    { onClose: () => { if (!answered) resolve(false); } });
+  });
+}
+
+// 画像などを共有する。共有シートが使えない端末では保存（ダウンロード）にする
+export async function shareOrSave(blob, name, text) {
+  const file = new File([blob], name, { type: blob.type });
+  if (navigator.canShare?.({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], text });
+      return 'shared';
+    } catch (e) {
+      if (e?.name === 'AbortError') return 'aborted';
+    }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = h('a', { href: url, download: name });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return 'saved';
 }
 
 // ---------- 小さなお知らせ ----------

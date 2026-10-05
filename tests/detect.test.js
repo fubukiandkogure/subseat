@@ -137,3 +137,8 @@ test('辞書にない店でも、毎月まったく同じ額なら候補にす�
   assert.equal(c[0].name, 'エニタイムフィットネス シブヤ');
   assert.equal(c[0].confidence, 'high');
 });
+
+test('候補には最初に請求が出た日（入居日の目安）を持たせる', () => {
+  const c = detectRecurring(monthly('SPOTIFY', [980, 980, 980], 9, 4), { today: TODAY });
+  assert.equal(c[0].firstSeen, '2026-04-09');
+});

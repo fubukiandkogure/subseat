@@ -2,7 +2,7 @@ import { h, money, tile, toast, select, numberInput } from '../ui.js';
 import { readStatement, readStatementText } from '../csv.js';
 import { detectRecurring, reconcile, sameSubscription, TOL } from '../detect.js';
 import { parseFreeText } from '../freetext.js';
-import { SUB_CATEGORIES, CHANNELS, newContract, uid } from '../model.js';
+import { SUB_CATEGORIES, CHANNELS, newContract, uid, recordPrice } from '../model.js';
 import { matchMerchant } from '../services.js';
 import { sampleCsvText } from '../sample.js';
 import { todayYmd } from '../dates.js';
@@ -62,9 +62,11 @@ function approve(store, c) {
     channel: d.channel ?? c.channel ?? 'direct',
     serviceId: c.serviceId ?? matchMerchant(name)?.id ?? null,
     keys: c.key ? [c.key] : [],
+    since: c.firstSeen ? c.firstSeen.slice(0, 7) : null,
     source: c.source,
     ...(c.sample ? { sample: true } : {})
   });
+  recordPrice(contract, todayYmd());
   store.update((s) => {
     s.contracts.push(contract);
     s.candidates = s.candidates.filter((x) => x.id !== c.id);
@@ -94,7 +96,7 @@ function changeCard(store, c) {
       tile(c.name),
       h('div', { class: 'row-main' },
         h('span', { class: 'row-title' }, c.name),
-        h('span', { class: 'row-sub' }, '登録している金額と、明細の金額がちがいます')),
+        h('span', { class: 'row-sub' }, '入居時の金額と、明細の金額がちがいます')),
       h('span', { class: 'badge accent' }, c.to > c.from ? '値上げ？' : '金額の変化')),
     h('p', { class: 'change-amount' }, h('s', null, `${money(c.from)}円`), h('span', { 'aria-hidden': 'true' }, '→'), h('b', null, `${money(c.to)}円`),
       h('small', null, `（月 ${c.to > c.from ? '+' : ''}${money(c.to - c.from)}円）`)),
@@ -103,11 +105,11 @@ function changeCard(store, c) {
       h('button', { type: 'button', class: 'btn primary', onClick: () => {
         store.update((s) => {
           const k = s.contracts.find((x) => x.id === c.contractId);
-          if (k) { k.amount = c.to; if (c.key && !(k.keys || []).includes(c.key)) k.keys = [...(k.keys || []), c.key]; }
+          if (k) { k.amount = c.to; recordPrice(k, todayYmd()); if (c.key && !(k.keys || []).includes(c.key)) k.keys = [...(k.keys || []), c.key]; }
           s.candidates = s.candidates.filter((x) => x.id !== c.id);
         });
         toast(`${c.name} を ${money(c.to)}円 に更新しました`);
-      } }, '金額を更新'),
+      } }, '新しい金額にする'),
       h('button', { type: 'button', class: 'btn', onClick: () => { reject(store, c); toast('このままにしました'); } }, 'このまま')));
 }
 
@@ -132,8 +134,8 @@ function candidateCard(store, c) {
       h('label', { class: 'mini' }, h('span', null, 'カテゴリ'), select(SUB_CATEGORIES, v('category'), (x) => { d.category = x; })),
       h('label', { class: 'mini' }, h('span', null, '経路'), select(CHANNELS, v('channel') || 'direct', (x) => { d.channel = x; }))),
     h('div', { class: 'actions' },
-      h('button', { type: 'button', class: 'btn primary', onClick: () => { const k = approve(store, c); toast(`${k.name} を登録しました`); } }, '登録する'),
-      h('button', { type: 'button', class: 'btn', onClick: () => { reject(store, c); toast(c.source === 'csv' ? '次からは出さないようにしました' : '候補から外しました'); } }, '違う')));
+      h('button', { type: 'button', class: 'btn primary', onClick: () => { const k = approve(store, c); toast(`${k.name} が入居しました`); } }, '入居させる'),
+      h('button', { type: 'button', class: 'btn', onClick: () => { reject(store, c); toast(c.source === 'csv' ? 'お断りしました。次からは出しません' : 'お断りしました'); } }, 'お断り')));
 }
 
 export function renderImport(root, store) {
@@ -152,9 +154,9 @@ export function renderImport(root, store) {
 
   const runInfo = lastRun ? h('div', { class: 'run' },
     h('p', null, lastRun.period
-      ? `${lastRun.txCount}件の明細（${lastRun.period[0].replace(/-/g, '/')}〜${lastRun.period[1].replace(/-/g, '/')}）から、新しい候補 ${lastRun.fresh}件・金額の変化 ${lastRun.changes}件を見つけました。`
+      ? `${lastRun.txCount}件の明細（${lastRun.period[0].replace(/-/g, '/')}〜${lastRun.period[1].replace(/-/g, '/')}）から、入居希望者 ${lastRun.fresh}人・金額の変化 ${lastRun.changes}件を見つけました。`
       : '明細を読み取れませんでした。'),
-    lastRun.known ? h('p', { class: 'muted small' }, `登録済みのもの ${lastRun.known}件は、変化がないので出していません。`) : null,
+    lastRun.known ? h('p', { class: 'muted small' }, `入居済みの ${lastRun.known}部屋は、変化がないので出していません。`) : null,
     h('details', { class: 'files' }, h('summary', null, '読み取った列を確認する'),
       h('ul', null, lastRun.metas.map((m) => h('li', null,
         h('b', null, m.name),
@@ -163,8 +165,8 @@ export function renderImport(root, store) {
           : h('span', { class: 'warn' }, m.error || '読み込めませんでした')))))) : null;
 
   const csvCard = h('section', { class: 'card' },
-    h('h2', null, 'カード明細から'),
-    h('p', { class: 'muted small' }, '同じお店で、ほぼ同じ額が毎月出ているものを拾います。ファイルはこの端末の中だけで読み、どこにも送りません。'),
+    h('h2', null, 'カード明細から探す'),
+    h('p', { class: 'muted small' }, '同じお店で、ほぼ同じ額が毎月出ているものを「入居希望者」として見つけます。ファイルはこの端末の中だけで読み、どこにも送りません。'),
     fileInput, drop,
     h('button', { type: 'button', class: 'btn ghost small', onClick: () => {
       const r = readStatementText(sampleCsvText(todayYmd()));
@@ -176,8 +178,8 @@ export function renderImport(root, store) {
   // ---------- 雑入力 ----------
   const ta = h('textarea', { rows: 3, placeholder: '例：ChatGPTとClaudeとYouTube、あとAmazonも払ってると思う', 'aria-label': '契約していそうなサービス' });
   const textCard = h('section', { class: 'card' },
-    h('h2', null, '思いつくまま書く'),
-    h('p', { class: 'muted small' }, '金額や更新日が分からなくても、候補にできます（あとから埋められます）。'),
+    h('h2', null, '思いつくまま書く（メモから探す）'),
+    h('p', { class: 'muted small' }, '金額や更新日が分からなくても大丈夫です（入居させたあとで埋められます）。'),
     ta,
     h('button', { type: 'button', class: 'btn', onClick: () => {
       const items = parseFreeText(ta.value);
@@ -188,24 +190,24 @@ export function renderImport(root, store) {
       const fresh = items.filter((it) => !already(it));
       store.update((s) => { for (const it of fresh) s.candidates.push({ ...it, id: uid(), key: compact(it.name), addedAt: todayYmd() }); });
       ta.value = '';
-      toast(fresh.length ? `${fresh.length}件を候補にしました${items.length > fresh.length ? `（登録済み・候補にあるもの ${items.length - fresh.length}件は除きました）` : ''}` : 'どれも登録済みか、すでに候補にあります');
-    } }, '候補にする'));
+      toast(fresh.length ? `${fresh.length}人を入居希望者にしました${items.length > fresh.length ? `（入居済み・待っている ${items.length - fresh.length}件は除きました）` : ''}` : 'どれも入居済みか、すでに待っています');
+    } }, '入居希望者にする'));
 
   // ---------- 候補 ----------
   const changes = state.candidates.filter((c) => c.type === 'change');
   const cands = state.candidates.filter((c) => c.type !== 'change');
   const highs = cands.filter((c) => c.confidence === 'high');
-  const candSection = h('section', { class: 'cands', 'aria-label': '確認待ちの候補' },
+  const candSection = h('section', { class: 'cands', 'aria-label': '入居希望者' },
     h('div', { class: 'section-head' },
-      h('h2', null, '確認待ちの候補', state.candidates.length ? h('span', { class: 'count' }, state.candidates.length) : null),
+      h('h2', null, '入居希望者', state.candidates.length ? h('span', { class: 'count' }, state.candidates.length) : null),
       highs.length > 1 ? h('button', { type: 'button', class: 'btn small primary', onClick: () => {
         for (const c of highs) approve(store, c);
-        toast(`確度の高い ${highs.length}件を登録しました`);
-      } }, `確度 高 の${highs.length}件をまとめて登録`) : null),
-    h('p', { class: 'muted small' }, '候補は、登録するまで合計や席には入りません。金額や日付を直してから登録できます。'),
+        toast(`確度の高い ${highs.length}人が入居しました`);
+      } }, `確度 高 の${highs.length}人をまとめて入居`) : null),
+    h('p', { class: 'muted small' }, '入居させるまで、合計や部屋には入りません。金額や日付を直してから入居させられます。'),
     changes.map((c) => changeCard(store, c)),
     cands.map((c) => candidateCard(store, c)),
-    !state.candidates.length ? h('p', { class: 'empty' }, 'まだ候補はありません。上の2つのどちらかから始めてください。') : null);
+    !state.candidates.length ? h('p', { class: 'empty' }, 'いまは誰も待っていません。上の2つのどちらかから探してください。') : null);
 
   root.replaceChildren(csvCard, textCard, candSection);
 }

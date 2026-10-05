@@ -2,29 +2,37 @@ import { addDays, addMonths, ymd } from './dates.js';
 import { newContract } from './model.js';
 
 // 初回起動時に入れるサンプル。金額や日付は雰囲気を見るための例で、実際の料金ではない。
-// sample: true の印をつけておき、設定やホームから一括で消せるようにする。
+// sample: true の印をつけておき、ホームや設定から一括で消せるようにする。
 export function sampleState(today) {
   const d = (n) => addDays(today, n);
-  const c = (f) => newContract({ ...f, sample: true });
+  const m = (n) => addMonths(today, -n).slice(0, 7);
+  const price = (amount, ago, extra = {}) => ({ date: d(-ago), amount, currency: 'JPY', cycle: 'month', ...extra });
+  const c = (f) => newContract({
+    history: f.amount != null ? [{ date: d(-200), amount: f.amount, currency: f.currency || 'JPY', cycle: f.cycle || 'month' }] : [],
+    ...f, sample: true
+  });
   return {
-    settings: { takeHome: 240000, rent: 72000, phone: 2980, usdJpy: 150, sample: true },
+    settings: { takeHome: 240000, takeHomeMode: 'month', rent: 72000, phone: 2980, usdJpy: 150, joPrice: 10000, sample: true },
     contracts: [
-      c({ name: 'Netflix', serviceId: 'netflix', category: 'video', amount: 1590, nextDate: d(3) }),
-      c({ name: 'YouTube Premium', serviceId: 'ytpremium', category: 'video', amount: 1280, nextDate: d(12), channel: 'googleplay' }),
-      c({ name: 'U-NEXT', serviceId: 'unext', category: 'video', amount: 2189, nextDate: d(5), status: 'review', trial: { on: true, endDate: d(5) } }),
+      c({ name: 'Netflix', serviceId: 'netflix', category: 'video', amount: 1590, nextDate: d(3), since: m(40), history: [price(1490, 400), price(1590, 40)] }),
+      c({ name: 'YouTube Premium', serviceId: 'ytpremium', category: 'video', amount: 1280, nextDate: d(12), channel: 'googleplay', since: m(22) }),
+      c({ name: 'U-NEXT', serviceId: 'unext', category: 'video', amount: 2189, nextDate: d(5), status: 'review', trial: { on: true, endDate: d(5) }, since: m(0) }),
       c({ name: 'dアニメストア', serviceId: 'danime', category: 'video', amount: null, nextDate: null, status: 'review' }),
-      c({ name: 'ChatGPT', serviceId: 'chatgpt', category: 'ai', amount: 20, currency: 'USD', nextDate: d(1), channel: 'appstore' }),
-      c({ name: 'Claude', serviceId: 'claude', category: 'ai', amount: 20, currency: 'USD', nextDate: d(16) }),
-      c({ name: 'Spotify', serviceId: 'spotify', category: 'music', amount: 980, nextDate: d(20), status: 'review' }),
-      c({ name: 'iCloud+', serviceId: 'icloud', category: 'cloud', amount: 400, nextDate: d(8), channel: 'appstore' }),
-      c({ name: 'Adobe', serviceId: 'adobe', category: 'cloud', amount: 26136, cycle: 'year', nextDate: d(24), status: 'review' }),
-      c({ name: 'Nintendo Switch Online', serviceId: 'nso', category: 'game', amount: 2400, cycle: 'year', nextDate: d(150) }),
-      c({ name: 'Amazonプライム', serviceId: 'amazonprime', category: 'other', amount: 600, nextDate: d(27) })
+      c({ name: 'ChatGPT', serviceId: 'chatgpt', category: 'ai', amount: 20, currency: 'USD', nextDate: d(1), channel: 'appstore', since: m(14) }),
+      c({ name: 'Claude', serviceId: 'claude', category: 'ai', amount: 20, currency: 'USD', nextDate: d(16), since: m(6) }),
+      c({ name: 'Spotify', serviceId: 'spotify', category: 'music', amount: 980, nextDate: d(20), status: 'review', since: m(55) }),
+      c({ name: 'iCloud+', serviceId: 'icloud', category: 'cloud', amount: 400, nextDate: d(8), channel: 'appstore', since: m(30) }),
+      c({ name: 'Adobe', serviceId: 'adobe', category: 'cloud', amount: 26136, cycle: 'year', nextDate: d(24), status: 'review', since: m(23) }),
+      c({ name: 'Nintendo Switch Online', serviceId: 'nso', category: 'game', amount: 2400, cycle: 'year', nextDate: d(150), since: m(31) }),
+      c({ name: 'Amazonプライム', serviceId: 'amazonprime', category: 'other', amount: 600, nextDate: d(27), since: m(70) })
+    ],
+    former: [
+      { ...newContract({ name: 'Hulu', serviceId: 'hulu', category: 'video', amount: 1026, since: m(20) }), cancelledAt: d(-95), sample: true }
     ]
   };
 }
 
-// 「サンプルCSVで試す」用の明細（6か月分）。定期課金・ドル建てのぶれ・値上げ・単発の買い物が混ざっている
+// 「サンプルの明細で試す」用の明細（6か月分）。定期課金・ドル建てのぶれ・値上げ・単発の買い物が混ざっている
 export function sampleCsvText(today) {
   const start = addMonths(today.slice(0, 8) + '01', -6);
   const rows = [['ご利用日', 'ご利用店名', 'ご利用者', '支払方法', 'ご利用金額', '手数料', 'お支払金額']];

@@ -1,4 +1,4 @@
-import { addDays, diffDays, rollForward, nextCycleDate, parseYmd, daysInMonth, weekday } from './dates.js';
+import { addDays, addMonths, diffDays, rollForward, nextCycleDate, parseYmd, daysInMonth, weekday } from './dates.js';
 
 export const CATEGORIES = [
   { id: 'video', label: '動画' },
@@ -11,7 +11,6 @@ export const CATEGORIES = [
 ];
 export const SUB_CATEGORIES = CATEGORIES.filter((c) => c.id !== 'fixed');
 export const catLabel = (id) => (CATEGORIES.find((c) => c.id === id) || CATEGORIES[5]).label;
-const catOrder = (id) => Math.max(0, CATEGORIES.findIndex((c) => c.id === id));
 
 export const CHANNELS = [
   { id: 'direct', label: '直接' },
@@ -25,38 +24,67 @@ export const STATUSES = [
   { id: 'cancel', label: '解約予定' }
 ];
 
-export const DEFAULT_SETTINGS = { takeHome: null, rent: null, phone: null, usdJpy: 150, seatUnit: 'auto', theme: 'auto' };
-
-export function newContract(fields = {}) {
-  return {
-    id: fields.id || uid(), name: '', category: 'other', amount: null, currency: 'JPY', cycle: 'month',
-    nextDate: null, channel: 'direct', cancelUrl: '', status: 'keep', trial: { on: false, endDate: null },
-    serviceId: null, keys: [], createdAt: new Date().toISOString(), ...fields
-  };
-}
+export const DEFAULT_SETTINGS = {
+  takeHome: null,          // 月の手取り（年で入れたときも、ここには12で割った額を持つ）
+  takeHomeMode: 'month',   // 入力欄を「月」「年」のどちらで見せるか
+  rent: null, phone: null, usdJpy: 150,
+  joPrice: 10000,          // 1畳あたりの年額
+  theme: 'auto'
+};
 
 export function uid() {
   if (globalThis.crypto?.randomUUID) return crypto.randomUUID();
   return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
+export function newContract(fields = {}) {
+  return {
+    id: fields.id || uid(), name: '', category: 'other', amount: null, currency: 'JPY', cycle: 'month',
+    nextDate: null, channel: 'direct', cancelUrl: '', status: 'keep', trial: { on: false, endDate: null },
+    serviceId: null, keys: [], since: null, history: [], usage: [], createdAt: new Date().toISOString(), ...fields
+  };
+}
+
 // ---------- お金 ----------
-// 円にした1回分の額。金額未確定なら null
 export function chargeYen(c, rate) {
   if (c.amount == null || !(c.amount >= 0)) return null;
   return c.currency === 'USD' ? c.amount * (rate > 0 ? rate : DEFAULT_SETTINGS.usdJpy) : c.amount;
 }
-// 月あたりの額（年払いは12で割ってならす）
 export function monthlyYen(c, rate) {
   const y = chargeYen(c, rate);
   if (y == null) return null;
   return c.cycle === 'year' ? y / 12 : y;
 }
+export function yearlyYen(c, rate) {
+  const m = monthlyYen(c, rate);
+  return m == null ? null : m * 12;
+}
+
+// 金額が変わったら記録しておく（値上げの検知と「金額の推移」に使う）
+export function recordPrice(c, today) {
+  if (c.amount == null) return c;
+  const h = c.history || [];
+  const last = h[h.length - 1];
+  if (!last || last.amount !== c.amount || last.currency !== c.currency || last.cycle !== c.cycle) {
+    c.history = [...h, { date: today, amount: c.amount, currency: c.currency, cycle: c.cycle }];
+  }
+  return c;
+}
+
+// 最近（既定で120日以内）値上がりしたか
+export function recentRaise(c, today, days = 120) {
+  const h = c.history || [];
+  if (h.length < 2) return null;
+  const a = h[h.length - 2], b = h[h.length - 1];
+  if (!b.date || a.currency !== b.currency || a.cycle !== b.cycle) return null;
+  if (b.amount > a.amount && diffDays(b.date, today) <= days) return { from: a.amount, to: b.amount, date: b.date };
+  return null;
+}
 
 export function fixedItems(settings) {
   const out = [];
-  if (settings.rent > 0) out.push({ id: 'fixed:rent', kind: 'fixed', name: '家賃', category: 'fixed', yen: Math.round(settings.rent) });
-  if (settings.phone > 0) out.push({ id: 'fixed:phone', kind: 'fixed', name: '通信費', category: 'fixed', yen: Math.round(settings.phone) });
+  if (settings.rent > 0) out.push({ id: 'fixed:rent', kind: 'fixed', name: '家賃', category: 'fixed', monthly: settings.rent, icon: 'rent' });
+  if (settings.phone > 0) out.push({ id: 'fixed:phone', kind: 'fixed', name: '通信費', category: 'fixed', monthly: settings.phone, icon: 'phone' });
   return out;
 }
 
@@ -69,75 +97,126 @@ export function totals(state) {
     if (m == null) unknown++;
     else subs += m;
   }
-  const fixed = fixedItems(settings).reduce((a, f) => a + f.yen, 0);
+  const fixed = fixedItems(settings).reduce((a, f) => a + f.monthly, 0);
   const takeHome = settings.takeHome > 0 ? settings.takeHome : null;
   const reserved = subs + (takeHome ? fixed : 0);
   return { subs, fixed, reserved, takeHome, free: takeHome ? takeHome - reserved : null, unknown };
 }
 
-// ---------- 席 ----------
-const UNITS = [500, 1000, 2000, 3000, 5000, 10000, 20000, 50000];
-export const MAX_SEATS = 240;
+// ---------- 畳 ----------
+export const tatami = (yearYen, joPrice) => yearYen / (joPrice > 0 ? joPrice : DEFAULT_SETTINGS.joPrice);
 
-export function chooseUnit(capacity, setting) {
-  if (setting && setting !== 'auto') return Number(setting);
-  for (const u of UNITS) if (capacity / u <= MAX_SEATS) return u;
-  return UNITS[UNITS.length - 1];
+const SIZES = [[3, '押入れ'], [6, '4畳半'], [10, '6畳ひと間'], [16, '1K'], [26, '1LDK'], [38, '2LDK'], [50, '3LDK']];
+export function sizeLabel(jo) {
+  for (const [max, label] of SIZES) if (jo < max) return `${label}くらい`;
+  return '一軒家くらい';
 }
 
-// 席の配置。前の列（スクリーン側）からサブスク → 固定費 の順に埋め、残りが空席。
-// 1席は unit 円。小さいサブスクは1席を分け合うので、席ごとに「誰が何割座っているか」を持つ。
-// 手取りが未入力のときは、サブスクの席だけを出す。
-export function seatPlan(state) {
-  const { settings, contracts } = state;
-  const rate = settings.usdJpy;
-  const subs = contracts
-    .map((c) => ({ c, m: monthlyYen(c, rate) }))
-    .filter((x) => x.m != null && x.m > 0)
-    .sort((a, b) => catOrder(a.c.category) - catOrder(b.c.category) || b.m - a.m)
-    .map(({ c, m }) => ({ id: c.id, kind: 'sub', name: c.name, category: c.category, yen: Math.round(m), status: c.status, trial: !!c.trial?.on }));
-  const takeHome = settings.takeHome > 0 ? settings.takeHome : null;
-  const items = takeHome ? [...subs, ...fixedItems(settings)] : subs;
-
-  // 同じカテゴリの中で隣り合うものを見分けられるよう、濃淡の段を振る
-  const shadeIdx = new Map();
-  for (const it of items) {
-    const n = shadeIdx.get(it.category) ?? 0;
-    it.shade = n % 3;
-    shadeIdx.set(it.category, n + 1);
-  }
-
-  const used = items.reduce((a, it) => a + it.yen, 0);
-  const capacity = takeHome ?? used;
-  const unit = chooseUnit(Math.max(capacity, used), settings.seatUnit);
-  const inCapacity = Math.max(1, Math.ceil(capacity / unit));
-  const count = Math.max(inCapacity, Math.ceil(used / unit));
-  const seats = Array.from({ length: count }, (_, i) => ({ index: i, segs: [], over: i >= inCapacity }));
-  let pos = 0;
-  for (const it of items) {
-    let left = it.yen;
-    while (left > 0) {
-      const si = Math.min(seats.length - 1, Math.floor(pos / unit));
-      const room = (si + 1) * unit - pos;
-      const take = Math.min(room, left);
-      seats[si].segs.push({ id: it.id, frac: take / unit });
-      pos += take;
-      left -= take;
-      if (room <= 0) break;
+// ---------- 間取り ----------
+// 面積を値に比例させて長方形を分ける（squarified treemap）。大きいものほど左上に来る。
+export function squarify(items, x, y, w, h) {
+  const list = items.filter((i) => i.value > 0);
+  const total = list.reduce((a, i) => a + i.value, 0);
+  if (!total || w <= 0 || h <= 0) return [];
+  const scale = (w * h) / total;
+  let rest = list.map((item) => ({ item, area: item.value * scale }));
+  const worst = (row, len) => {
+    const s = row.reduce((a, r) => a + r.area, 0);
+    let m = 0;
+    for (const r of row) m = Math.max(m, (len * len * r.area) / (s * s), (s * s) / (len * len * r.area));
+    return m;
+  };
+  const out = [];
+  let rx = x, ry = y, rw = w, rh = h;
+  while (rest.length) {
+    const len = Math.min(rw, rh);
+    const row = [rest[0]];
+    let i = 1;
+    while (i < rest.length && worst([...row, rest[i]], len) <= worst(row, len)) row.push(rest[i++]);
+    const s = row.reduce((a, r) => a + r.area, 0);
+    const thick = s / len;
+    let off = 0;
+    for (const r of row) {
+      const l = r.area / thick;
+      out.push(rw >= rh ? { ...r.item, x: rx, y: ry + off, w: thick, h: l } : { ...r.item, x: rx + off, y: ry, w: l, h: thick });
+      off += l;
     }
+    if (rw >= rh) { rx += thick; rw -= thick; } else { ry += thick; rh -= thick; }
+    rest = rest.slice(row.length);
   }
-  return { unit, seats, items, used, capacity, takeHome };
+  return out;
 }
 
-// 「これをやめたら？」で浮く額
+// サブスク荘の部屋（年額の大きい順）。金額未確定のものは広さが決まらないので入れない
+export function planRooms(state, today) {
+  const { settings: s, contracts } = state;
+  return contracts
+    .map((c) => ({ c, y: yearlyYen(c, s.usdJpy) }))
+    .filter((x) => x.y != null && x.y > 0)
+    .sort((a, b) => b.y - a.y)
+    .map(({ c, y }) => ({
+      id: c.id, kind: 'sub', name: c.name, category: c.category, value: y, jo: tatami(y, s.joPrice),
+      status: c.status, trial: !!c.trial?.on, raise: recentRaise(c, today), currency: c.currency
+    }));
+}
+
+// 手取りの家：家賃・通信費・サブスク棟・リビング（自由に使えるお金）
+export function housePlan(state, today) {
+  const s = state.settings;
+  if (!(s.takeHome > 0)) return null;
+  const subs = planRooms(state, today);
+  const subsYear = subs.reduce((a, r) => a + r.value, 0);
+  const fixed = fixedItems(s).map((f) => ({ ...f, value: f.monthly * 12, jo: tatami(f.monthly * 12, s.joPrice) }));
+  const take = s.takeHome * 12;
+  const used = subsYear + fixed.reduce((a, f) => a + f.value, 0);
+  const free = take - used;
+  const blocks = [
+    ...fixed,
+    { id: 'wing', kind: 'wing', name: 'サブスク棟', category: 'other', value: subsYear, jo: tatami(subsYear, s.joPrice), children: subs },
+    { id: 'free', kind: 'free', name: 'リビング', category: 'free', value: Math.max(0, free), jo: tatami(Math.max(0, free), s.joPrice), icon: 'free' }
+  ].filter((b) => b.value > 0).sort((a, b) => b.value - a.value);
+  return { blocks, take, used, free, over: free < 0 ? -free : 0, jo: tatami(take, s.joPrice) };
+}
+
+// 模様替え（これをやめたら？）で浮く額と広さ
 export function savings(state, ids) {
   const rate = state.settings.usdJpy;
   let month = 0;
   for (const c of state.contracts) if (ids.has(c.id)) month += monthlyYen(c, rate) ?? 0;
-  return { month, year: month * 12 };
+  return { month, year: month * 12, jo: tatami(month * 12, state.settings.joPrice) };
 }
 
-// ---------- タイムライン ----------
+// 入居日からの支払いの累計（概算）
+export function paidSince(c, today, rate) {
+  if (!c.since) return null;
+  const charge = chargeYen(c, rate);
+  if (charge == null) return null;
+  const [sy, sm] = c.since.split('-').map(Number);
+  const t = parseYmd(today);
+  const months = (t.getFullYear() - sy) * 12 + (t.getMonth() + 1 - sm) + 1;
+  if (months <= 0) return null;
+  const count = c.cycle === 'year' ? Math.ceil(months / 12) : months;
+  return { months, count, yen: count * charge };
+}
+
+// 退去済み（解約した）の記録から、浮いたお金を数える
+export function formerSaved(former, today, rate) {
+  let monthly = 0, saved = 0;
+  for (const f of former || []) {
+    const m = monthlyYen(f, rate) ?? 0;
+    monthly += m;
+    saved += m * Math.max(0, Math.floor(diffDays(f.cancelledAt, today) / 30.44));
+  }
+  return { count: (former || []).length, monthly, year: monthly * 12, saved };
+}
+
+// 月1回の見回り（棚卸し）の時期か
+export function inspectionDue(state, today) {
+  if (!state.contracts.some((c) => c.amount != null)) return false;
+  return !state.lastInspection || state.lastInspection.slice(0, 7) !== today.slice(0, 7);
+}
+
+// ---------- タイムライン・カレンダー ----------
 export function upcoming(state, today, days = 30) {
   const end = addDays(today, days);
   const rate = state.settings.usdJpy;
@@ -151,6 +230,9 @@ export function upcoming(state, today, days = 30) {
       }
     }
     if (c.trial?.on && c.trial.endDate && c.trial.endDate >= today && c.trial.endDate <= end) {
+      // 内見おわりの日がそのまま最初の支払日なら、1件にまとめる
+      const same = events.findIndex((e) => e.contract === c && e.date === c.trial.endDate);
+      if (same >= 0) events.splice(same, 1);
       events.push({ date: c.trial.endDate, type: 'trialEnd', contract: c, yen: chargeYen(c, rate) });
     }
   }
@@ -158,7 +240,19 @@ export function upcoming(state, today, days = 30) {
   return events.sort((a, b) => a.date.localeCompare(b.date) || order[a.type] - order[b.type]);
 }
 
-// 「明日」「来週の水曜」「月末」のような言い方
+// ある期間に入る支払日（カレンダー用）。支払日の「本来の日」を保って前後にたどる
+export function occurrencesInRange(c, start, end) {
+  if (!c.nextDate) return [];
+  const day = parseYmd(c.nextDate).getDate();
+  const step = c.cycle === 'year' ? 12 : 1;
+  const out = [];
+  for (let i = -36; i <= 36; i++) {
+    const d = addMonths(c.nextDate, i * step, day);
+    if (d >= start && d <= end) out.push(d);
+  }
+  return out;
+}
+
 export function relativeLabel(date, today) {
   const d = diffDays(today, date);
   const wd = weekday(date);

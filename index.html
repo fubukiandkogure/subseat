@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>サブスク席</title>
-<meta name="description" content="自分のサブスクを映画館の座席で見える化する。データは端末の中だけ。">
+<title>サブスク荘</title>
+<meta name="description" content="自分のサブスクを、アパートの部屋にして見える化する。データは端末の中だけ。">
 <meta name="theme-color" content="#f3f4f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0e1015" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="サブスク席">
+<meta name="apple-mobile-web-app-title" content="サブスク荘">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
@@ -18,9 +18,9 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="#/home" aria-label="サブスク席 ホームへ">
-    <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-    <span class="brand-name">サブスク席</span>
+  <a class="brand" href="#/home" aria-label="サブスク荘 ホームへ">
+    <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="brand-name">サブスク荘</span>
   </a>
 </header>
 
@@ -28,16 +28,16 @@
 
 <nav class="tabbar" aria-label="メニュー">
   <a href="#/home" data-route="home">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="5" height="5" rx="1.5"/><rect x="9.5" y="9" width="5" height="5" rx="1.5"/><rect x="16" y="9" width="5" height="5" rx="1.5"/><rect x="3" y="15.5" width="5" height="5" rx="1.5"/><rect x="9.5" y="15.5" width="5" height="5" rx="1.5"/><rect x="16" y="15.5" width="5" height="5" rx="1.5"/><path d="M4 5.5q8-4 16 0" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2.5" fill="none" stroke-width="2"/><path d="M12 3v10M3 13h18M8 13v8" fill="none" stroke-width="2"/></svg>
     <span>ホーム</span>
   </a>
   <a href="#/import" data-route="import">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0-4-4m4 4 4-4" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
-    <span>取り込み</span><b class="tab-badge" hidden></b>
+    <span>入居希望</span><b class="tab-badge" hidden></b>
   </a>
   <a href="#/contracts" data-route="contracts">
     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3" fill="none" stroke-width="2"/><path d="M8 9h8M8 13h8M8 17h5" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
-    <span>契約</span>
+    <span>部屋</span>
   </a>
   <a href="#/settings" data-route="settings">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
