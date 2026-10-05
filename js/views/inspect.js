@@ -65,6 +65,7 @@ export function openInspection(store, { onRemodel } = {}) {
       progress.setAttribute('aria-valuenow', String(i));
       requestAnimationFrame(() => { barFill.style.width = `${(i / list.length) * 100}%`; });
       const card = h('div', { class: 'inspect-card' }, tile(c.name, 'l'),
+          c.roomNo ? h('p', { class: 'room-no-label' }, `${c.roomNo}号室`) : null,
           h('p', { class: 'inspect-name' }, c.name),
           h('p', { class: 'muted small' }, `月 ${money(y / 12)}円・年 ${money(y)}円`));
       card.animate?.([{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' });

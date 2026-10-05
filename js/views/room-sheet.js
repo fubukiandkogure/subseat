@@ -22,7 +22,7 @@ export function openRoomSheet(store, id) {
   const next = c.nextDate ? rollForward(c.nextDate, c.cycle, today) : null;
   const paid = paidSince(c, today, rate);
 
-  openSheet(c.name, (close) => {
+  openSheet(c.roomNo ? `${c.roomNo}号室　${c.name}` : c.name, (close) => {
     const row = (label, value) => h('div', { class: 'info-row' }, h('dt', null, label), h('dd', null, value));
     const signs = [
       c.trial?.on ? h('span', { class: 'badge warn' }, `内見中（${c.trial.endDate ? md(c.trial.endDate) + 'まで' : '終了日未入力'}）`) : null,

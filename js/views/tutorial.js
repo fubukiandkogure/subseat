@@ -1,5 +1,6 @@
 import { h, toast, segmented } from '../ui.js';
 import { layoutSubs, planSvg, readPalette } from '../plan.js';
+import { facadeSvg } from '../facade.js';
 import { clearSample } from '../store.js';
 
 // 初回に出るチュートリアル（設定からもう一度見られる）。
@@ -11,6 +12,15 @@ const DEMO = [
   { id: 'c', name: 'Spotify', category: 'music', value: 11760 },
   { id: 'd', name: 'iCloud+', category: 'cloud', value: 4800, status: 'keep' }
 ];
+
+function buildingArt() {
+  const rooms = [
+    { id: 'a', name: 'ChatGPT', category: 'ai', roomNo: 101 }, { id: 'b', name: 'Netflix', category: 'video', roomNo: 102, raise: true },
+    { id: 'c', name: 'Spotify', category: 'music', roomNo: 103 }, { id: 'd', name: 'iCloud+', category: 'cloud', roomNo: 201 },
+    { id: 'e', name: 'U-NEXT', category: 'video', roomNo: 202, trial: true }
+  ];
+  return svgBox(facadeSvg(rooms, { height: 225 }));
+}
 
 const svgBox = (markup) => { const d = h('div', { class: 'tut-art' }); d.innerHTML = markup; return d; };
 
@@ -57,8 +67,8 @@ function checkArt() {
 const STEPS = [
   {
     title: 'サブスク荘へ、ようこそ',
-    body: ['あなたのサブスクを、アパートの部屋にして並べます。', '部屋の広さは払っている額。大きい部屋ほど、たくさん払っています。'],
-    art: () => demoPlan()
+    body: ['あなたのサブスクが、アパートの住人になります。1つのサブスクに1部屋、部屋番号つき。', '窓を押すとその部屋へ。ダークモードの夜は、窓に明かりがつきます。'],
+    art: buildingArt
   },
   {
     title: '入居希望者を、審査する',
@@ -67,7 +77,7 @@ const STEPS = [
   },
   {
     title: '模様替えで、退去させてみる',
-    body: ['部屋をタップして退去させると、月・年でいくら浮くかがその場で出ます。', '無料体験中の部屋には「内見中」の札がつき、終わる前に知らせます。'],
+    body: ['間取りの部屋の広さは、払っている額。部屋を押して退去させると、月・年でいくら浮くかがその場で出ます。', '無料体験中の部屋には「内見中」の札がつき、終わる前に知らせます。'],
     art: () => demoPlan(new Set(['b']), true)
   },
   {

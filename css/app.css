@@ -1,53 +1,65 @@
 /* サブスク荘：サブスクをアパートの部屋に見立てた間取り図がモチーフ。ライト／ダーク両対応（色はすべて変数から） */
 :root {
-  --bg: #f3f4f7;
-  --surface: #ffffff;
-  --surface-2: #eceef3;
-  --text: #15171c;
-  --muted: #5d6371;
-  --line: rgba(21, 23, 28, 0.1);
-  --line-strong: rgba(21, 23, 28, 0.22);
-  --accent: #e3344d;
+  --bg: #f3ede2;
+  --surface: #fffcf5;
+  --surface-2: #f0e8da;
+  --text: #2b2420;
+  --muted: #776a5e;
+  --line: rgba(70, 45, 20, 0.12);
+  --line-strong: rgba(70, 45, 20, 0.26);
+  --accent: #d4462c;
   --accent-ink: #ffffff;
-  --ok: #17905a;
-  --warn: #b86e00;
-  --warn-bg: rgba(232, 150, 0, 0.14);
-  --freed: #22b573;
-  --plan-floor: #fbfaf6;
-  --plan-wall: #2a2e38;
-  --cat-video: #e5484d;
-  --cat-ai: #7457f0;
-  --cat-music: #1d9a5c;
-  --cat-cloud: #2c7be0;
-  --cat-game: #ec8420;
-  --cat-other: #109c9c;
-  --cat-fixed: #697083;
+  --ok: #3d8a5a;
+  --warn: #b0700c;
+  --warn-bg: rgba(200, 140, 30, 0.16);
+  --freed: #3f9d6c;
+  --plan-floor: #fdf8ee;
+  --plan-wall: #3b302a;
+  --cat-video: #d4553f;
+  --cat-ai: #6f5fc4;
+  --cat-music: #3c9a68;
+  --cat-cloud: #3a78b9;
+  --cat-game: #dd8a2a;
+  --cat-other: #2c968f;
+  --cat-fixed: #8b7f72;
+  /* 外観（昼） */
+  --fa-sky-1: #cfe4ec; --fa-sky-2: #f6efe2; --fa-wall: #efe0c5; --fa-wall-line: #e3cfac; --fa-roof: #5c4a3e; --fa-slab: #9a876f;
+  --fa-glass: #c9d7da; --fa-glow: #ffd98a; --fa-door: #b98b5c; --fa-ground: #d8cab2; --fa-night: 0;
+  --card-shadow: 0 1px 0 rgba(70, 45, 20, 0.06), 0 8px 22px rgba(70, 45, 20, 0.06);
+  --paper-dot: rgba(120, 90, 50, 0.06); --board: #e6d6b8; --board-dot: rgba(120, 85, 40, 0.1);
+  --wood-1: #b98450; --wood-2: #96653a; --wood-ink: #fff3df;
   --radius: 18px;
   --tabbar-h: 64px;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1015; --surface: #171a21; --surface-2: #20242d; --text: #eef0f4; --muted: #9ca3b1;
-    --line: rgba(255, 255, 255, 0.08); --line-strong: rgba(255, 255, 255, 0.2); --accent: #ff4d64; --warn: #f0a531; --warn-bg: rgba(240, 165, 49, 0.14);
-    --freed: #3ddc97; --plan-floor: #1c2029; --plan-wall: #c9cdd6;
-    --cat-video: #ff5c62; --cat-ai: #9a85ff; --cat-music: #35c27f; --cat-cloud: #4f98f6; --cat-game: #ff9f43; --cat-other: #2cc4c4; --cat-fixed: #8a92a6;
+    --bg: #14151c; --surface: #1d1e27; --surface-2: #272834; --text: #f1ebe1; --muted: #a89d90;
+    --line: rgba(255, 240, 220, 0.08); --line-strong: rgba(255, 240, 220, 0.2); --accent: #ff6a4d; --accent-ink: #1a0f0b; --ok: #4fc285; --warn: #f0a840; --warn-bg: rgba(240, 168, 64, 0.15);
+    --freed: #4fd08f; --plan-floor: #1b1c25; --plan-wall: #d9cfbf;
+    --cat-video: #ff6f5c; --cat-ai: #9d8dff; --cat-music: #4cc98a; --cat-cloud: #5aa0ea; --cat-game: #ffab4a; --cat-other: #3cc8bf; --cat-fixed: #9a9083;
+    --fa-sky-1: #0b0e22; --fa-sky-2: #1f2344; --fa-wall: #36323f; --fa-wall-line: #2e2b37; --fa-roof: #15131b; --fa-slab: #5d566a;
+    --fa-glass: #10111a; --fa-glow: #ffd27a; --fa-door: #4b3d33; --fa-ground: #22202a; --fa-night: 1;
+    --card-shadow: none; --paper-dot: rgba(255, 240, 220, 0.025); --board: #2a251f; --board-dot: rgba(255, 220, 170, 0.05);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e1015; --surface: #171a21; --surface-2: #20242d; --text: #eef0f4; --muted: #9ca3b1;
-  --line: rgba(255, 255, 255, 0.08); --line-strong: rgba(255, 255, 255, 0.2); --accent: #ff4d64; --warn: #f0a531; --warn-bg: rgba(240, 165, 49, 0.14);
-  --freed: #3ddc97; --plan-floor: #1c2029; --plan-wall: #c9cdd6;
-  --cat-video: #ff5c62; --cat-ai: #9a85ff; --cat-music: #35c27f; --cat-cloud: #4f98f6; --cat-game: #ff9f43; --cat-other: #2cc4c4; --cat-fixed: #8a92a6;
-  color-scheme: dark;
+  --bg: #14151c; --surface: #1d1e27; --surface-2: #272834; --text: #f1ebe1; --muted: #a89d90;
+    --line: rgba(255, 240, 220, 0.08); --line-strong: rgba(255, 240, 220, 0.2); --accent: #ff6a4d; --accent-ink: #1a0f0b; --ok: #4fc285; --warn: #f0a840; --warn-bg: rgba(240, 168, 64, 0.15);
+    --freed: #4fd08f; --plan-floor: #1b1c25; --plan-wall: #d9cfbf;
+    --cat-video: #ff6f5c; --cat-ai: #9d8dff; --cat-music: #4cc98a; --cat-cloud: #5aa0ea; --cat-game: #ffab4a; --cat-other: #3cc8bf; --cat-fixed: #9a9083;
+    --fa-sky-1: #0b0e22; --fa-sky-2: #1f2344; --fa-wall: #36323f; --fa-wall-line: #2e2b37; --fa-roof: #15131b; --fa-slab: #5d566a;
+    --fa-glass: #10111a; --fa-glow: #ffd27a; --fa-door: #4b3d33; --fa-ground: #22202a; --fa-night: 1;
+    --card-shadow: none; --paper-dot: rgba(255, 240, 220, 0.025); --board: #2a251f; --board-dot: rgba(255, 220, 170, 0.05);
+    color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg) radial-gradient(var(--paper-dot) 1px, transparent 1.2px) 0 0 / 12px 12px;
   color: var(--text);
   font: 15px/1.6 system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", Meiryo, sans-serif;
   padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 24px);
@@ -71,12 +83,16 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); display: flex; align
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
-.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 900; font-size: 17px; letter-spacing: 0.04em; }
-.brand-mark { display: grid; grid-template-columns: 12px 7px; grid-template-rows: 9px 9px; gap: 2px; padding: 2px; border: 2px solid var(--plan-wall); border-radius: 3px; }
-.brand-mark i { border-radius: 1px; background: var(--cat-ai); }
-.brand-mark i:nth-child(1) { grid-row: span 2; }
-.brand-mark i:nth-child(2) { background: var(--accent); }
-.brand-mark i:nth-child(3) { background: var(--cat-cloud); }
+.brand { display: inline-flex; align-items: center; text-decoration: none; }
+.nameplate {
+  position: relative; display: inline-flex; align-items: center; padding: 5px 16px 5px; border-radius: 6px;
+  background: linear-gradient(180deg, var(--wood-1), var(--wood-2));
+  box-shadow: inset 0 0 0 1.5px rgba(60, 35, 15, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.18), 0 2px 0 rgba(60, 35, 15, 0.25);
+  color: var(--wood-ink); font-weight: 900; font-size: 16px; letter-spacing: 0.18em; text-shadow: 0 1px 0 rgba(60, 35, 15, 0.5);
+}
+.nameplate::before, .nameplate::after { content: ''; position: absolute; top: 50%; width: 4px; height: 4px; margin-top: -2px; border-radius: 50%; background: rgba(60, 35, 15, 0.55); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25); }
+.nameplate::before { left: 5px; }
+.nameplate::after { right: 5px; }
 .view { max-width: 560px; margin: 0 auto; padding: 4px 16px 0; display: grid; gap: 16px; }
 
 .tabbar {
@@ -92,13 +108,14 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); display: flex; align
 .tabbar a { position: relative; display: grid; place-items: center; align-content: center; gap: 2px; color: var(--muted); text-decoration: none; font-size: 11px; font-weight: 800; }
 .tabbar svg { width: 24px; height: 24px; fill: currentColor; stroke: currentColor; }
 .tabbar a[aria-current="page"] { color: var(--accent); }
+.tabbar a[aria-current="page"]::before { content: ''; position: absolute; top: 0; left: 50%; width: 28px; height: 3px; margin-left: -14px; border-radius: 0 0 3px 3px; background: var(--accent); }
 .tab-badge {
   position: absolute; top: 8px; left: calc(50% + 6px); min-width: 18px; height: 18px; padding: 0 5px;
   border-radius: 9px; background: var(--accent); color: var(--accent-ink); font-size: 11px; line-height: 18px; text-align: center;
 }
 
 /* ---------- 部品 ---------- */
-.card, .timeline, .summary, .plan-card { background: var(--surface); border-radius: var(--radius); padding: 18px 16px; }
+.card, .timeline, .summary, .plan-card, .group { background: var(--surface); border-radius: var(--radius); padding: 18px 16px; box-shadow: var(--card-shadow); }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   min-height: 44px; padding: 10px 18px; border-radius: 12px; border: 1px solid var(--line);
@@ -538,4 +555,60 @@ body.has-whatif #toast { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bott
 }
 @media (min-width: 720px) {
   .view { padding-top: 12px; }
+}
+
+/* ---------- サブスク荘らしさ ---------- */
+/* ボタンは判子のように「押し込める」 */
+.btn { box-shadow: 0 2px 0 var(--line-strong); }
+.btn.primary, .btn.danger { box-shadow: 0 3px 0 color-mix(in oklab, var(--accent) 62%, #000); }
+.btn.ghost, .btn.danger-ghost { box-shadow: none; }
+.btn:active { transform: translateY(2px) scale(.99); box-shadow: 0 0 0 transparent; }
+.btn.ghost:active, .btn.danger-ghost:active { transform: scale(.97); }
+
+/* ホームのいちばん上：外観 */
+.summary.hero { padding: 0; overflow: hidden; }
+.hero-body { padding: 14px 16px 18px; }
+.facade { line-height: 0; border-bottom: 1px solid var(--line); }
+.facade svg { display: block; width: 100%; height: auto; }
+.fa-room { cursor: pointer; outline: none; transform-box: fill-box; transform-origin: center; transition: transform .18s cubic-bezier(.2,.9,.3,1.35); -webkit-tap-highlight-color: transparent; }
+.fa-room:active { transform: scale(.93); transition-duration: .07s; }
+.fa-room:focus-visible .fa-pane { stroke: var(--accent); stroke-width: 2.5; }
+.view.enter .fa-room .fa-pane, .view.enter .fa-room .fa-glow { animation: lights-on .45s ease-out both; animation-delay: calc(var(--i, 0) * 55ms + .2s); }
+@keyframes lights-on { from { opacity: 0; } }
+
+/* 管理人からのお知らせ（掲示板） */
+.board {
+  border-radius: var(--radius); padding: 12px 12px 14px;
+  background: var(--board) radial-gradient(var(--board-dot) 1px, transparent 1.3px) 0 0 / 7px 7px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.board-head { margin: 0 4px 10px; font-size: 12px; font-weight: 900; letter-spacing: 0.12em; color: var(--muted); }
+.board .alerts { gap: 10px; }
+.board .alert {
+  position: relative; border-left: 0; border-radius: 4px; padding: 13px 14px 11px;
+  box-shadow: 0 1px 0 rgba(70, 45, 20, 0.12), 0 3px 8px rgba(70, 45, 20, 0.08);
+}
+.board .alert:nth-child(odd) { transform: rotate(-0.35deg); }
+.board .alert:nth-child(even) { transform: rotate(0.3deg); }
+.board .alert:active { transform: scale(.97); }
+.board .alert::before {
+  content: ''; position: absolute; top: -4px; left: 50%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%;
+  background: var(--line-strong); box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+.board .alert.accent::before { background: var(--accent); }
+.board .alert.warn::before { background: var(--warn); }
+.board .alert.ok::before { background: var(--ok); }
+
+/* 部屋番号 */
+.room-no {
+  display: inline-block; margin-right: 6px; padding: 0 5px; border-radius: 4px; vertical-align: 1px;
+  font-size: 11px; font-weight: 900; line-height: 17px; font-variant-numeric: tabular-nums;
+  color: var(--muted); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line);
+}
+.room-no-label { margin: 2px 0 0 !important; font-size: 12px; font-weight: 900; letter-spacing: 0.08em; color: var(--muted); }
+
+/* 入居者募集中の札 */
+.recruit {
+  margin: 0 0 6px !important; padding: 6px 14px; border: 2.5px solid var(--accent); border-radius: 6px;
+  color: var(--accent); font-weight: 900; letter-spacing: 0.2em; transform: rotate(-2deg); background: var(--surface);
 }

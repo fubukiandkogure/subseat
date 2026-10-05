@@ -1,4 +1,4 @@
-// アプリのアイコン（間取り図）を PNG と SVG で作る。追加のライブラリなし（PNG は自前で書き出す）
+// アプリのアイコン（サブスク荘の建物）を PNG と SVG で作る。追加のライブラリなし（PNG は自前で書き出す）
 //   node tools/make-icons.mjs
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
@@ -8,25 +8,40 @@ import { fileURLToPath } from 'node:url';
 const out = join(dirname(fileURLToPath(import.meta.url)), '..', 'icons');
 mkdirSync(out, { recursive: true });
 
-const BG = [14, 16, 21];
-const WALL = [233, 235, 240];
-// 外壁の中に、大きさの違う部屋（AI・動画・クラウド・音楽・ゲーム）。マスカブル用に中央 70% に収める
-const OUT = { x0: 0.165, y0: 0.165, x1: 0.835, y1: 0.835 };
-const ROOMS = [
-  { x0: 0.2, y0: 0.2, x1: 0.52, y1: 0.8, c: [116, 87, 240] },
-  { x0: 0.52, y0: 0.2, x1: 0.8, y1: 0.5, c: [229, 72, 77] },
-  { x0: 0.52, y0: 0.5, x1: 0.8, y1: 0.68, c: [44, 123, 224] },
-  { x0: 0.52, y0: 0.68, x1: 0.68, y1: 0.8, c: [29, 154, 92] },
-  { x0: 0.68, y0: 0.68, x1: 0.8, y1: 0.8, c: [236, 132, 32] }
+// 朱色の地に、生成りのアパート（サブスク荘）。窓はあかり・カテゴリの色。マスカブル用に中央に収める
+const BG = [212, 70, 44];
+const WALL = [246, 231, 204];
+const ROOF = [59, 48, 42];
+const ROOF_Y = [0.25, 0.36], ROOF_TOP = [0.25, 0.75], ROOF_BOTTOM = [0.15, 0.85];
+const BODY = { x0: 0.2, y0: 0.36, x1: 0.8, y1: 0.78 };
+const GROUND = { x0: 0.13, y0: 0.78, x1: 0.87, y1: 0.815 };
+const WINDOWS = [
+  { x0: 0.27, y0: 0.42, x1: 0.44, y1: 0.54, c: [255, 210, 122] },
+  { x0: 0.56, y0: 0.42, x1: 0.73, y1: 0.54, c: [111, 95, 196] },
+  { x0: 0.27, y0: 0.61, x1: 0.44, y1: 0.73, c: [58, 120, 185] },
+  { x0: 0.56, y0: 0.61, x1: 0.73, y1: 0.73, c: [255, 210, 122] }
 ];
-const INNER = 0.012;
+const FRAME = 0.018;
+const inBox = (px, py, r) => px >= r.x0 && px <= r.x1 && py >= r.y0 && py <= r.y1;
 
 function pixel(px, py) {
-  if (px < OUT.x0 || px > OUT.x1 || py < OUT.y0 || py > OUT.y1) return BG;
-  for (const r of ROOMS) {
-    if (px >= r.x0 + INNER && px <= r.x1 - INNER && py >= r.y0 + INNER && py <= r.y1 - INNER) return r.c;
+  if (py >= ROOF_Y[0] && py <= ROOF_Y[1]) {
+    const t = (py - ROOF_Y[0]) / (ROOF_Y[1] - ROOF_Y[0]);
+    const l = ROOF_TOP[0] + (ROOF_BOTTOM[0] - ROOF_TOP[0]) * t, r = ROOF_TOP[1] + (ROOF_BOTTOM[1] - ROOF_TOP[1]) * t;
+    if (px >= l && px <= r) return ROOF;
   }
-  return WALL;
+  if (inBox(px, py, GROUND)) return ROOF;
+  if (inBox(px, py, BODY)) {
+    for (const w of WINDOWS) {
+      if (inBox(px, py, w)) {
+        const inner = { x0: w.x0 + FRAME, y0: w.y0 + FRAME, x1: w.x1 - FRAME, y1: w.y1 - FRAME };
+        const mid = Math.abs(px - (w.x0 + w.x1) / 2) < FRAME / 2;
+        return inBox(px, py, inner) && !mid ? w.c : ROOF;
+      }
+    }
+    return WALL;
+  }
+  return BG;
 }
 
 function png(size) {
@@ -63,8 +78,10 @@ for (const [name, size] of [['icon-192.png', 192], ['icon-512.png', 512], ['appl
 
 const rgb = (c) => `rgb(${c.join(',')})`;
 const pct = (n) => (n * 100).toFixed(2);
-const svgRooms = ROOMS.map((r) => `<rect x="${pct(r.x0 + INNER)}" y="${pct(r.y0 + INNER)}" width="${pct(r.x1 - r.x0 - INNER * 2)}" height="${pct(r.y1 - r.y0 - INNER * 2)}" fill="${rgb(r.c)}"/>`).join('');
+const rect = (r, fill) => `<rect x="${pct(r.x0)}" y="${pct(r.y0)}" width="${pct(r.x1 - r.x0)}" height="${pct(r.y1 - r.y0)}" fill="${fill}"/>`;
+const svgWin = WINDOWS.map((w) => rect(w, rgb(ROOF)) + rect({ x0: w.x0 + FRAME, y0: w.y0 + FRAME, x1: w.x1 - FRAME, y1: w.y1 - FRAME }, rgb(w.c)) + rect({ x0: (w.x0 + w.x1) / 2 - FRAME / 2, y0: w.y0, x1: (w.x0 + w.x1) / 2 + FRAME / 2, y1: w.y1 }, rgb(ROOF))).join('');
 writeFileSync(join(out, 'icon.svg'),
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="${rgb(BG)}"/>` +
-  `<rect x="${pct(OUT.x0)}" y="${pct(OUT.y0)}" width="${pct(OUT.x1 - OUT.x0)}" height="${pct(OUT.y1 - OUT.y0)}" fill="${rgb(WALL)}"/>${svgRooms}</svg>\n`);
+  `<polygon points="${pct(ROOF_TOP[0])},${pct(ROOF_Y[0])} ${pct(ROOF_TOP[1])},${pct(ROOF_Y[0])} ${pct(ROOF_BOTTOM[1])},${pct(ROOF_Y[1])} ${pct(ROOF_BOTTOM[0])},${pct(ROOF_Y[1])}" fill="${rgb(ROOF)}"/>` +
+  rect(BODY, rgb(WALL)) + rect(GROUND, rgb(ROOF)) + svgWin + '</svg>\n');
 console.log('icons written to', out);

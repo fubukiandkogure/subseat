@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS } from './model.js';
+import { DEFAULT_SETTINGS, assignRoomNumbers } from './model.js';
 import { sampleState } from './sample.js';
 import { todayYmd } from './dates.js';
 import { migrate, SCHEMA } from './migrate.js';
@@ -18,7 +18,7 @@ export function emptyState() {
 function withDefaults(raw) {
   const s = migrate(raw);
   const base = emptyState();
-  return {
+  return assignRoomNumbers({
     ...base, ...s,
     settings: { ...base.settings, ...(s.settings || {}) },
     ui: { ...base.ui, ...(s.ui || {}) },
@@ -26,7 +26,7 @@ function withDefaults(raw) {
     candidates: Array.isArray(s.candidates) ? s.candidates : [],
     ignored: Array.isArray(s.ignored) ? s.ignored : [],
     former: Array.isArray(s.former) ? s.former : []
-  };
+  });
 }
 
 function load() {
@@ -39,7 +39,7 @@ function load() {
   s.settings = { ...s.settings, ...sample.settings };
   s.contracts = sample.contracts;
   s.former = sample.former;
-  return s;
+  return assignRoomNumbers(s);
 }
 
 let state = load();
@@ -67,6 +67,7 @@ export const store = {
   update(fn) {
     const next = structuredClone(state);
     fn(next);
+    assignRoomNumbers(next);
     state = next;
     persist();
     listeners.forEach((l) => l(state));

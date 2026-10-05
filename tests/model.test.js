@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  monthlyYen, yearlyYen, totals, upcoming, relativeLabel, savings, DEFAULT_SETTINGS, squarify, planRooms, takeHomeBreakdown,
+  monthlyYen, yearlyYen, totals, upcoming, relativeLabel, savings, DEFAULT_SETTINGS, squarify, planRooms, takeHomeBreakdown, assignRoomNumbers, roomNoAt,
   paidSince, formerSaved, inspectionDue, occurrencesInRange, recordPrice, recentRaise
 } from '../js/model.js';
 import { migrate, SCHEMA } from '../js/migrate.js';
@@ -61,6 +61,17 @@ test('サブスク荘の部屋：年額の大きい順。金額未確定は部�
   assert.equal(rooms[0].value, 36000, '部屋の広さは年額（ドルは円にして）');
   assert.equal(rooms[0].trial, true);
   assert.deepEqual(rooms[1].raise, { from: 1490, to: 1590, date: '2026-09-01' });
+});
+
+test('部屋番号：1フロア4部屋。空いた番号から埋まり、重複は振り直す', () => {
+  assert.deepEqual([0, 1, 3, 4, 9].map(roomNoAt), [101, 102, 104, 201, 302]);
+  const s = { contracts: [{ id: 'a' }, { id: 'b', roomNo: 101 }, { id: 'c' }, { id: 'd', roomNo: 101 }, { id: 'e', roomNo: 999 }] };
+  assignRoomNumbers(s);
+  assert.deepEqual(s.contracts.map((c) => c.roomNo), [102, 101, 103, 104, 201]);
+  s.contracts = s.contracts.filter((c) => c.id !== 'c'); // 103 が退去
+  s.contracts.push({ id: 'f' });
+  assignRoomNumbers(s);
+  assert.equal(s.contracts.find((c) => c.id === 'f').roomNo, 103, '空いた 103 に入る');
 });
 
 test('手取りの内訳：サブスク・家賃・通信費と、自由に使えるお金。使いすぎも分かる', () => {

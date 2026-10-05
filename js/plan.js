@@ -101,6 +101,7 @@ function roomSvg(r, P, o) {
   const tiny = r.w < 34 || r.h < 26;
   const inner = r.w - 12;
   const lines = [];
+  if (!vac) parts.push(`<rect x="${f1(r.x)}" y="${f1(r.y)}" width="${f1(r.w)}" height="${f1(r.h)}" fill="url(#${o.pid}-planks)" pointer-events="none"/>`);
   if (!tiny) {
     const iconSize = clamp(scale / 5, 16, 34);
     const bigSize = clamp(scale / 6.2, 11, 26);
@@ -152,6 +153,8 @@ function roomSvg(r, P, o) {
       const dx = r.x + 12, dy = r.y + r.h;
       lines.push(`<path d="M${f1(dx)} ${f1(dy)}h22" stroke="${P.floor}" stroke-width="4"/><path d="M${f1(dx)} ${f1(dy)}v-20M${f1(dx)} ${f1(dy - 20)}A20 20 0 0 1 ${f1(dx + 20)} ${f1(dy)}" fill="none" stroke="${P.wall}" stroke-width="1.4"/>`);
     }
+    // 部屋番号（左上。間取り図のように）
+    if (r.roomNo && r.w >= 44 && r.h >= 34) lines.push(`<text x="${f1(r.x + 6)}" y="${f1(r.y + 13)}" font-size="8.5" font-weight="800" fill="${P.muted}" opacity="0.85">${r.roomNo}</text>`);
     // 札
     const sign = signOf(r, vac);
     if (sign && r.w >= 58 && r.h >= 44) {
@@ -161,7 +164,8 @@ function roomSvg(r, P, o) {
       lines.push(`<rect x="${f1(sx)}" y="${f1(sy)}" width="${f1(tw)}" height="16" rx="4" fill="${tone}"/><text x="${f1(sx + tw / 2)}" y="${f1(sy + 11.6)}" text-anchor="middle" font-size="9.5" font-weight="900" fill="${P.surface}">${esc(sign.text)}</text>`);
     }
   }
-  const label = vac ? `空き部屋（${r.name} が退去）${fullLabel}` : `${r.name} ${fullLabel}`;
+  const no = r.roomNo ? `${r.roomNo}号室 ` : '';
+  const label = vac ? `${no}空き部屋（${r.name} が退去）${fullLabel}` : `${no}${r.name} ${fullLabel}`;
   return `<g class="room${vac ? ' vacant' : ''}" data-id="${esc(r.id)}" role="button" tabindex="0" aria-label="${esc(label)}"><title>${esc(label)}</title>${parts.join('')}${lines.join('')}</g>`;
 }
 
@@ -173,7 +177,8 @@ export function planSvg(laid, { w, h, vacant = new Set(), unit = 'month', palett
   const o = { vacant, unit, pid };
   const hatchLine = mix(P.freed, P.floor, P.dark ? 0.55 : 0.4);
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="100%" font-family="${FONT}" role="group" aria-label="間取り図">` +
-    `<defs><pattern id="${pid}-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="${P.floor}"/><rect width="4" height="10" fill="${hatchLine}"/></pattern></defs>` +
+    `<defs><pattern id="${pid}-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="${P.floor}"/><rect width="4" height="10" fill="${hatchLine}"/></pattern>` +
+    `<pattern id="${pid}-planks" width="44" height="16" patternUnits="userSpaceOnUse"><path d="M0 8h44M0 16h44M14 0v8M36 8v8" stroke="${P.wall}" stroke-width="0.7" opacity="${P.dark ? 0.16 : 0.08}" fill="none"/></pattern></defs>` +
     `<rect x="0" y="0" width="${w}" height="${h}" fill="${P.floor}"/>` +
     laid.map((r) => roomSvg(r, P, o)).join('') +
     `<rect x="3.5" y="3.5" width="${w - 7}" height="${h - 7}" fill="none" stroke="${P.wall}" stroke-width="7" rx="2"/></svg>`;

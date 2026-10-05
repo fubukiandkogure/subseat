@@ -114,6 +114,6 @@ export function renderSettings(root, store) {
         toast('すべて消しました');
       } }, 'すべてのデータを消す')),
 
-    h('p', { class: 'about' }, 'サブスク荘 0.4.0・データは外に送りません')
+    h('p', { class: 'about' }, 'サブスク荘 0.5.0・データは外に送りません')
   ].filter(Boolean));
 }

@@ -1,5 +1,6 @@
 import { h, money, tile, toast, segmented, openSheet, shareOrSave, bigAmount, otherAmount, modeToggle, flipMode, undoable } from '../ui.js';
 import { haptic, burstFrom, countUp } from '../feel.js';
+import { facadeSvg } from '../facade.js';
 import {
   totals, planRooms, takeHomeBreakdown, upcoming, relativeLabel, savings, CATEGORIES, chargeYen,
   inspectionDue, formerSaved, occurrencesInRange, recentRaise
@@ -51,13 +52,25 @@ export function renderHome(root, store, go) {
   const chips = [
     settings.rent > 0 && subsYear > 0 ? h('span', { class: 'stat-chip' }, `1年で家賃 ${(Math.round((subsYear / settings.rent) * 10) / 10).toFixed(1)}か月分`) : null
   ].filter(Boolean);
-  const summary = h('section', { class: 'summary' },
+  // 外観：窓を押すとその部屋、空き部屋は入居希望へ
+  const facade = h('div', { class: 'facade' });
+  facade.innerHTML = facadeSvg(state.contracts.map((c) => ({ id: c.id, name: c.name, roomNo: c.roomNo, category: c.category, status: c.status, trial: !!c.trial?.on, raise: !!recentRaise(c, today) })));
+  const openWindow = (el) => {
+    const g = el?.closest('.fa-room');
+    if (!g) return;
+    if (g.dataset.id) { openRoomSheet(store, g.dataset.id); return; }
+    toast('空き部屋です', { action: '入居者を探す', onAction: () => go('import') });
+  };
+  facade.addEventListener('click', (e) => openWindow(e.target));
+  facade.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWindow(e.target); } });
+
+  const summary = h('section', { class: 'summary hero' }, facade, h('div', { class: 'hero-body' },
     h('div', { class: 'summary-top' }, h('p', { class: 'eyebrow' }, 'サブスクに払っている額'), modeToggle(store)),
     bigAmount(subsMonth, year, { key: 'home-total', onTap: () => flipMode(store) }),
     h('p', { class: 'money-line' }, h('span', null, otherAmount(subsMonth, year)), h('span', { class: 'sep' }, '・'), h('span', null, `${rooms.length}部屋`)),
     nextPay(store, state, today),
     chips.length ? h('div', { class: 'stat-chips' }, chips) : null,
-    breakdownView(takeHomeBreakdown(state), year, go));
+    breakdownView(takeHomeBreakdown(state), year, go)));
 
   // ---------- お知らせ ----------
   const alerts = [];
@@ -77,7 +90,9 @@ export function renderHome(root, store, go) {
   const raises = state.contracts.filter((c) => recentRaise(c, today));
   if (raises.length) alerts.push(chip('📈', `最近値上げした部屋 ${raises.length}件（${raises.map((c) => c.name).join('、')}）`, () => openRoomSheet(store, raises[0].id)));
   if (t.unknown) alerts.push(chip('❔', `金額が分からない部屋 ${t.unknown}件（入れると間取りに入ります）`, () => go('contracts')));
-  const alertBox = alerts.length ? h('div', { class: 'alerts' }, alerts) : null;
+  const alertBox = alerts.length ? h('section', { class: 'board', 'aria-label': '管理人からのお知らせ' },
+    h('p', { class: 'board-head' }, '管理人からのお知らせ'),
+    h('div', { class: 'alerts' }, alerts)) : null;
 
   // ---------- 間取り ----------
   const H = rooms.length > 8 ? 500 : 440;
@@ -114,6 +129,7 @@ export function renderHome(root, store, go) {
   let planBody;
   if (!laid.length) {
     planBody = h('div', { class: 'empty-plan' },
+      h('p', { class: 'recruit', 'aria-hidden': 'true' }, '入居者募集中'),
       h('p', null, h('b', null, 'まだ入居者がいません')),
       h('p', { class: 'muted small' }, 'カード明細やメモから入居希望者を探すか、手で入居させてください。'),
       h('div', { class: 'actions' },

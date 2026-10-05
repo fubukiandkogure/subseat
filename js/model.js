@@ -103,6 +103,28 @@ export function totals(state) {
   return { subs, fixed, reserved, takeHome, free: takeHome ? takeHome - reserved : null, unknown };
 }
 
+// ---------- 部屋番号 ----------
+// 1フロア4部屋（101〜104, 201〜204 …）。空いている一番小さい番号に入居する。退去すると番号が空く
+export const ROOMS_PER_FLOOR = 4;
+export const roomNoAt = (k) => (Math.floor(k / ROOMS_PER_FLOOR) + 1) * 100 + (k % ROOMS_PER_FLOOR) + 1;
+const validRoomNo = (n) => Number.isInteger(n) && n >= 101 && n % 100 >= 1 && n % 100 <= ROOMS_PER_FLOOR;
+export function assignRoomNumbers(s) {
+  const used = new Set();
+  for (const c of s.contracts) {
+    if (validRoomNo(c.roomNo) && !used.has(c.roomNo)) used.add(c.roomNo);
+    else c.roomNo = null; // 番号なし・重複（再入居で取られていた など）は振り直す
+  }
+  let k = 0;
+  for (const c of s.contracts) {
+    if (c.roomNo) continue;
+    while (used.has(roomNoAt(k))) k++;
+    c.roomNo = roomNoAt(k);
+    used.add(c.roomNo);
+  }
+  return s;
+}
+export const roomLabel = (c) => (c?.roomNo ? `${c.roomNo}号室` : '');
+
 // ---------- 間取り ----------
 // 面積を値に比例させて長方形を分ける（squarified treemap）。大きいものほど左上に来る。
 export function squarify(items, x, y, w, h) {
@@ -146,7 +168,7 @@ export function planRooms(state, today) {
     .filter((x) => x.y != null && x.y > 0)
     .sort((a, b) => b.y - a.y)
     .map(({ c, y }) => ({
-      id: c.id, kind: 'sub', name: c.name, category: c.category, value: y,
+      id: c.id, kind: 'sub', name: c.name, category: c.category, value: y, roomNo: c.roomNo,
       status: c.status, trial: !!c.trial?.on, raise: recentRaise(c, today), currency: c.currency
     }));
 }

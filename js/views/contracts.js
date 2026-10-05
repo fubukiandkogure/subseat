@@ -21,7 +21,7 @@ export function renderContracts(root, store) {
     return h('button', { type: 'button', class: 'row', onClick: () => openRoomSheet(store, c.id) },
       tile(c.name),
       h('span', { class: 'row-main' },
-        h('span', { class: 'row-title' }, c.name),
+        h('span', { class: 'row-title' }, c.roomNo ? h('span', { class: 'room-no' }, c.roomNo) : null, c.name),
         h('span', { class: 'row-sub' },
           h('span', { class: 'swatch mini', style: { background: `var(--cat-${c.category})` } }),
           `${catLabel(c.category)}・${CHANNELS.find((x) => x.id === c.channel)?.label ?? '直接'}`,

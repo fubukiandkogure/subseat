@@ -12,7 +12,7 @@ export function haptic(kind = 'tap') {
 }
 
 // 押せるものを押したら、軽く振動（画面ごとに付けなくていいように、まとめて拾う）
-const PRESSABLE = '.btn, .seg button, .alert, .row:not(.static), .event-btn, .room, .tabbar a, .cal-cell.has, .icon-btn, .former-card, .tap-amount, .next-pay';
+const PRESSABLE = '.fa-room, .btn, .seg button, .alert, .row:not(.static), .event-btn, .room, .tabbar a, .cal-cell.has, .icon-btn, .former-card, .tap-amount, .next-pay';
 export function installPressFeedback() {
   document.addEventListener('pointerdown', (e) => {
     if (e.button !== 0) return;
