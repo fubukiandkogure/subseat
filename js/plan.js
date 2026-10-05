@@ -1,4 +1,5 @@
 import { squarify } from './model.js';
+import { logoSvg } from './pixel.js';
 
 // 間取り図を SVG で描く。色は CSS の変数から実際の値を読んで埋め込む（そのまま画像に書き出せるように）
 export const FONT = "'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic UI',Meiryo,system-ui,sans-serif";
@@ -194,7 +195,8 @@ export function shareSvg(laid, { w, h, title, sub, footer, unit, palette }) {
     `<text x="${M}" y="118" font-size="44" font-weight="900" fill="${P.ink}">${esc(title)}</text>` +
     `<text x="${M}" y="182" font-size="30" font-weight="700" fill="${P.muted}">${esc(sub)}</text>` +
     inner +
-    `<text x="${W - M}" y="${H - 48}" text-anchor="end" font-size="24" font-weight="700" fill="${P.muted}">${esc(footer)}</text></svg>`;
+    `<text x="${M}" y="${H - 48}" font-size="24" font-weight="700" fill="${P.muted}">${esc(footer)}</text>` +
+    logoSvg({ night: P.dark, scale: 3 }).replace('<svg ', `<svg x="${W - M - 294}" y="${H - 96}" `) + '</svg>';
 }
 
 export function svgToPng(svg, width = 1080, height = 1350) {

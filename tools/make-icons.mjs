@@ -1,58 +1,41 @@
-// アプリのアイコン（サブスク荘の建物）を PNG と SVG で作る。追加のライブラリなし（PNG は自前で書き出す）
+// アプリのアイコン（ロゴと同じドットの建物）を PNG と SVG で作る。追加のライブラリなし（PNG は自前で書き出す）
 //   node tools/make-icons.mjs
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { BUILDING, PALETTE, rects } from '../js/pixel.js';
 
 const out = join(dirname(fileURLToPath(import.meta.url)), '..', 'icons');
 mkdirSync(out, { recursive: true });
 
-// 朱色の地に、生成りのアパート（サブスク荘）。窓はあかり・カテゴリの色。マスカブル用に中央に収める
+// 朱色の地に、ロゴと同じドットの建物（js/pixel.js）。1ドットを整数倍にして、くっきり描く
 const BG = [212, 70, 44];
-const WALL = [246, 231, 204];
-const ROOF = [59, 48, 42];
-const ROOF_Y = [0.25, 0.36], ROOF_TOP = [0.25, 0.75], ROOF_BOTTOM = [0.15, 0.85];
-const BODY = { x0: 0.2, y0: 0.36, x1: 0.8, y1: 0.78 };
-const GROUND = { x0: 0.13, y0: 0.78, x1: 0.87, y1: 0.815 };
-const WINDOWS = [
-  { x0: 0.27, y0: 0.42, x1: 0.44, y1: 0.54, c: [255, 210, 122] },
-  { x0: 0.56, y0: 0.42, x1: 0.73, y1: 0.54, c: [111, 95, 196] },
-  { x0: 0.27, y0: 0.61, x1: 0.44, y1: 0.73, c: [58, 120, 185] },
-  { x0: 0.56, y0: 0.61, x1: 0.73, y1: 0.73, c: [255, 210, 122] }
-];
-const FRAME = 0.018;
-const inBox = (px, py, r) => px >= r.x0 && px <= r.x1 && py >= r.y0 && py <= r.y1;
+const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const SPRITE = BUILDING.map((row) => [...row].map((ch) => (ch === '.' ? null : hex(PALETTE.day[ch]))));
+const SW = BUILDING[0].length, SH = BUILDING.length;
 
-function pixel(px, py) {
-  if (py >= ROOF_Y[0] && py <= ROOF_Y[1]) {
-    const t = (py - ROOF_Y[0]) / (ROOF_Y[1] - ROOF_Y[0]);
-    const l = ROOF_TOP[0] + (ROOF_BOTTOM[0] - ROOF_TOP[0]) * t, r = ROOF_TOP[1] + (ROOF_BOTTOM[1] - ROOF_TOP[1]) * t;
-    if (px >= l && px <= r) return ROOF;
-  }
-  if (inBox(px, py, GROUND)) return ROOF;
-  if (inBox(px, py, BODY)) {
-    for (const w of WINDOWS) {
-      if (inBox(px, py, w)) {
-        const inner = { x0: w.x0 + FRAME, y0: w.y0 + FRAME, x1: w.x1 - FRAME, y1: w.y1 - FRAME };
-        const mid = Math.abs(px - (w.x0 + w.x1) / 2) < FRAME / 2;
-        return inBox(px, py, inner) && !mid ? w.c : ROOF;
-      }
-    }
-    return WALL;
-  }
-  return BG;
+let cell = 1, offX = 0, offY = 0;
+function layout(size) {
+  cell = Math.floor((size * 0.64) / SW);
+  offX = Math.floor((size - SW * cell) / 2);
+  offY = Math.floor((size - SH * cell) / 2);
+}
+function pixel(px, py, size) {
+  const x = Math.floor((px * size - offX) / cell), y = Math.floor((py * size - offY) / cell);
+  return (y >= 0 && y < SH && x >= 0 && x < SW && SPRITE[y][x]) || BG;
 }
 
 function png(size) {
-  const SS = 4;
+  layout(size);
+  const SS = 1;
   const raw = Buffer.alloc((size * 4 + 1) * size);
   for (let y = 0; y < size; y++) {
     raw[y * (size * 4 + 1)] = 0;
     for (let x = 0; x < size; x++) {
       const acc = [0, 0, 0];
       for (let sy = 0; sy < SS; sy++) for (let sx = 0; sx < SS; sx++) {
-        const c = pixel((x + (sx + 0.5) / SS) / size, (y + (sy + 0.5) / SS) / size);
+        const c = pixel((x + (sx + 0.5) / SS) / size, (y + (sy + 0.5) / SS) / size, size);
         acc[0] += c[0]; acc[1] += c[1]; acc[2] += c[2];
       }
       const o = y * (size * 4 + 1) + 1 + x * 4;
@@ -77,11 +60,7 @@ for (const [name, size] of [['icon-192.png', 192], ['icon-512.png', 512], ['appl
 }
 
 const rgb = (c) => `rgb(${c.join(',')})`;
-const pct = (n) => (n * 100).toFixed(2);
-const rect = (r, fill) => `<rect x="${pct(r.x0)}" y="${pct(r.y0)}" width="${pct(r.x1 - r.x0)}" height="${pct(r.y1 - r.y0)}" fill="${fill}"/>`;
-const svgWin = WINDOWS.map((w) => rect(w, rgb(ROOF)) + rect({ x0: w.x0 + FRAME, y0: w.y0 + FRAME, x1: w.x1 - FRAME, y1: w.y1 - FRAME }, rgb(w.c)) + rect({ x0: (w.x0 + w.x1) / 2 - FRAME / 2, y0: w.y0, x1: (w.x0 + w.x1) / 2 + FRAME / 2, y1: w.y1 }, rgb(ROOF))).join('');
 writeFileSync(join(out, 'icon.svg'),
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="${rgb(BG)}"/>` +
-  `<polygon points="${pct(ROOF_TOP[0])},${pct(ROOF_Y[0])} ${pct(ROOF_TOP[1])},${pct(ROOF_Y[0])} ${pct(ROOF_BOTTOM[1])},${pct(ROOF_Y[1])} ${pct(ROOF_BOTTOM[0])},${pct(ROOF_Y[1])}" fill="${rgb(ROOF)}"/>` +
-  rect(BODY, rgb(WALL)) + rect(GROUND, rgb(ROOF)) + svgWin + '</svg>\n');
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" shape-rendering="crispEdges"><rect width="100" height="100" rx="22" fill="${rgb(BG)}"/>` +
+  `<g transform="translate(${(100 - SW * 2.7) / 2} ${(100 - SH * 2.7) / 2}) scale(2.7)">${rects(BUILDING, PALETTE.day)}</g></svg>\n`);
 console.log('icons written to', out);

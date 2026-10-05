@@ -1,11 +1,11 @@
 // オフラインでも開けるように、アプリ本体（同じサイトのファイル）をキャッシュする。
 // 開くときはキャッシュをすぐ返しつつ、裏で新しい版を取りに行く（次に開いたときに反映）。
 // ファイルを増やしたら ASSETS に足し、大きく変えたら VERSION を上げる。
-const VERSION = 'subsou-v7';
+const VERSION = 'subsou-v8';
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/app.js', 'js/store.js', 'js/ui.js', 'js/model.js', 'js/dates.js', 'js/text.js', 'js/services.js',
-  'js/feel.js', 'js/facade.js', 'js/logo.js', 'js/csv.js', 'js/detect.js', 'js/freetext.js', 'js/ics.js', 'js/sample.js', 'js/migrate.js', 'js/plan.js',
+  'js/feel.js', 'js/facade.js', 'js/pixel.js', 'js/csv.js', 'js/detect.js', 'js/freetext.js', 'js/ics.js', 'js/sample.js', 'js/migrate.js', 'js/plan.js',
   'js/views/home.js', 'js/views/import.js', 'js/views/contracts.js', 'js/views/settings.js', 'js/views/contract-sheet.js',
   'js/views/room-sheet.js', 'js/views/inspect.js', 'js/views/tutorial.js',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'

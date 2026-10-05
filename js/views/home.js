@@ -326,7 +326,7 @@ function saveImage(laid, H, unit, subsYear, count) {
         const P = readPalette();
         const title = 'わたしのサブスク荘';
         const sub = hide ? `${count}部屋` : `${count}部屋・${amountText(subsYear, unit)}`;
-        const svg = shareSvg(laid, { w: W, h: H, title, sub, footer: 'サブスク荘 ・ 部屋の広さ＝払っている額', unit: hide ? 'none' : unit, palette: P });
+        const svg = shareSvg(laid, { w: W, h: H, title, sub, footer: '部屋の広さ＝払っている額', unit: hide ? 'none' : unit, palette: P });
         const blob = await svgToPng(svg);
         const r = await shareOrSave(blob, `subsou-${todayYmd().replace(/-/g, '')}.png`, title);
         if (r === 'saved') toast('画像を保存しました');

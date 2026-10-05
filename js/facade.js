@@ -1,6 +1,6 @@
 import { mix, FONT } from './plan.js';
 import { ROOMS_PER_FLOOR } from './model.js';
-import { LOGO_DAY, LOGO_NIGHT } from './logo.js';
+import { wordSvg, TEXT_W, TEXT_H } from './pixel.js';
 
 // サブスク荘の外観。部屋番号の場所に窓とドアがあり、窓の色はカテゴリ。
 // 昼（ライト）はカーテン、夜（ダーク）は明かりがつく。窓を押すとその部屋を開く。
@@ -55,10 +55,10 @@ export function facadeSvg(rooms, { height } = {}) {
   if (P.night) {
     out.push(`<defs><filter id="fa-neon" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="1.6" result="b"/><feFlood flood-color="#ff6a2e"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`);
     out.push(`<rect x="${sx}" y="${sy}" width="76" height="18" rx="3" fill="#15131b" stroke="#3a3542" stroke-width="1"/>`);
-    out.push(`<svg class="fa-neon" x="${sx + 6}" y="${sy + 3}" width="64" height="12" viewBox="${LOGO_NIGHT.viewBox}"><path d="${LOGO_NIGHT.d}" fill="#fff1d6" filter="url(#fa-neon)"/></svg>`);
+    out.push(`<g filter="url(#fa-neon)">${wordSvg({ night: true, x: sx + 6, y: sy + 3, width: 64, height: 64 * TEXT_H / TEXT_W })}</g>`);
   } else {
     out.push(`<rect x="${sx}" y="${sy}" width="76" height="18" rx="3" fill="#fbf4e4" stroke="#1f3a5f" stroke-width="1.6"/>`);
-    out.push(`<svg x="${sx + 6}" y="${sy + 3.5}" width="64" height="11" viewBox="${LOGO_DAY.viewBox}"><path d="${LOGO_DAY.d}" fill="#c93a22"/></svg>`);
+    out.push(wordSvg({ x: sx + 6, y: sy + 3, width: 64, height: 64 * TEXT_H / TEXT_W }));
   }
 
   // 外階段（右側）

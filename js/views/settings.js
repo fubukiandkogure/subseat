@@ -3,6 +3,7 @@ import { hasSample, clearSample, exportJson, parseBackup, emptyState } from '../
 import { buildIcs } from '../ics.js';
 import { todayYmd } from '../dates.js';
 import { openTutorial } from './tutorial.js';
+import { logoSvg } from '../pixel.js';
 
 const THEMES = [{ id: 'auto', label: '端末に合わせる' }, { id: 'light', label: 'ライト' }, { id: 'dark', label: 'ダーク' }];
 const MODES = [{ id: 'month', label: '月で入れる' }, { id: 'year', label: '年で入れる（ボーナス込み）' }];
@@ -114,6 +115,12 @@ export function renderSettings(root, store) {
         toast('すべて消しました');
       } }, 'すべてのデータを消す')),
 
-    h('p', { class: 'about' }, 'サブスク荘 0.6.0・データは外に送りません')
+    (() => {
+      const box = h('div', { class: 'about-logo' }, h('span', { class: 'sign sign-day', 'aria-hidden': 'true' }), h('span', { class: 'sign sign-night', 'aria-hidden': 'true' }),
+        h('p', { class: 'about' }, 'サブスク荘 0.7.0・データは外に送りません'));
+      box.querySelector('.sign-day').innerHTML = logoSvg({ scale: 3 });
+      box.querySelector('.sign-night').innerHTML = logoSvg({ night: true, scale: 3 });
+      return box;
+    })()
   ].filter(Boolean));
 }

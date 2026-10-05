@@ -43,13 +43,11 @@
 
 ### 看板（ロゴ）
 
-昼は昭和のホーロー看板、ダークモードは夜のネオン看板（開くと一度ちらついて点く）。
-文字は Dela Gothic One（昼）と RocknRoll One（夜）の形を SVG の図形にして埋め込んでいます。アプリはフォントを読み込まず、外にも通信しません。
-フォントはどちらも SIL Open Font License 1.1（Google Fonts）。作り直すときは、2つのフォントの .ttf を用意して
-
-```bash
-node tools/make-logo.mjs DelaGothicOne-Regular.ttf RocknRollOne-Regular.ttf
-```
+ドット絵の建物と「サブスク荘」の文字。窓には ▶ ✦ ♪ ☁（動画・AI・音楽・クラウド）。
+文字もフォントを使わず、12×12 のドットで1文字ずつ描いています（縦の線を2ドットにした太字＋黄色の影）。
+ダークモードは夜の色になり、開くと文字が一度ちらついて点きます。
+同じロゴを、ヘッダー・建物の屋根の看板・アプリのアイコン・画像で保存のすみ・設定のいちばん下で使っています。
+形は js/pixel.js の文字の地図（# がドット）なので、そこを直せば全部に反映されます（アイコンは node tools/make-icons.mjs で作り直す）。
 
 ### 辞書
 
@@ -112,7 +110,7 @@ js/csv.js               CSV：文字コード判定・列の推定・明細の�
 js/detect.js            定期課金の検出・登録済みとの照合
 js/freetext.js          雑入力の分解
 js/services.js          よくあるサブスクの辞書（約270件。金額は持たない）
-js/logo.js              ロゴの文字の形（tools/make-logo.mjs で作る）
+js/pixel.js             ロゴ（ドット絵の建物と文字。1ドットずつ描いたもの）
 js/facade.js            サブスク荘の外観（窓・部屋番号）
 js/ics.js               カレンダー（.ics）の書き出し
 js/sample.js            サンプルデータとサンプル明細
