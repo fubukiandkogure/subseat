@@ -1,4 +1,4 @@
-import { h, toast, download, segmented, field, ask, money } from '../ui.js';
+import { h, toast, download, segmented, field, ask, money, undoable } from '../ui.js';
 import { hasSample, clearSample, exportJson, parseBackup, emptyState } from '../store.js';
 import { buildIcs } from '../ics.js';
 import { todayYmd } from '../dates.js';
@@ -70,6 +70,7 @@ export function renderSettings(root, store) {
     h('section', { class: 'card' },
       h('h2', null, '表示'),
       field('テーマ', segmented(THEMES, s.theme, (v) => store.update((x) => { x.settings.theme = v; }), 'テーマ')),
+      field('押したときの振動', segmented([{ id: 'on', label: 'あり' }, { id: 'off', label: 'なし' }], s.haptics === false ? 'off' : 'on', (v) => store.update((x) => { x.settings.haptics = v === 'on'; }), '押したときの振動'), '対応している端末だけ（Android など）'),
       h('button', { type: 'button', class: 'btn', onClick: () => openTutorial(store) }, 'はじめての説明をもう一度見る')),
 
     h('section', { class: 'card' },
@@ -97,9 +98,7 @@ export function renderSettings(root, store) {
     hasSample(st) ? h('section', { class: 'card' },
       h('h2', null, 'サンプル'),
       h('button', { type: 'button', class: 'btn', onClick: async () => {
-        if (!(await ask('サンプルの部屋・候補・設定を消しますか？', { ok: '消す', danger: true }))) return;
-        store.update(clearSample);
-        toast('サンプルを消しました');
+        undoable(store, 'サンプルを消しました', clearSample);
       } }, 'サンプルデータを消す')) : null,
 
     h('section', { class: 'card danger-zone' },
@@ -115,6 +114,6 @@ export function renderSettings(root, store) {
         toast('すべて消しました');
       } }, 'すべてのデータを消す')),
 
-    h('p', { class: 'about' }, 'サブスク荘 0.3.1・データは外に送りません')
+    h('p', { class: 'about' }, 'サブスク荘 0.4.0・データは外に送りません')
   ].filter(Boolean));
 }

@@ -444,16 +444,97 @@ textarea + .btn { margin-top: 10px; }
 @keyframes fade { from { opacity: 0; } }
 #toast {
   position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 16px); z-index: 60;
-  transform: translate(-50%, 20px); opacity: 0; pointer-events: none; transition: 0.25s;
+  transform: translate(-50%, 24px) scale(.96); opacity: 0; pointer-events: none;
+  transition: opacity .18s, transform .32s cubic-bezier(.2,.9,.3,1.3);
+  display: flex; align-items: center; gap: 12px;
   width: max-content; max-width: calc(100% - 32px); padding: 10px 16px; border-radius: 14px; background: var(--text); color: var(--bg);
-  font-size: 14px; font-weight: 800; text-align: center;
+  font-size: 14px; font-weight: 800; text-align: left; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
 }
-#toast.show { opacity: 1; transform: translate(-50%, 0); }
-body.has-whatif #toast { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 160px); }
+#toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+#toast.has-action { padding: 6px 6px 6px 16px; }
+#toast.show.has-action { pointer-events: auto; }
+.toast-action {
+  all: unset; flex: none; cursor: pointer; padding: 8px 12px; border-radius: 10px; font-weight: 900; white-space: nowrap;
+  background: color-mix(in oklab, var(--bg) 16%, transparent); color: var(--bg);
+}
+.toast-action:focus-visible { outline: 2px solid var(--bg); }
+body.has-whatif #toast { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 170px); }
+
+/* ---------- さわり心地 ---------- */
+.btn, .seg button, .alert, .row, .event-btn, .icon-btn, .former-card, .next-pay, .tap-amount, .cal-cell, .answer {
+  transition: transform .18s cubic-bezier(.2,.9,.3,1.35), background-color .15s, filter .15s, box-shadow .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.tabbar a { -webkit-tap-highlight-color: transparent; }
+.btn:active, .seg button:active, .alert:active, .row:not(.static):active, .event-btn:active, .icon-btn:active,
+.former-card:active, .next-pay:active, .cal-cell.has:active { transform: scale(.965); transition-duration: .07s; }
+.tap-amount:active { transform: scale(.98); transition-duration: .07s; }
+.tabbar svg { transition: transform .22s cubic-bezier(.2,.9,.3,1.4); }
+.tabbar a:active svg { transform: scale(.86); transition-duration: .07s; }
+.tabbar a[aria-current="page"] svg { animation: tab-pop .42s cubic-bezier(.2,.9,.3,1.4); }
+@keyframes tab-pop { 40% { transform: scale(1.2) translateY(-2px); } }
+
+/* 画面に入るとき：中身が下からふわっと */
+.view.enter > * { animation: rise .44s cubic-bezier(.2,.8,.2,1) both; }
+.view.enter > :nth-child(2) { animation-delay: .04s; }
+.view.enter > :nth-child(3) { animation-delay: .08s; }
+.view.enter > :nth-child(4) { animation-delay: .12s; }
+.view.enter > :nth-child(5) { animation-delay: .16s; }
+.view.enter > :nth-child(n+6) { animation-delay: .2s; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+.view.enter .breakdown-bar { animation: wipe .8s .25s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0 round 7px); } to { clip-path: inset(0 0 0 0 round 7px); } }
+
+/* 間取りの部屋：押すと沈む、入るときは順に出る、模様替えで押した部屋ははずむ */
+.plan-wrap .room { transform-box: fill-box; transform-origin: center; transition: transform .18s cubic-bezier(.2,.9,.3,1.35); }
+.plan-wrap .room:active { transform: scale(.96); transition-duration: .07s; }
+.plan-wrap.enter .room { animation: room-in .52s cubic-bezier(.2,.9,.3,1.25) both; animation-delay: calc(var(--i, 0) * 45ms + .12s); }
+@keyframes room-in { from { opacity: 0; transform: scale(.55); } }
+.plan-wrap .room.pop { animation: room-pop .38s cubic-bezier(.2,.9,.3,1.4); }
+@keyframes room-pop { 0% { transform: scale(.88); } 60% { transform: scale(1.03); } }
+
+/* 合計：押すと月／年が入れかわる */
+.big.tap-amount { appearance: none; background: none; border: 0; padding: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 10px; }
+.big.tap-amount::after { content: '⇄'; align-self: center; margin-left: 6px; font-size: 15px; font-weight: 900; color: var(--muted); opacity: .7; }
+.big.tap-amount:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* 次の支払い */
+.next-pay {
+  all: unset; box-sizing: border-box; cursor: pointer; width: 100%; margin-top: 12px;
+  display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 14px; background: var(--surface-2); font-size: 13px;
+}
+.next-pay .next-label { color: var(--muted); font-weight: 800; font-size: 12px; white-space: nowrap; }
+.next-pay .next-when { color: var(--accent); font-weight: 900; white-space: nowrap; }
+.next-pay.trial .next-when { color: var(--warn); }
+.next-pay .tile { width: 24px; height: 24px; font-size: 12px; border-radius: 7px; flex: none; }
+.next-pay .next-name { flex: 1; min-width: 0; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.next-pay b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.next-pay:focus-visible { outline: 2px solid var(--accent); }
+
+/* 紙ふぶき */
+.burst { position: fixed; inset: 0; pointer-events: none; z-index: 80; overflow: hidden; }
+.burst i { position: absolute; width: 8px; height: 8px; border-radius: 2px; }
+
+/* 見回りおわりのハンコ */
+.stamp-wrap { display: grid; place-items: center; padding-top: 6px; }
+.stamp {
+  display: grid; place-items: center; width: 78px; height: 78px; border-radius: 50%;
+  border: 4px solid var(--accent); box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 5px var(--accent);
+  color: var(--accent); font-size: 34px; font-weight: 900; transform: rotate(-12deg);
+  animation: stamp .55s cubic-bezier(.2,.9,.3,1.3) both;
+}
+@keyframes stamp {
+  0% { opacity: 0; transform: scale(2.3) rotate(-32deg); }
+  55% { opacity: 1; transform: scale(.9) rotate(-10deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-12deg); }
+}
+
+/* シートは上の帯を引っぱって閉じられる */
+.sheet-head { touch-action: none; cursor: grab; }
+.sheet-head:active { cursor: grabbing; }
 
 @media (prefers-reduced-motion: reduce) {
-  .sheet, .sheet-backdrop, .tutorial { animation: none; }
-  #toast, .inspect-progress span { transition: none; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
 }
 @media (min-width: 720px) {
   .view { padding-top: 12px; }

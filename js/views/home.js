@@ -1,4 +1,5 @@
-import { h, money, tile, toast, segmented, openSheet, shareOrSave, bigAmount, otherAmount, modeToggle } from '../ui.js';
+import { h, money, tile, toast, segmented, openSheet, shareOrSave, bigAmount, otherAmount, modeToggle, flipMode, undoable } from '../ui.js';
+import { haptic, burstFrom, countUp } from '../feel.js';
 import {
   totals, planRooms, takeHomeBreakdown, upcoming, relativeLabel, savings, CATEGORIES, chargeYen,
   inspectionDue, formerSaved, occurrencesInRange, recentRaise
@@ -9,10 +10,9 @@ import { hasSample, clearSample } from '../store.js';
 import { openRoomSheet } from './room-sheet.js';
 import { openContractSheet } from './contract-sheet.js';
 import { openInspection } from './inspect.js';
-import { ask } from '../ui.js';
 
 // 模様替え（これをやめたら？）の状態。画面を離れたら消える
-const remodel = { on: false, ids: new Set() };
+const remodel = { on: false, ids: new Set(), last: null };
 let calMonth = null;
 const W = 400;
 
@@ -43,9 +43,7 @@ export function renderHome(root, store, go) {
   const sampleBar = hasSample(state) ? h('div', { class: 'sample-bar' },
     h('span', null, 'いま見ているのはサンプルのサブスク荘です'),
     h('button', { class: 'btn small', type: 'button', onClick: async () => {
-      if (!(await ask('サンプルの部屋・設定を消しますか？（自分で入れたものは消えません）', { ok: '消す', danger: true }))) return;
-      store.update(clearSample);
-      toast('サンプルを消しました');
+      undoable(store, 'サンプルを消しました', clearSample);
     } }, 'サンプルを消す')) : null;
 
   // ---------- 合計 ----------
@@ -55,8 +53,9 @@ export function renderHome(root, store, go) {
   ].filter(Boolean);
   const summary = h('section', { class: 'summary' },
     h('div', { class: 'summary-top' }, h('p', { class: 'eyebrow' }, 'サブスクに払っている額'), modeToggle(store)),
-    bigAmount(subsMonth, year),
+    bigAmount(subsMonth, year, { key: 'home-total', onTap: () => flipMode(store) }),
     h('p', { class: 'money-line' }, h('span', null, otherAmount(subsMonth, year)), h('span', { class: 'sep' }, '・'), h('span', null, `${rooms.length}部屋`)),
+    nextPay(store, state, today),
     chips.length ? h('div', { class: 'stat-chips' }, chips) : null,
     breakdownView(takeHomeBreakdown(state), year, go));
 
@@ -86,11 +85,19 @@ export function renderHome(root, store, go) {
   const wrap = h('div', { class: 'plan-wrap' });
   if (laid.length) {
     wrap.innerHTML = planSvg(laid, { w: W, h: H, vacant: remodel.on ? remodel.ids : new Set(), unit });
+    // 画面に入ったときは部屋が順にぽんぽん出る。模様替えで押した部屋は少しはずむ
+    if (root.classList.contains('enter')) {
+      wrap.classList.add('enter');
+      wrap.querySelectorAll('.room').forEach((g, i) => g.style.setProperty('--i', String(i)));
+    }
+    if (remodel.last) { wrap.querySelector(`[data-id="${CSS.escape(remodel.last)}"]`)?.classList.add('pop'); remodel.last = null; }
     const act = (el) => {
       const id = el?.closest('[data-id]')?.dataset.id;
       if (!id) return;
       if (remodel.on) {
         remodel.ids.has(id) ? remodel.ids.delete(id) : remodel.ids.add(id);
+        remodel.last = id;
+        haptic('select');
         rerender();
         return;
       }
@@ -138,16 +145,18 @@ export function renderHome(root, store, go) {
       remodel.ids.size
         ? h('div', { class: 'whatif-text' },
           h('p', null, `${remodel.ids.size}部屋を退去させると`),
-          h('p', null, h('b', null, year ? `年 ${money(sv.year)}円` : `月 ${money(sv.month)}円`), h('span', null, '浮きます')),
+          h('p', null, savedAmount(year ? sv.year : sv.month, year), h('span', null, '浮きます')),
           h('p', { class: 'whatif-sub' }, `${year ? `月 ${money(sv.month)}円` : `年 ${money(sv.year)}円`}・サブスク代の ${pct(sv.share)}`))
         : h('p', null, '退去させてみたい部屋をタップしてください'),
       h('div', { class: 'whatif-actions' },
-        remodel.ids.size ? h('button', { type: 'button', class: 'btn small primary', onClick: () => {
+        remodel.ids.size ? h('button', { type: 'button', class: 'btn small primary', onClick: (e) => {
           const n = remodel.ids.size;
-          store.update((s) => { for (const c of s.contracts) if (remodel.ids.has(c.id)) c.status = 'cancel'; });
+          const ids = new Set(remodel.ids);
+          burstFrom(e.currentTarget);
+          haptic('success');
           remodel.on = false;
           remodel.ids.clear();
-          toast(`${n}部屋を「退去予定」にしました。解約したら部屋の画面で「解約した」を押してください`);
+          undoable(store, `${n}部屋を「退去予定」にしました`, (s) => { for (const c of s.contracts) if (ids.has(c.id)) c.status = 'cancel'; });
         } }, '退去予定にする') : null,
         h('button', { type: 'button', class: 'btn small', onClick: () => { remodel.on = false; remodel.ids.clear(); rerender(); } }, '閉じる')));
   }
@@ -171,6 +180,28 @@ export function renderHome(root, store, go) {
 
   root.replaceChildren(...[sampleBar, summary, alertBox, planCard, payments, formerCard, bar].filter(Boolean));
   document.body.classList.toggle('has-whatif', remodel.on);
+}
+
+// 浮く額（数字はカウントアップ）
+function savedAmount(value, year) {
+  const num = h('span', null, money(value));
+  countUp(num, value, (v) => money(v), `whatif-${year ? 'y' : 'm'}`, 380);
+  return h('b', null, year ? '年 ' : '月 ', num, '円');
+}
+
+// 次の支払い（ホームを開いたら、まずこれが分かる）
+function nextPay(store, state, today) {
+  const e = upcoming(state, today, 60)[0];
+  if (!e) return null;
+  const c = e.contract;
+  const amt = c.amount == null ? '' : c.currency === 'USD' ? `$${c.amount}` : `${money(c.amount)}円`;
+  const rel = relativeLabel(e.date, today);
+  return h('button', { type: 'button', class: `next-pay${e.type === 'trialEnd' ? ' trial' : ''}`, onClick: () => openRoomSheet(store, c.id) },
+    h('span', { class: 'next-label' }, e.type === 'trialEnd' ? '次に内見おわり' : '次の支払い'),
+    h('span', { class: 'next-when' }, rel),
+    tile(c.name),
+    h('span', { class: 'next-name' }, c.name),
+    h('b', null, amt));
 }
 
 // 手取りの内訳：1本の帯と、項目ごとの額・割合

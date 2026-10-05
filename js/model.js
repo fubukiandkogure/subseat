@@ -28,7 +28,8 @@ export const DEFAULT_SETTINGS = {
   takeHome: null,          // 月の手取り（年で入れたときも、ここには12で割った額を持つ）
   takeHomeMode: 'month',   // 入力欄を「月」「年」のどちらで見せるか
   rent: null, phone: null, usdJpy: 150,
-  theme: 'auto'
+  theme: 'auto',
+  haptics: true            // 押したときの小さな振動（対応端末だけ）
 };
 
 export function uid() {

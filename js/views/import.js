@@ -1,4 +1,5 @@
-import { h, money, tile, toast, select, numberInput } from '../ui.js';
+import { h, money, tile, toast, select, numberInput, undoable } from '../ui.js';
+import { burstFrom, haptic } from '../feel.js';
 import { readStatement, readStatementText } from '../csv.js';
 import { detectRecurring, reconcile, sameSubscription, TOL } from '../detect.js';
 import { parseFreeText } from '../freetext.js';
@@ -110,7 +111,7 @@ function changeCard(store, c) {
         });
         toast(`${c.name} を ${money(c.to)}円 に更新しました`);
       } }, '新しい金額にする'),
-      h('button', { type: 'button', class: 'btn', onClick: () => { reject(store, c); toast('このままにしました'); } }, 'このまま')));
+      h('button', { type: 'button', class: 'btn', onClick: () => undoable(store, 'このままにしました', () => reject(store, c)) }, 'このまま')));
 }
 
 function candidateCard(store, c) {
@@ -134,8 +135,12 @@ function candidateCard(store, c) {
       h('label', { class: 'mini' }, h('span', null, 'カテゴリ'), select(SUB_CATEGORIES, v('category'), (x) => { d.category = x; })),
       h('label', { class: 'mini' }, h('span', null, '経路'), select(CHANNELS, v('channel') || 'direct', (x) => { d.channel = x; }))),
     h('div', { class: 'actions' },
-      h('button', { type: 'button', class: 'btn primary', onClick: () => { const k = approve(store, c); toast(`${k.name} が入居しました`); } }, '入居させる'),
-      h('button', { type: 'button', class: 'btn', onClick: () => { reject(store, c); toast(c.source === 'csv' ? 'お断りしました。次からは出しません' : 'お断りしました'); } }, 'お断り')));
+      h('button', { type: 'button', class: 'btn primary', onClick: (e) => {
+        burstFrom(e.currentTarget);
+        haptic('success');
+        undoable(store, `${(d.name ?? c.name) || 'サブスク'} が入居しました`, () => approve(store, c));
+      } }, '入居させる'),
+      h('button', { type: 'button', class: 'btn', onClick: () => undoable(store, c.source === 'csv' ? 'お断りしました。次からは出しません' : 'お断りしました', () => reject(store, c)) }, 'お断り')));
 }
 
 export function renderImport(root, store) {
@@ -200,9 +205,10 @@ export function renderImport(root, store) {
   const candSection = h('section', { class: 'cands', 'aria-label': '入居希望者' },
     h('div', { class: 'section-head' },
       h('h2', null, '入居希望者', state.candidates.length ? h('span', { class: 'count' }, state.candidates.length) : null),
-      highs.length > 1 ? h('button', { type: 'button', class: 'btn small primary', onClick: () => {
-        for (const c of highs) approve(store, c);
-        toast(`確度の高い ${highs.length}人が入居しました`);
+      highs.length > 1 ? h('button', { type: 'button', class: 'btn small primary', onClick: (e) => {
+        burstFrom(e.currentTarget);
+        haptic('success');
+        undoable(store, `確度の高い ${highs.length}人が入居しました`, () => { for (const c of highs) approve(store, c); });
       } }, `確度 高 の${highs.length}人をまとめて入居`) : null),
     h('p', { class: 'muted small' }, '入居させるまで、合計や部屋には入りません。金額や日付を直してから入居させられます。'),
     changes.map((c) => changeCard(store, c)),

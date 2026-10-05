@@ -1,4 +1,7 @@
 import { nfkc, formatYen } from './text.js';
+import { countUp, haptic } from './feel.js';
+
+const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 // 小さな DOM 組み立て係。h('div', { class: 'x', onClick }, '文字', 子要素...)
 export function h(tag, props, ...kids) {
@@ -36,17 +39,19 @@ export function tile(name, size = 'm') {
 }
 
 // ---------- 下から出るシート ----------
+// 閉じるときは下に滑らせる。上の帯（つまみ）を下に引っぱっても閉じられる
 let sheetCleanup = null;
+let sheetSeq = 0;
 export function openSheet(title, build, { onClose } = {}) {
   closeSheet();
   const root = document.getElementById('sheet-root');
-  const close = () => closeSheet();
-  const panel = h('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': title },
-    h('div', { class: 'sheet-head' },
-      h('div', { class: 'sheet-grip', 'aria-hidden': 'true' }),
-      h('h2', { class: 'sheet-title' }, title),
-      h('button', { class: 'icon-btn', type: 'button', 'aria-label': '閉じる', onClick: close }, '✕')),
-    h('div', { class: 'sheet-body' }, build(close)));
+  const seq = ++sheetSeq;
+  const close = () => closeSheet(true);
+  const head = h('div', { class: 'sheet-head' },
+    h('div', { class: 'sheet-grip', 'aria-hidden': 'true' }),
+    h('h2', { class: 'sheet-title' }, title),
+    h('button', { class: 'icon-btn', type: 'button', 'aria-label': '閉じる', onClick: close }, '✕'));
+  const panel = h('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': title }, head, h('div', { class: 'sheet-body' }, build(close)));
   const backdrop = h('div', { class: 'sheet-backdrop', onClick: close });
   root.replaceChildren(backdrop, panel);
   root.hidden = false;
@@ -54,16 +59,59 @@ export function openSheet(title, build, { onClose } = {}) {
   const onKey = (e) => { if (e.key === 'Escape') close(); };
   document.addEventListener('keydown', onKey);
   sheetCleanup = () => { document.removeEventListener('keydown', onKey); onClose?.(); };
+  dragToClose(head, panel, backdrop, () => seq === sheetSeq && closeSheet(true));
   requestAnimationFrame(() => panel.querySelector('input, select, textarea, button:not(.icon-btn)')?.focus({ preventScroll: true }));
 }
-export function closeSheet() {
+
+function dragToClose(handle, panel, backdrop, close) {
+  let y0 = null, t0 = 0, dy = 0;
+  handle.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('button')) return;
+    y0 = e.clientY; t0 = performance.now(); dy = 0;
+    handle.setPointerCapture(e.pointerId);
+    panel.style.transition = 'none';
+  });
+  handle.addEventListener('pointermove', (e) => {
+    if (y0 == null) return;
+    dy = Math.max(0, e.clientY - y0);
+    panel.style.transform = `translateY(${dy}px)`;
+    backdrop.style.opacity = String(Math.max(0.2, 1 - dy / 400));
+  });
+  const end = () => {
+    if (y0 == null) return;
+    const fast = dy / Math.max(1, performance.now() - t0) > 0.5;
+    y0 = null;
+    if (dy > 110 || (dy > 30 && fast)) { close(); return; }
+    panel.style.transition = 'transform .22s cubic-bezier(.2,.9,.3,1.2)';
+    panel.style.transform = '';
+    backdrop.style.opacity = '';
+  };
+  handle.addEventListener('pointerup', end);
+  handle.addEventListener('pointercancel', end);
+}
+
+export function closeSheet(animate = false) {
   const root = document.getElementById('sheet-root');
-  if (!root || root.hidden) return;
-  root.replaceChildren();
-  root.hidden = true;
+  if (!root || root.hidden || !sheetCleanup) return;
+  const seq = sheetSeq;
   document.body.classList.remove('sheet-open');
   const done = sheetCleanup;
   sheetCleanup = null;
+  const panel = root.querySelector('.sheet');
+  const remove = () => {
+    if (seq !== sheetSeq) return; // もう次のシートが開いている
+    root.replaceChildren();
+    root.hidden = true;
+  };
+  if (animate && panel && !reducedMotion()) {
+    root.style.pointerEvents = 'none';
+    const from = getComputedStyle(panel).transform;
+    panel.animate([{ transform: from === 'none' ? 'translateY(0)' : from }, { transform: 'translateY(105%)' }], { duration: 200, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' });
+    root.querySelector('.sheet-backdrop')?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' });
+    setTimeout(() => { root.style.pointerEvents = ''; remove(); }, 190);
+  } else {
+    remove();
+  }
   done?.();
 }
 
@@ -101,13 +149,32 @@ export async function shareOrSave(blob, name, text) {
 }
 
 // ---------- 小さなお知らせ ----------
+// action を渡すと「元に戻す」などのボタン付きで、少し長めに出す
 let toastTimer = null;
-export function toast(msg) {
+export function toast(msg, { action, onAction, duration } = {}) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
+  el.replaceChildren(h('span', null, msg), action ? h('button', { type: 'button', class: 'toast-action', onClick: () => { el.classList.remove('show'); onAction?.(); } }, action) : null);
+  el.classList.toggle('has-action', !!action);
+  el.classList.remove('show');
+  void el.offsetWidth; // 出し直しのアニメーション
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+  toastTimer = setTimeout(() => el.classList.remove('show'), duration ?? (action ? 5000 : 2600));
+}
+
+// 元に戻せる操作：やる前の状態を覚えておき、お知らせの「元に戻す」で戻す（表示の設定はそのまま）
+export function undoable(store, message, mutate) {
+  const before = structuredClone(store.get());
+  if (mutate.length === 0) mutate(); // 自分で store を更新する処理（入居させる など）
+  else store.update(mutate);
+  toast(message, {
+    action: '元に戻す',
+    onAction: () => {
+      store.update((s) => { const ui = s.ui; Object.assign(s, structuredClone(before)); s.ui = ui; });
+      haptic('select');
+      toast('元に戻しました');
+    }
+  });
 }
 
 // ファイルを保存させる（JSON バックアップ・.ics）
@@ -122,17 +189,24 @@ export function download(name, text, type) {
 
 // 選択肢のボタン（セグメント）
 // 大きな金額（月額／年額の切り替えに合わせる）と、もう片方の額
-export function bigAmount(monthly, yearMode) {
-  return h('p', { class: 'big' },
-    h('span', { class: 'per' }, yearMode ? '年' : '月'),
-    h('span', { class: 'num' }, money(yearMode ? monthly * 12 : monthly)),
-    h('span', { class: 'unit' }, '円'));
+// key を渡すと、前に出した数字からカウントアップする。onTap を渡すと、押して月／年を切り替えられる
+export function bigAmount(monthly, yearMode, { key, onTap } = {}) {
+  const value = yearMode ? monthly * 12 : monthly;
+  const num = h('span', { class: 'num' }, money(value));
+  if (key) countUp(num, value, (v) => money(v), key);
+  const kids = [h('span', { class: 'per' }, yearMode ? '年' : '月'), num, h('span', { class: 'unit' }, '円')];
+  if (!onTap) return h('p', { class: 'big' }, kids);
+  return h('button', { type: 'button', class: 'big tap-amount', 'aria-label': `${yearMode ? '年' : '月'} ${money(value)}円。押すと${yearMode ? '月' : '年'}の額にします`, onClick: onTap }, kids);
 }
 export const otherAmount = (monthly, yearMode) => (yearMode ? `月 ${money(monthly)}円` : `年 ${money(monthly * 12)}円`);
 
 // 月額／年額の切り替え（ホームと部屋の一覧で同じものを使う）
 export function modeToggle(store) {
   return segmented([{ id: 'month', label: '月額' }, { id: 'year', label: '年額' }], store.get().ui.mode, (m) => store.update((s) => { s.ui.mode = m; }), '金額の出し方');
+}
+export function flipMode(store) {
+  haptic('select');
+  store.update((s) => { s.ui.mode = s.ui.mode === 'year' ? 'month' : 'year'; });
 }
 
 export function segmented(options, value, onChange, label) {

@@ -46,11 +46,20 @@ let state = load();
 const listeners = new Set();
 let timer = null;
 
+function save() {
+  clearTimeout(timer);
+  timer = null;
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* 容量不足などは次の変更で再挑戦 */ }
+}
 function persist() {
   clearTimeout(timer);
-  timer = setTimeout(() => {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* 容量不足などは次の変更で再挑戦 */ }
-  }, 120);
+  timer = setTimeout(save, 120);
+}
+// アプリを閉じる・裏に回すときは、待たずにすぐ保存する
+if (typeof window !== 'undefined') {
+  const flush = () => { if (timer) save(); };
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
 }
 
 export const store = {

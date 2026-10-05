@@ -1,4 +1,4 @@
-import { h, money, tile, toast, ask, bigAmount, otherAmount, modeToggle } from '../ui.js';
+import { h, money, tile, bigAmount, otherAmount, modeToggle, flipMode, undoable } from '../ui.js';
 import { STATUSES, CHANNELS, catLabel, monthlyYen, yearlyYen, recentRaise, formerSaved } from '../model.js';
 import { parseYmd, todayYmd, diffDays } from '../dates.js';
 import { openRoomSheet } from './room-sheet.js';
@@ -51,22 +51,20 @@ export function renderContracts(root, store) {
       h('span', { class: 'row-main' },
         h('span', { class: 'row-title' }, f.name),
         h('span', { class: 'row-sub' }, `${f.cancelledAt.replace(/-/g, '/')} に退去・${Math.max(0, Math.floor(diffDays(f.cancelledAt, today) / 30.44))}か月前`, f.sample ? h('span', { class: 'badge' }, 'サンプル') : null)),
-      h('button', { type: 'button', class: 'btn small ghost', onClick: async () => {
-        if (!(await ask(`${f.name} をまた入居させますか？`, { ok: '再入居' }))) return;
-        store.update((s) => {
+      h('button', { type: 'button', class: 'btn small ghost', onClick: () => {
+        undoable(store, `${f.name} が再入居しました`, (s) => {
           const i = s.former.findIndex((x) => x.id === f.id);
           if (i < 0) return;
           const [k] = s.former.splice(i, 1);
           delete k.cancelledAt;
           s.contracts.push({ ...k, status: 'keep' });
         });
-        toast(`${f.name} が再入居しました`);
       } }, '再入居'))))) : null;
 
   root.replaceChildren(...[
     h('section', { class: 'summary compact-summary' },
       h('div', { class: 'summary-top' }, h('p', { class: 'eyebrow' }, `入居中の部屋 ${list.length}件`), modeToggle(store)),
-      bigAmount(sumYear / 12, year),
+      bigAmount(sumYear / 12, year, { key: 'rooms-total', onTap: () => flipMode(store) }),
       h('p', { class: 'money-line' }, h('span', null, otherAmount(sumYear / 12, year)))),
     unknown.length ? h('p', { class: 'notice' }, `金額か次の支払日が未確定の部屋が ${unknown.length}件あります。タップして分かるところから埋めてください。`) : null,
     ...groups.filter(Boolean),

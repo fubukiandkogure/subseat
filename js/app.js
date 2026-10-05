@@ -6,6 +6,7 @@ import { renderContracts } from './views/contracts.js';
 import { renderSettings } from './views/settings.js';
 import { openTutorial } from './views/tutorial.js';
 import { todayYmd, diffDays } from './dates.js';
+import { installPressFeedback, setHaptics } from './feel.js';
 
 // 画面の切り替えは URL の # で行う（GitHub Pages のサブパス配下でもそのまま動く）
 const ROUTES = { home: renderHome, import: renderImport, contracts: renderContracts, settings: renderSettings };
@@ -42,6 +43,7 @@ function render() {
   current = r;
   const state = store.get();
   applyTheme(state.settings.theme);
+  setHaptics(state.settings.haptics);
   document.title = r === 'home' ? 'サブスク荘' : `${TITLES[r]}｜サブスク荘`;
   for (const a of document.querySelectorAll('.tabbar a')) {
     a.setAttribute('aria-current', a.dataset.route === r ? 'page' : 'false');
@@ -53,12 +55,25 @@ function render() {
   updateBadge(state);
 }
 
+// 画面を切り替えたときだけ、中身を下からふわっと出す
+function enter() {
+  const view = document.getElementById('view');
+  view.classList.remove('enter');
+  void view.offsetWidth;
+  view.classList.add('enter');
+  clearTimeout(enter.t);
+  enter.t = setTimeout(() => view.classList.remove('enter'), 900);
+}
+
 window.addEventListener('hashchange', () => {
   closeSheet();
+  enter();
   render();
   window.scrollTo(0, 0);
 });
 store.subscribe(render);
+installPressFeedback();
+enter();
 render();
 if (!store.get().ui.welcomed) openTutorial(store);
 

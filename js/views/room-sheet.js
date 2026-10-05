@@ -1,4 +1,5 @@
-import { h, money, tile, toast, ask, openSheet, segmented, bigAmount, otherAmount } from '../ui.js';
+import { h, money, tile, toast, openSheet, segmented, bigAmount, otherAmount, undoable } from '../ui.js';
+import { burstFrom, haptic } from '../feel.js';
 import { STATUSES, CHANNELS, catLabel, monthlyYen, paidSince, recentRaise, relativeLabel } from '../model.js';
 import { todayYmd, parseYmd, rollForward } from '../dates.js';
 import { openContractSheet } from './contract-sheet.js';
@@ -59,16 +60,16 @@ export function openRoomSheet(store, id) {
       h('div', { class: 'actions stack-actions' },
         h('button', { type: 'button', class: 'btn', onClick: () => { close(); openContractSheet(store, store.get().contracts.find((x) => x.id === c.id)); } }, '編集する'),
         /^https?:\/\//.test(c.cancelUrl || '') ? h('a', { class: 'btn', href: c.cancelUrl, target: '_blank', rel: 'noopener noreferrer' }, '解約ページを開く ↗') : null,
-        h('button', { type: 'button', class: 'btn primary', onClick: async () => {
-          const ok = await ask(`${c.name} を解約しましたか？「退去済み」に移して、浮いたお金を記録します。`, { ok: '解約した', title: '退去の確認' });
-          if (!ok) { openRoomSheet(store, c.id); return; }
-          store.update((st) => {
+        h('button', { type: 'button', class: 'btn primary', onClick: (e) => {
+          burstFrom(e.currentTarget);
+          haptic('success');
+          close();
+          undoable(store, m ? `${c.name} が退去しました。月 ${money(m)}円 浮きます` : `${c.name} が退去しました`, (st) => {
             const i = st.contracts.findIndex((x) => x.id === c.id);
             if (i < 0) return;
             const [k] = st.contracts.splice(i, 1);
             st.former.unshift({ ...k, status: 'cancel', cancelledAt: today });
           });
-          toast(m ? `${c.name} が退去しました。月 ${money(m)}円 浮きます` : `${c.name} が退去しました`);
         } }, '解約した（退去済みにする）')));
   });
 }

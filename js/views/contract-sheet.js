@@ -1,4 +1,4 @@
-import { h, openSheet, toast, field, select, numberInput, segmented, money, ask } from '../ui.js';
+import { h, openSheet, toast, field, select, numberInput, segmented, money, undoable } from '../ui.js';
 import { SUB_CATEGORIES, CHANNELS, STATUSES, newContract, monthlyYen, recordPrice } from '../model.js';
 import { matchMerchant } from '../services.js';
 import { todayYmd } from '../dates.js';
@@ -40,14 +40,10 @@ export function openContractSheet(store, existing) {
       close();
       toast(isNew ? `${d.name} が入居しました` : `${d.name} を保存しました`);
     };
-    const remove = async () => {
+    // 解約したときは「解約した」を使う。ここは間違えて入れた部屋を消すだけ（元に戻せる）
+    const remove = () => {
       close();
-      if (!(await ask(`${d.name} の部屋を消しますか？（解約した記録としては残りません。解約したときは部屋の画面の「解約した」を使ってください）`, { ok: '消す', danger: true }))) {
-        openContractSheet(store, existing);
-        return;
-      }
-      store.update((s) => { s.contracts = s.contracts.filter((c) => c.id !== d.id); });
-      toast(`${d.name} の部屋を消しました`);
+      undoable(store, `${d.name} の部屋を消しました`, (s) => { s.contracts = s.contracts.filter((c) => c.id !== d.id); });
     };
 
     const validUrl = /^https?:\/\//.test(d.cancelUrl || '');

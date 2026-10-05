@@ -1,4 +1,5 @@
 import { h, money, tile, openSheet, toast } from '../ui.js';
+import { burst, haptic } from '../feel.js';
 import { yearlyYen } from '../model.js';
 import { todayYmd } from '../dates.js';
 import { USAGE } from './room-sheet.js';
@@ -17,6 +18,9 @@ export function openInspection(store, { onRemodel } = {}) {
 
   openSheet('今月の見回り', (close) => {
     const body = h('div', { class: 'inspect' });
+    const barFill = h('span', { style: { width: '0%' } });
+    const progress = h('div', { class: 'inspect-progress', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(list.length) }, barFill);
+    let dir = 1;
 
     const finish = () => {
       store.update((s) => {
@@ -29,7 +33,13 @@ export function openInspection(store, { onRemodel } = {}) {
       const none = list.filter((c) => answers.get(c.id) === 'none');
       const some = list.filter((c) => answers.get(c.id) === 'some');
       const year = none.reduce((a, c) => a + yearlyYen(c, rate), 0);
+      haptic('success');
+      requestAnimationFrame(() => {
+        const r = body.querySelector('.stamp')?.getBoundingClientRect();
+        if (r) burst(r.left + r.width / 2, r.top + r.height / 2);
+      });
       body.replaceChildren(
+        h('div', { class: 'stamp-wrap' }, h('span', { class: 'stamp', 'aria-hidden': 'true' }, '済')),
         h('p', { class: 'inspect-done' }, '見回りおわり'),
         h('ul', { class: 'inspect-stats' },
           h('li', null, h('b', null, list.filter((c) => answers.get(c.id) === 'good').length), 'よく使った'),
@@ -52,19 +62,22 @@ export function openInspection(store, { onRemodel } = {}) {
       if (i >= list.length) return finish();
       const c = list[i];
       const y = yearlyYen(c, rate);
-      body.replaceChildren(
-        h('div', { class: 'inspect-progress', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': String(list.length), 'aria-valuenow': String(i) },
-          h('span', { style: { width: `${(i / list.length) * 100}%` } })),
-        h('p', { class: 'muted small' }, `${i + 1} / ${list.length} 部屋目`),
-        h('div', { class: 'inspect-card' }, tile(c.name, 'l'),
+      progress.setAttribute('aria-valuenow', String(i));
+      requestAnimationFrame(() => { barFill.style.width = `${(i / list.length) * 100}%`; });
+      const card = h('div', { class: 'inspect-card' }, tile(c.name, 'l'),
           h('p', { class: 'inspect-name' }, c.name),
-          h('p', { class: 'muted small' }, `月 ${money(y / 12)}円・年 ${money(y)}円`)),
+          h('p', { class: 'muted small' }, `月 ${money(y / 12)}円・年 ${money(y)}円`));
+      card.animate?.([{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      body.replaceChildren(
+        progress,
+        h('p', { class: 'muted small' }, `${i + 1} / ${list.length} 部屋目`),
+        card,
         h('p', { class: 'inspect-q' }, '今月、使いましたか？'),
         h('div', { class: 'inspect-answers' }, Object.entries(USAGE).map(([k, label]) =>
-          h('button', { type: 'button', class: `btn answer ${k}`, onClick: () => { answers.set(c.id, k); i++; render(); } }, label))),
+          h('button', { type: 'button', class: `btn answer ${k}`, onClick: () => { answers.set(c.id, k); dir = 1; i++; render(); } }, label))),
         h('div', { class: 'inspect-nav' },
-          i > 0 ? h('button', { type: 'button', class: 'btn ghost small', onClick: () => { i--; render(); } }, '← もどる') : h('span'),
-          h('button', { type: 'button', class: 'btn ghost small', onClick: () => { i++; render(); } }, 'とばす →')));
+          i > 0 ? h('button', { type: 'button', class: 'btn ghost small', onClick: () => { dir = -1; i--; render(); } }, '← もどる') : h('span'),
+          h('button', { type: 'button', class: 'btn ghost small', onClick: () => { dir = 1; i++; render(); } }, 'とばす →')));
     };
     render();
     return body;
