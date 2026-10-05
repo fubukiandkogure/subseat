@@ -60,7 +60,7 @@ export function renderSettings(root, store) {
       field('手取りの入れ方', segmented(MODES, s.takeHomeMode, (v) => store.update((x) => { x.settings.takeHomeMode = v; }), '手取りの入れ方')),
       field(yearMode ? '年の手取り（ボーナス込み）' : '月の手取り',
         moneyInput(store, 'takeHome', yearMode ? '例：3200000' : '例：240000', yearMode ? { toStore: (v) => Math.round(v / 12), fromStore: (v) => v * 12 } : {}),
-        s.takeHome ? `月 ${money(s.takeHome)}円・年 ${money(s.takeHome * 12)}円 として計算しています` : '入れると「手取りの家」が見えます（家賃・通信費・サブスク・リビング）'),
+        s.takeHome ? `月 ${money(s.takeHome)}円・年 ${money(s.takeHome * 12)}円 として計算しています` : '入れると、ホームに手取りの内訳（サブスク・家賃・通信費・自由に使えるお金）が出ます'),
       h('div', { class: 'field-row two' },
         field('家賃（月）', moneyInput(store, 'rent', '0')),
         field('通信費（月）', moneyInput(store, 'phone', '0'))),
@@ -115,6 +115,6 @@ export function renderSettings(root, store) {
         toast('すべて消しました');
       } }, 'すべてのデータを消す')),
 
-    h('p', { class: 'about' }, 'サブスク荘 0.3.0・データは外に送りません')
+    h('p', { class: 'about' }, 'サブスク荘 0.3.1・データは外に送りません')
   ].filter(Boolean));
 }

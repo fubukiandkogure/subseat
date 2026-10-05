@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  monthlyYen, yearlyYen, totals, upcoming, relativeLabel, savings, DEFAULT_SETTINGS, squarify, planRooms, housePlan,
+  monthlyYen, yearlyYen, totals, upcoming, relativeLabel, savings, DEFAULT_SETTINGS, squarify, planRooms, takeHomeBreakdown,
   paidSince, formerSaved, inspectionDue, occurrencesInRange, recordPrice, recentRaise
 } from '../js/model.js';
 import { migrate, SCHEMA } from '../js/migrate.js';
@@ -63,16 +63,16 @@ test('サブスク荘の部屋：年額の大きい順。金額未確定は部�
   assert.deepEqual(rooms[1].raise, { from: 1490, to: 1590, date: '2026-09-01' });
 });
 
-test('手取りの家：家賃・通信費・サブスク・リビング（自由）。使いすぎも分かる', () => {
-  const st = { settings: settings({ takeHome: 200000, rent: 70000, phone: 3000 }), contracts: [sub({ name: 'a', amount: 2000 })] };
-  const h = housePlan(st, TODAY);
-  assert.deepEqual(h.blocks.map((b) => b.id), ['free', 'fixed:rent', 'fixed:phone', 'wing']);
-  assert.equal(h.free, (200000 - 70000 - 3000 - 2000) * 12);
-  assert.equal(h.take, 200000 * 12);
-  const over = housePlan({ settings: settings({ takeHome: 50000, rent: 70000 }), contracts: [] }, TODAY);
-  assert.equal(over.over, 20000 * 12);
-  assert.ok(!over.blocks.some((b) => b.id === 'free'));
-  assert.equal(housePlan({ settings: settings(), contracts: [] }, TODAY), null, '手取りが未入力なら出さない');
+test('手取りの内訳：サブスク・家賃・通信費と、自由に使えるお金。使いすぎも分かる', () => {
+  const st = { settings: settings({ takeHome: 200000, rent: 70000, phone: 3000 }), contracts: [sub({ name: 'a', amount: 2000 }), sub({ name: 'b', amount: null })] };
+  const b = takeHomeBreakdown(st);
+  assert.deepEqual(b.parts.map((p) => [p.id, p.monthly]), [['subs', 2000], ['rent', 70000], ['phone', 3000]]);
+  assert.equal(b.free, 125000);
+  assert.equal(b.over, 0);
+  const over = takeHomeBreakdown({ settings: settings({ takeHome: 50000, rent: 70000 }), contracts: [] });
+  assert.equal(over.free, 0);
+  assert.equal(over.over, 20000);
+  assert.equal(takeHomeBreakdown({ settings: settings(), contracts: [] }), null, '手取りが未入力なら出さない');
 });
 
 test('模様替え：退去させると浮く額（月・年）と、サブスク代のうちの割合', () => {

@@ -1,5 +1,5 @@
 import { h, toast, segmented } from '../ui.js';
-import { layoutSubs, layoutHouse, planSvg, readPalette } from '../plan.js';
+import { layoutSubs, planSvg, readPalette } from '../plan.js';
 import { clearSample } from '../store.js';
 
 // 初回に出るチュートリアル（設定からもう一度見られる）。
@@ -19,14 +19,17 @@ function demoPlan(vacant = new Set(), trial = false) {
   return svgBox(planSvg(layoutSubs(rooms, AW, AH), { w: AW, h: AH, vacant, unit: 'month', palette: readPalette() }));
 }
 
-function houseArt() {
+function breakdownArt() {
   const blocks = [
-    { id: 'free', kind: 'free', name: 'リビング', category: 'free', value: 1500000, icon: 'free' },
-    { id: 'fixed:rent', kind: 'fixed', name: '家賃', category: 'fixed', value: 864000, icon: 'rent' },
-    { id: 'wing', kind: 'wing', name: 'サブスク', category: 'other', value: 260000, children: DEMO.map((r) => ({ ...r, kind: 'sub' })) },
-    { id: 'fixed:phone', kind: 'fixed', name: '通信費', category: 'fixed', value: 60000, icon: 'phone' }
+    { label: 'サブスク', share: 0.07, color: 'var(--accent)', em: true },
+    { label: '家賃・通信費', share: 0.31, color: 'var(--cat-fixed)' },
+    { label: '自由に使えるお金', share: 0.62, color: 'color-mix(in oklab, var(--freed) 45%, var(--surface))' }
   ];
-  return svgBox(planSvg(layoutHouse({ blocks }, AW, AH), { w: AW, h: AH, unit: 'none', palette: readPalette() }));
+  return svgBox(`<svg viewBox="0 0 ${AW} ${AH}" aria-hidden="true" font-family="system-ui,sans-serif">
+    <text x="30" y="52" font-size="14" font-weight="900" fill="var(--text)">手取りの内訳</text>
+    ${(() => { let x = 30; return blocks.map((b) => { const w = 260 * b.share; const r = `<rect x="${x}" y="66" width="${w - 2}" height="30" rx="4" fill="${b.color}"/>`; x += w; return r; }).join(''); })()}
+    ${blocks.map((b, i) => `<g transform="translate(30 ${118 + i * 20})"><rect width="10" height="10" rx="3" y="1" fill="${b.color}"/><text x="18" y="10" font-size="12" font-weight="${b.em ? 900 : 700}" fill="var(--text)">${b.label}</text><text x="260" y="10" text-anchor="end" font-size="12" font-weight="900" fill="var(--text)">${Math.round(b.share * 100)}%</text></g>`).join('')}
+  </svg>`);
 }
 
 function doorArt() {
@@ -118,9 +121,9 @@ export function openTutorial(store, { onDone } = {}) {
       onInput: (e) => { takeHome = e.target.value; }
     });
     return [
-      houseArt(),
+      breakdownArt(),
       h('h2', { class: 'tut-title' }, 'さいごに、手取りを教えてください'),
-      h('p', { class: 'tut-body' }, '入れると「手取りの家」で、サブスクが手取りのどれくらいかが見えます。あとからでも入れられます。'),
+      h('p', { class: 'tut-body' }, '入れると、手取りのうちサブスク・家賃・通信費・自由に使えるお金がいくらずつかが分かります。あとからでも入れられます。'),
       h('div', { class: 'tut-form' },
         h('div', { class: 'tut-row' },
           segmented([{ id: 'month', label: '月' }, { id: 'year', label: '年' }], mode, (v) => {

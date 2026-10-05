@@ -150,22 +150,16 @@ export function planRooms(state, today) {
     }));
 }
 
-// 手取りの家：家賃・通信費・サブスク・リビング（自由に使えるお金）
-export function housePlan(state, today) {
+// 手取りの内訳（月額）：サブスク・家賃・通信費と、自由に使えるお金
+export function takeHomeBreakdown(state) {
   const s = state.settings;
   if (!(s.takeHome > 0)) return null;
-  const subs = planRooms(state, today);
-  const subsYear = subs.reduce((a, r) => a + r.value, 0);
-  const fixed = fixedItems(s).map((f) => ({ ...f, value: f.monthly * 12 }));
-  const take = s.takeHome * 12;
-  const used = subsYear + fixed.reduce((a, f) => a + f.value, 0);
-  const free = take - used;
-  const blocks = [
-    ...fixed,
-    { id: 'wing', kind: 'wing', name: 'サブスク', category: 'other', value: subsYear, children: subs },
-    { id: 'free', kind: 'free', name: 'リビング', category: 'free', value: Math.max(0, free), icon: 'free' }
-  ].filter((b) => b.value > 0).sort((a, b) => b.value - a.value);
-  return { blocks, take, used, free, over: free < 0 ? -free : 0 };
+  const parts = [
+    { id: 'subs', label: 'サブスク', monthly: totals(state).subs },
+    ...fixedItems(s).map((f) => ({ id: f.icon, label: f.name, monthly: f.monthly }))
+  ].filter((p) => p.monthly > 0);
+  const left = s.takeHome - parts.reduce((a, p) => a + p.monthly, 0);
+  return { take: s.takeHome, parts, free: Math.max(0, left), over: left < 0 ? -left : 0 };
 }
 
 // 模様替え（これをやめたら？）で浮く額と、サブスク代のうちの割合（0〜1）
