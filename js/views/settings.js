@@ -117,7 +117,7 @@ export function renderSettings(root, store) {
 
     (() => {
       const box = h('div', { class: 'about-logo' }, h('span', { class: 'sign sign-day', 'aria-hidden': 'true' }), h('span', { class: 'sign sign-night', 'aria-hidden': 'true' }),
-        h('p', { class: 'about' }, 'サブスク荘 0.7.0・データは外に送りません'));
+        h('p', { class: 'about' }, 'サブスク荘 0.7.1・データは外に送りません'));
       box.querySelector('.sign-day').innerHTML = logoSvg({ scale: 3 });
       box.querySelector('.sign-night').innerHTML = logoSvg({ night: true, scale: 3 });
       return box;

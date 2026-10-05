@@ -153,7 +153,10 @@ export async function shareOrSave(blob, name, text) {
 let toastTimer = null;
 export function toast(msg, { action, onAction, duration } = {}) {
   const el = document.getElementById('toast');
-  el.replaceChildren(h('span', null, msg), action ? h('button', { type: 'button', class: 'toast-action', onClick: () => { el.classList.remove('show'); onAction?.(); } }, action) : null);
+  // replaceChildren に null を渡すと「null」という文字が出るので、ボタンがないときは渡さない
+  const parts = [h('span', null, msg)];
+  if (action) parts.push(h('button', { type: 'button', class: 'toast-action', onClick: () => { el.classList.remove('show'); onAction?.(); } }, action));
+  el.replaceChildren(...parts);
   el.classList.toggle('has-action', !!action);
   el.classList.remove('show');
   void el.offsetWidth; // 出し直しのアニメーション
