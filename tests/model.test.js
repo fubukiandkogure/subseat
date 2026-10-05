@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   monthlyYen, yearlyYen, totals, upcoming, relativeLabel, savings, DEFAULT_SETTINGS, squarify, planRooms, housePlan,
-  tatami, sizeLabel, paidSince, formerSaved, inspectionDue, occurrencesInRange, recordPrice, recentRaise
+  paidSince, formerSaved, inspectionDue, occurrencesInRange, recordPrice, recentRaise
 } from '../js/model.js';
 import { migrate, SCHEMA } from '../js/migrate.js';
 import { buildIcs, fold } from '../js/ics.js';
@@ -26,15 +26,6 @@ test('合計には未確定を入れず、件数だけ数える', () => {
   assert.equal(t.unknown, 1);
   assert.equal(t.reserved, 71000);
   assert.equal(t.free, 129000);
-});
-
-test('畳：1畳＝年1万円。広さの例え', () => {
-  assert.equal(tatami(36000, 10000), 3.6);
-  assert.equal(tatami(36000, 20000), 1.8);
-  assert.equal(sizeLabel(2), '押入れくらい');
-  assert.equal(sizeLabel(18.5), '1LDKくらい');
-  assert.equal(sizeLabel(30), '2LDKくらい');
-  assert.equal(sizeLabel(80), '一軒家くらい');
 });
 
 test('間取り（squarify）：面積は値に比例し、枠からはみ出さず、重ならない', () => {
@@ -67,29 +58,30 @@ test('サブスク荘の部屋：年額の大きい順。金額未確定は部�
   };
   const rooms = planRooms(st, TODAY);
   assert.deepEqual(rooms.map((r) => r.name), ['big', 'raised', 'small']);
-  assert.equal(rooms[0].jo, 3.6);
+  assert.equal(rooms[0].value, 36000, '部屋の広さは年額（ドルは円にして）');
   assert.equal(rooms[0].trial, true);
   assert.deepEqual(rooms[1].raise, { from: 1490, to: 1590, date: '2026-09-01' });
 });
 
-test('手取りの家：家賃・通信費・サブスク棟・リビング（自由）。使いすぎも分かる', () => {
+test('手取りの家：家賃・通信費・サブスク・リビング（自由）。使いすぎも分かる', () => {
   const st = { settings: settings({ takeHome: 200000, rent: 70000, phone: 3000 }), contracts: [sub({ name: 'a', amount: 2000 })] };
   const h = housePlan(st, TODAY);
   assert.deepEqual(h.blocks.map((b) => b.id), ['free', 'fixed:rent', 'fixed:phone', 'wing']);
   assert.equal(h.free, (200000 - 70000 - 3000 - 2000) * 12);
-  assert.equal(h.jo, 240);
+  assert.equal(h.take, 200000 * 12);
   const over = housePlan({ settings: settings({ takeHome: 50000, rent: 70000 }), contracts: [] }, TODAY);
   assert.equal(over.over, 20000 * 12);
   assert.ok(!over.blocks.some((b) => b.id === 'free'));
   assert.equal(housePlan({ settings: settings(), contracts: [] }, TODAY), null, '手取りが未入力なら出さない');
 });
 
-test('模様替え：退去させると浮く額と広さ（月・年・畳）', () => {
+test('模様替え：退去させると浮く額（月・年）と、サブスク代のうちの割合', () => {
   const s = { settings: settings(), contracts: [sub({ name: 'a', amount: 1590 }), sub({ name: 'b', amount: 20, currency: 'USD' }), sub({ name: 'c', amount: 6000, cycle: 'year' })] };
   const sv = savings(s, new Set(['a', 'c']));
   assert.equal(sv.month, 2090);
   assert.equal(sv.year, 25080);
-  assert.ok(Math.abs(sv.jo - 2.508) < 1e-9);
+  assert.ok(Math.abs(sv.share - 2090 / 5090) < 1e-9);
+  assert.equal(savings({ settings: settings(), contracts: [] }, new Set()).share, 0);
 });
 
 test('入居日からの累計（概算）', () => {
@@ -168,6 +160,14 @@ test('月末の日付をまたいでも、本来の日に戻る', () => {
   assert.equal(rollForward('2026-01-31', 'month', '2026-03-01'), '2026-03-31');
 });
 
+test('保存データの移行：0.2 の「1畳あたりの額」は消す（ほかの設定は残す）', () => {
+  const v02 = { schema: 2, settings: { takeHome: 240000, joPrice: 20000, theme: 'light' }, contracts: [], candidates: [], ignored: [], former: [], ui: { mode: 'year', welcomed: true } };
+  const m = migrate(v02);
+  assert.equal('joPrice' in m.settings, false);
+  assert.equal(m.settings.theme, 'light');
+  assert.equal(m.ui.welcomed, true);
+});
+
 test('保存データの移行：座席表の版（schema 1）→ 間取りの版', () => {
   const old = {
     settings: { takeHome: 240000, usdJpy: 150, seatUnit: 'auto', theme: 'dark' },
@@ -177,7 +177,7 @@ test('保存データの移行：座席表の版（schema 1）→ 間取りの�
   const m = migrate(old);
   assert.equal(m.schema, SCHEMA);
   assert.equal('seatUnit' in m.settings, false);
-  assert.equal(m.settings.joPrice, 10000);
+  assert.equal('joPrice' in m.settings, false);
   assert.equal(m.settings.theme, 'dark');
   assert.deepEqual(m.contracts[0].history, [{ date: '2026-10-01', amount: 1590, currency: 'JPY', cycle: 'month' }]);
   assert.deepEqual(m.contracts[1].history, []);

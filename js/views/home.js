@@ -1,9 +1,9 @@
-import { h, money, tile, toast, segmented, openSheet, shareOrSave } from '../ui.js';
+import { h, money, tile, toast, segmented, openSheet, shareOrSave, bigAmount, otherAmount, modeToggle } from '../ui.js';
 import {
-  totals, planRooms, housePlan, upcoming, relativeLabel, savings, CATEGORIES, chargeYen, tatami, sizeLabel,
+  totals, planRooms, housePlan, upcoming, relativeLabel, savings, CATEGORIES, chargeYen,
   inspectionDue, formerSaved, occurrencesInRange, recentRaise
 } from '../model.js';
-import { layoutSubs, layoutHouse, planSvg, shareSvg, svgToPng, readPalette } from '../plan.js';
+import { layoutSubs, layoutHouse, planSvg, shareSvg, svgToPng, readPalette, amountText } from '../plan.js';
 import { todayYmd, parseYmd, weekday, addMonths, daysInMonth, diffDays, pad2 } from '../dates.js';
 import { hasSample, clearSample } from '../store.js';
 import { openRoomSheet } from './room-sheet.js';
@@ -21,8 +21,7 @@ export function startRemodel(ids) {
   remodel.ids = new Set(ids);
 }
 
-// 100畳を超えたら小数はいらない
-const f1 = (n) => (n >= 100 ? String(Math.round(n)) : (Math.round(n * 10) / 10).toFixed(1));
+const pct = (x) => `${Math.round(x * 1000) / 10}%`;
 // カレンダーの小さなマス用（2.6万 など）
 const yenShort = (n) => (n >= 100000 ? `${Math.round(n / 10000)}万` : n >= 10000 ? `${(Math.round(n / 1000) / 10).toFixed(1)}万` : money(n));
 
@@ -36,11 +35,10 @@ export function renderHome(root, store, go) {
   const t = totals(state);
   const rooms = planRooms(state, today);
   const subsYear = rooms.reduce((a, r) => a + r.value, 0);
-  const jo = tatami(subsYear, settings.joPrice);
   const contractById = new Map(state.contracts.map((c) => [c.id, c]));
   for (const id of [...remodel.ids]) if (!contractById.has(id)) remodel.ids.delete(id);
   const rerender = () => renderHome(root, store, go);
-  const amountLabel = (r) => (year ? `${money(r.value)}円/年` : `${money(r.value / 12)}円/月`);
+  const unit = year ? 'year' : 'month';
 
   // ---------- サンプルのお知らせ ----------
   const sampleBar = hasSample(state) ? h('div', { class: 'sample-bar' },
@@ -51,18 +49,20 @@ export function renderHome(root, store, go) {
       toast('サンプルを消しました');
     } }, 'サンプルを消す')) : null;
 
-  // ---------- 広さ ----------
+  // ---------- 合計 ----------
+  const subsMonth = subsYear / 12;
+  const chips = [
+    t.takeHome ? h('span', { class: 'stat-chip' }, `手取りの ${pct(subsMonth / t.takeHome)}`) : null,
+    settings.rent > 0 && subsYear > 0 ? h('span', { class: 'stat-chip' }, `1年で家賃 ${(Math.round((subsYear / settings.rent) * 10) / 10).toFixed(1)}か月分`) : null
+  ].filter(Boolean);
   const summary = h('section', { class: 'summary' },
-    h('p', { class: 'eyebrow' }, 'サブスクに貸している広さ'),
-    h('p', { class: 'big' }, h('span', { class: 'num' }, f1(jo)), h('span', { class: 'unit' }, '畳'), rooms.length ? h('span', { class: 'size-chip' }, sizeLabel(jo)) : null),
-    h('p', { class: 'money-line' },
-      h('span', { class: year ? 'on' : '' }, '年 ', h('b', null, money(subsYear)), '円'),
-      h('span', { class: 'sep' }, '・'),
-      h('span', { class: year ? '' : 'on' }, '月 ', h('b', null, money(subsYear / 12)), '円'),
-      h('span', { class: 'sep' }, '・'),
-      h('span', null, `${rooms.length}部屋`)),
-    t.takeHome ? h('p', { class: 'summary-mini' }, `月の手取り ${money(t.takeHome)}円のうち ${Math.round((t.subs / t.takeHome) * 1000) / 10}% をサブスクに。固定費と合わせると ${Math.round((t.reserved / t.takeHome) * 100)}%`) : null,
-    h('p', { class: 'summary-mini' }, `1畳＝年 ${money(settings.joPrice)}円で計算しています`));
+    h('div', { class: 'summary-top' }, h('p', { class: 'eyebrow' }, 'サブスクに払っている額'), modeToggle(store)),
+    bigAmount(subsMonth, year),
+    h('p', { class: 'money-line' }, h('span', null, otherAmount(subsMonth, year)), h('span', { class: 'sep' }, '・'), h('span', null, `${rooms.length}部屋`)),
+    chips.length ? h('div', { class: 'stat-chips' }, chips) : null,
+    t.takeHome
+      ? h('p', { class: 'summary-mini' }, `家賃・通信費と合わせると、手取りの ${pct(t.reserved / t.takeHome)}`)
+      : h('button', { type: 'button', class: 'link-btn', onClick: () => go('settings') }, '手取りを入れると、手取りの何%かが出ます →'));
 
   // ---------- お知らせ ----------
   const alerts = [];
@@ -81,21 +81,21 @@ export function renderHome(root, store, go) {
   } }), 'ok'));
   const raises = state.contracts.filter((c) => recentRaise(c, today));
   if (raises.length) alerts.push(chip('📈', `最近値上げした部屋 ${raises.length}件（${raises.map((c) => c.name).join('、')}）`, () => openRoomSheet(store, raises[0].id)));
-  if (t.unknown) alerts.push(chip('📏', `広さ未確定の部屋 ${t.unknown}件（金額を入れると部屋になります）`, () => go('contracts')));
+  if (t.unknown) alerts.push(chip('❔', `金額が分からない部屋 ${t.unknown}件（入れると間取りに入ります）`, () => go('contracts')));
   const alertBox = alerts.length ? h('div', { class: 'alerts' }, alerts) : null;
 
   // ---------- 間取り ----------
-  let laid = [], H = 460, planJo = jo, house = null;
+  let laid = [], H = 460, house = null;
   if (view === 'subs') {
     H = rooms.length > 8 ? 500 : 440;
     laid = layoutSubs(rooms, W, H);
   } else {
     house = housePlan(state, today);
-    if (house) { H = 520; laid = layoutHouse(house, W, H); planJo = house.jo; }
+    if (house) { H = 520; laid = layoutHouse(house, W, H); }
   }
   const wrap = h('div', { class: 'plan-wrap' });
   if (laid.length) {
-    wrap.innerHTML = planSvg(laid, { w: W, h: H, vacant: remodel.on ? remodel.ids : new Set(), amountLabel });
+    wrap.innerHTML = planSvg(laid, { w: W, h: H, vacant: remodel.on ? remodel.ids : new Set(), unit });
     const act = (el) => {
       const id = el?.closest('[data-id]')?.dataset.id;
       if (!id) return;
@@ -122,7 +122,7 @@ export function renderHome(root, store, go) {
   if (view === 'house' && !house) {
     planBody = h('button', { class: 'prompt', type: 'button', onClick: () => go('settings') },
       h('b', null, '手取りを入れると、家ぜんぶの間取りが見えます'),
-      h('span', null, '家賃・通信費・サブスク棟と、自由に使えるお金（リビング）の広さ。設定で入れる →'));
+      h('span', null, '家賃・通信費・サブスクと、自由に使えるお金（リビング）が、手取りのどれくらいか。設定で入れる →'));
   } else if (!laid.length) {
     planBody = h('div', { class: 'empty-plan' },
       h('p', null, h('b', null, 'まだ入居者がいません')),
@@ -141,15 +141,16 @@ export function renderHome(root, store, go) {
           remodel.ids.clear();
           rerender();
         } }, remodel.on ? '模様替えをやめる' : [h('b', null, '模様替え'), h('small', null, 'やめたらどうなる？')]) : null,
-        h('button', { type: 'button', class: 'btn', onClick: () => saveImage(state, view, laid, H, planJo, house, year, subsYear) }, '画像で保存'))
+        h('button', { type: 'button', class: 'btn', onClick: () => saveImage(state, view, laid, H, house, unit, subsYear, rooms.length) }, '画像で保存'))
     ];
   }
 
   const planCard = h('section', { class: 'plan-card' },
     h('div', { class: 'plan-head' },
-      segmented([{ id: 'subs', label: 'サブスク荘' }, { id: 'house', label: '手取りの家' }], view, (v) => { remodel.on = false; remodel.ids.clear(); store.update((s) => { s.ui.view = v; }); }, '表示する間取り'),
-      segmented([{ id: 'month', label: '月額' }, { id: 'year', label: '年額' }], state.ui.mode, (m) => store.update((s) => { s.ui.mode = m; }), '部屋に出す金額')),
-    view === 'house' && house ? h('p', { class: 'plan-sub' }, `手取りの家 ${f1(house.jo)}畳（年 ${money(house.take)}円）`) : null,
+      segmented([{ id: 'subs', label: 'サブスク荘' }, { id: 'house', label: '手取りの家' }], view, (v) => { remodel.on = false; remodel.ids.clear(); store.update((s) => { s.ui.view = v; }); }, '表示する間取り')),
+    h('p', { class: 'plan-sub' }, view === 'house'
+      ? (house ? `手取り ${amountText(house.take, unit)} を1軒の家にすると（サブスクは ${pct(subsYear / house.take)}）` : '')
+      : '部屋の広さ＝払っている額。タップで詳しく'),
     planBody);
 
   // ---------- 模様替えの結果 ----------
@@ -158,7 +159,10 @@ export function renderHome(root, store, go) {
     const sv = savings(state, remodel.ids);
     bar = h('div', { class: 'whatif-bar', role: 'status' },
       remodel.ids.size
-        ? h('p', null, h('span', null, `${remodel.ids.size}部屋を退去させると`), h('b', null, `${f1(sv.jo)}畳`), h('span', null, 'ひろくなって'), h('b', null, `月 ${money(sv.month)}円`), h('span', { class: 'sep' }, '／'), h('b', { class: 'year' }, `年 ${money(sv.year)}円`), h('span', null, '浮きます'))
+        ? h('div', { class: 'whatif-text' },
+          h('p', null, `${remodel.ids.size}部屋を退去させると`),
+          h('p', null, h('b', null, year ? `年 ${money(sv.year)}円` : `月 ${money(sv.month)}円`), h('span', null, '浮きます')),
+          h('p', { class: 'whatif-sub' }, `${year ? `月 ${money(sv.month)}円` : `年 ${money(sv.year)}円`}・サブスク代の ${pct(sv.share)}`))
         : h('p', null, '退去させてみたい部屋をタップしてください'),
       h('div', { class: 'whatif-actions' },
         remodel.ids.size ? h('button', { type: 'button', class: 'btn small primary', onClick: () => {
@@ -273,18 +277,17 @@ function calendar(store, state, today, rerender) {
 }
 
 // 間取り図を画像にして共有・保存する（金額を出すか選べる）
-function saveImage(state, view, laid, H, planJo, house, year, subsYear) {
+function saveImage(state, view, laid, H, house, unit, subsYear, count) {
   openSheet('画像で保存', (close) => {
     const make = async (hide) => {
       close();
       try {
         const P = readPalette();
-        const title = view === 'house' ? `手取りの家 ${f1(planJo)}畳` : `わたしのサブスク荘 ${f1(planJo)}畳`;
+        const title = view === 'house' ? '手取りの家' : 'わたしのサブスク荘';
         const sub = view === 'house'
-          ? (hide ? 'サブスク・家賃・通信費・リビング' : `年の手取り ${money(house.take)}円`)
-          : (hide ? `${sizeLabel(planJo)}・${laid.length}部屋` : `${sizeLabel(planJo)}・年 ${money(subsYear)}円`);
-        const amountLabel = (r) => (hide ? '' : year ? `${money(r.value)}円/年` : `${money(r.value / 12)}円/月`);
-        const svg = shareSvg(laid, { w: W, h: H, title, sub, footer: `サブスク荘 ・ 1畳＝年 ${money(state.settings.joPrice)}円`, amountLabel, palette: P });
+          ? (hide ? '家賃・通信費・サブスク・リビング' : `手取り ${amountText(house.take, unit)}`)
+          : (hide ? `${count}部屋` : `${count}部屋・${amountText(subsYear, unit)}`);
+        const svg = shareSvg(laid, { w: W, h: H, title, sub, footer: 'サブスク荘 ・ 部屋の広さ＝払っている額', unit: hide ? 'none' : unit, palette: P });
         const blob = await svgToPng(svg);
         const r = await shareOrSave(blob, `subsou-${todayYmd().replace(/-/g, '')}.png`, title);
         if (r === 'saved') toast('画像を保存しました');

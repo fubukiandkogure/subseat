@@ -1,5 +1,5 @@
 import { h, money, tile, openSheet, toast } from '../ui.js';
-import { yearlyYen, tatami } from '../model.js';
+import { yearlyYen } from '../model.js';
 import { todayYmd } from '../dates.js';
 import { USAGE } from './room-sheet.js';
 
@@ -9,7 +9,7 @@ export function openInspection(store, { onRemodel } = {}) {
   const today = todayYmd();
   const month = today.slice(0, 7);
   const st = store.get();
-  const rate = st.settings.usdJpy, joPrice = st.settings.joPrice;
+  const rate = st.settings.usdJpy;
   const list = st.contracts.filter((c) => c.amount != null).sort((a, b) => yearlyYen(b, rate) - yearlyYen(a, rate));
   if (!list.length) { toast('見回る部屋がまだありません'); return; }
   const answers = new Map();
@@ -36,7 +36,7 @@ export function openInspection(store, { onRemodel } = {}) {
           h('li', null, h('b', null, some.length), 'たまに'),
           h('li', { class: none.length ? 'warn' : '' }, h('b', null, none.length), '使ってない')),
         none.length
-          ? h('p', { class: 'notice' }, `使っていない ${none.length}部屋（${none.map((c) => c.name).join('、')}）で、年 ${money(year)}円・${tatami(year, joPrice).toFixed(1)}畳 です。`)
+          ? h('p', { class: 'notice' }, `使っていない ${none.length}部屋（${none.map((c) => c.name).join('、')}）で、月 ${money(year / 12)}円・年 ${money(year)}円 です。`)
           : h('p', { class: 'muted' }, 'どの部屋もちゃんと使われていました。また来月。'),
         h('div', { class: 'actions stack-actions' },
           none.length && onRemodel ? h('button', { type: 'button', class: 'btn primary', onClick: () => { close(); onRemodel(new Set(none.map((c) => c.id))); } }, '退去させたら？を模様替えで見る') : null,
@@ -58,7 +58,7 @@ export function openInspection(store, { onRemodel } = {}) {
         h('p', { class: 'muted small' }, `${i + 1} / ${list.length} 部屋目`),
         h('div', { class: 'inspect-card' }, tile(c.name, 'l'),
           h('p', { class: 'inspect-name' }, c.name),
-          h('p', { class: 'muted small' }, `年 ${money(y)}円・${tatami(y, joPrice).toFixed(1)}畳`)),
+          h('p', { class: 'muted small' }, `月 ${money(y / 12)}円・年 ${money(y)}円`)),
         h('p', { class: 'inspect-q' }, '今月、使いましたか？'),
         h('div', { class: 'inspect-answers' }, Object.entries(USAGE).map(([k, label]) =>
           h('button', { type: 'button', class: `btn answer ${k}`, onClick: () => { answers.set(c.id, k); i++; render(); } }, label))),

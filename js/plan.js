@@ -93,17 +93,29 @@ function signOf(r, vacant) {
   return null;
 }
 
+// 部屋に出す金額。unit は 'month' | 'year' | 'none'（画像で金額を隠すとき）
+const yen = (n) => Math.round(n).toLocaleString('ja-JP');
+function amounts(value, unit) {
+  if (unit === 'none') return { num: '', per: '', other: '' };
+  return unit === 'year'
+    ? { num: yen(value), per: '円/年', other: `月 ${yen(value / 12)}円` }
+    : { num: yen(value / 12), per: '円/月', other: `年 ${yen(value)}円` };
+}
+export const amountText = (value, unit) => (unit === 'year' ? `年 ${yen(value)}円` : `月 ${yen(value / 12)}円`);
+
 function roomSvg(r, P, o) {
   const vac = o.vacant.has(r.id);
   const isWing = r.kind === 'wing';
   const base = r.kind === 'fixed' ? P.cat.fixed : r.kind === 'free' ? P.freed : isWing ? P.wall : (P.cat[r.category] || P.cat.other);
   const fill = vac ? `url(#${o.pid}-hatch)` : isWing ? P.floor : mix(base, P.floor, P.dark ? 0.3 : 0.17);
   const parts = [`<rect x="${f1(r.x)}" y="${f1(r.y)}" width="${f1(r.w)}" height="${f1(r.h)}" fill="${fill}" stroke="${P.wall}" stroke-width="${isWing ? 3.5 : 2.4}"/>`];
+  const fullLabel = `月 ${yen(r.value / 12)}円・年 ${yen(r.value)}円`;
 
   if (isWing) {
-    const t = fit(`サブスク棟　${f1(r.jo)}畳`, r.w - 16, 12, 9);
+    let t = fit(o.unit === 'none' ? 'サブスク' : `サブスク　${amountText(r.value, o.unit)}`, r.w - 16, 12, 9);
+    if (t.text.endsWith('…')) t = fit('サブスク', r.w - 16, 12, 8);
     parts.push(`<text x="${f1(r.x + 9)}" y="${f1(r.y + 16)}" font-size="${t.size}" font-weight="900" fill="${P.ink}">${esc(t.text)}</text>`);
-    return `<g class="room wing" data-id="wing" role="button" tabindex="0" aria-label="サブスク棟 ${f1(r.jo)}畳"><title>サブスク棟</title>${parts.join('')}</g>`;
+    return `<g class="room wing" data-id="wing" role="button" tabindex="0" aria-label="サブスク ${fullLabel}"><title>サブスク</title>${parts.join('')}</g>`;
   }
 
   const ink = vac ? P.muted : P.ink;
@@ -114,33 +126,43 @@ function roomSvg(r, P, o) {
   const lines = [];
   if (!tiny) {
     const iconSize = clamp(scale / 5, 16, 34);
-    const joSize = clamp(scale / 5.4, 11, 30);
+    const bigSize = clamp(scale / 6.2, 11, 26);
     const nameSize = clamp(scale / 10, 9, 16);
-    const amtSize = clamp(scale / 13.5, 8.5, 12.5);
+    const smallSize = clamp(scale / 13.5, 8.5, 12.5);
     const name = vac ? '空き部屋' : r.kind === 'free' ? 'リビング' : r.name;
-    const sub = vac ? `${r.name} が退去` : r.kind === 'free' ? '自由に使えるお金' : (r.jo < 1 && r.kind === 'sub' ? '押入れ' : '');
-    const amount = vac ? '' : o.amountLabel(r);
+    const sub = vac ? `${r.name} が退去` : r.kind === 'free' ? '自由に使えるお金' : '';
+    const a = amounts(r.value, o.unit);
     const nm = fit(name, inner, nameSize, 8);
-    const jo = { text: `${f1(r.jo)}`, size: joSize };
     const room = r.h - 12;
     const want = [];
-    const iconName = r.icon || r.category;
-    if (!vac && room > iconSize + joSize + nameSize + 16 && inner > 36) want.push({ kind: 'icon', h: iconSize + 4, size: iconSize, name: iconName });
+    if (!vac && room > iconSize + bigSize + nameSize + 16 && inner > 36) want.push({ kind: 'icon', h: iconSize + 4, size: iconSize, name: r.icon || r.category });
     if (nm.text) want.push({ kind: 'name', h: nm.size * 1.25, ...nm });
-    if (sub && room > joSize + nameSize * 2.6) want.push({ kind: 'sub', h: amtSize * 1.35, ...fit(sub, inner, amtSize, 8, 700) });
-    want.push({ kind: 'jo', h: joSize * 1.15, ...jo });
-    if (amount && room > joSize + nameSize * 1.25 + amtSize * 1.4 + 6) want.push({ kind: 'amt', h: amtSize * 1.35, ...fit(amount, inner, amtSize, 8, 700) });
-    let total = want.reduce((a, x) => a + x.h, 0);
-    while (total > room && want.length > 1) { const drop = want.findIndex((x) => x.kind === 'icon' || x.kind === 'sub' || x.kind === 'amt'); total -= want.splice(drop >= 0 ? drop : want.length - 1, 1)[0].h; }
+    if (sub && room > bigSize + nameSize * 2.6) want.push({ kind: 'sub', h: smallSize * 1.35, ...fit(sub, inner, smallSize, 8, 700) });
+    // 大きい数字：入りきらなければ文字を小さく → 単位を外す → 出さない
+    if (a.num) {
+      let size = bigSize, per = a.per;
+      const unitOf = (sz) => Math.max(8, sz * 0.5);
+      const width = (sz, p) => textW(a.num, sz, 900) + (p ? textW(p, unitOf(sz), 900) + 1 : 0);
+      while (size > 9 && width(size, per) > inner) size -= 0.5;
+      if (width(size, per) > inner) { per = ''; size = bigSize; while (size > 9 && width(size, '') > inner) size -= 0.5; }
+      if (width(size, per) <= inner) want.push({ kind: 'big', h: size * 1.15, size, text: a.num, per, unit: unitOf(size) });
+    }
+    const other = a.other ? fit(a.other, inner, smallSize, 8, 700) : null;
+    // 小さい部屋で途中で切れるなら出さない（金額は … で切らない）
+    if (other && !other.text.endsWith('…') && room > bigSize + nameSize * 1.25 + smallSize * 1.4 + 6) want.push({ kind: 'other', h: smallSize * 1.35, ...other });
+    let total = want.reduce((acc, x) => acc + x.h, 0);
+    while (total > room && want.length > 1) {
+      const drop = ['icon', 'sub', 'other', 'big'].map((k) => want.findIndex((x) => x.kind === k)).find((i) => i >= 0);
+      total -= want.splice(drop ?? want.length - 1, 1)[0].h;
+    }
     let y = r.y + r.h / 2 - total / 2;
     const cx = r.x + r.w / 2;
     for (const it of want) {
       if (it.kind === 'icon') lines.push(icon(it.name, cx - it.size / 2, y, it.size, color));
-      else if (it.kind === 'jo') {
-        const unit = Math.max(9, it.size * 0.45);
-        const wNum = textW(it.text, it.size, 900), wUnit = textW('畳', unit, 900);
-        const sx = cx - (wNum + wUnit + 1) / 2;
-        lines.push(`<text x="${f1(sx)}" y="${f1(y + it.size * 0.92)}" font-size="${f1(it.size)}" font-weight="900" fill="${ink}">${esc(it.text)}<tspan font-size="${f1(unit)}" dx="1">畳</tspan></text>`);
+      else if (it.kind === 'big') {
+        const wNum = textW(it.text, it.size, 900), wUnit = it.per ? textW(it.per, it.unit, 900) + 1 : 0;
+        const sx = cx - (wNum + wUnit) / 2;
+        lines.push(`<text x="${f1(sx)}" y="${f1(y + it.size * 0.92)}" font-size="${f1(it.size)}" font-weight="900" fill="${ink}">${esc(it.text)}${it.per ? `<tspan font-size="${f1(it.unit)}" dx="1">${esc(it.per)}</tspan>` : ''}</text>`);
       } else {
         const weight = it.kind === 'name' ? 900 : 700;
         const fillC = it.kind === 'name' ? ink : P.muted;
@@ -162,16 +184,16 @@ function roomSvg(r, P, o) {
       lines.push(`<rect x="${f1(sx)}" y="${f1(sy)}" width="${f1(tw)}" height="16" rx="4" fill="${tone}"/><text x="${f1(sx + tw / 2)}" y="${f1(sy + 11.6)}" text-anchor="middle" font-size="9.5" font-weight="900" fill="${P.surface}">${esc(sign.text)}</text>`);
     }
   }
-  const label = vac ? `空き部屋（${r.name} が退去）${f1(r.jo)}畳` : `${r.kind === 'free' ? 'リビング（自由に使えるお金）' : r.name} ${f1(r.jo)}畳 ${o.amountLabel(r)}`;
+  const label = vac ? `空き部屋（${r.name} が退去）${fullLabel}` : `${r.kind === 'free' ? 'リビング（自由に使えるお金）' : r.name} ${fullLabel}`;
   return `<g class="room${vac ? ' vacant' : ''}" data-id="${esc(r.id)}" role="button" tabindex="0" aria-label="${esc(label)}"><title>${esc(label)}</title>${parts.join('')}${lines.join('')}</g>`;
 }
 
 let seq = 0;
 // rooms はすでに配置済み（x, y, w, h を持つ）もの
-export function planSvg(laid, { w, h, vacant = new Set(), amountLabel = () => '', palette } = {}) {
+export function planSvg(laid, { w, h, vacant = new Set(), unit = 'month', palette } = {}) {
   const P = palette || readPalette();
   const pid = `plan${++seq}`;
-  const o = { vacant, amountLabel, pid };
+  const o = { vacant, unit, pid };
   const hatchLine = mix(P.freed, P.floor, P.dark ? 0.55 : 0.4);
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="100%" font-family="${FONT}" role="group" aria-label="間取り図">` +
     `<defs><pattern id="${pid}-hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="10" height="10" fill="${P.floor}"/><rect width="4" height="10" fill="${hatchLine}"/></pattern></defs>` +
@@ -181,10 +203,10 @@ export function planSvg(laid, { w, h, vacant = new Set(), amountLabel = () => ''
 }
 
 // ---------- 画像にする（共有・保存用） ----------
-export function shareSvg(laid, { w, h, title, sub, footer, amountLabel, palette }) {
+export function shareSvg(laid, { w, h, title, sub, footer, unit, palette }) {
   const P = palette || readPalette();
   const W = 1080, H = 1350, M = 72, top = 250;
-  const inner = planSvg(laid, { w, h, amountLabel, palette: P }).replace('width="100%"', `x="${M}" y="${top}" width="${W - M * 2}" height="${H - top - 110}"`);
+  const inner = planSvg(laid, { w, h, unit, palette: P }).replace('width="100%"', `x="${M}" y="${top}" width="${W - M * 2}" height="${H - top - 110}"`);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="${FONT}">` +
     `<rect width="${W}" height="${H}" fill="${P.surface}"/>` +
     `<text x="${M}" y="118" font-size="44" font-weight="900" fill="${P.ink}">${esc(title)}</text>` +

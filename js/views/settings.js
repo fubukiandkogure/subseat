@@ -4,7 +4,6 @@ import { buildIcs } from '../ics.js';
 import { todayYmd } from '../dates.js';
 import { openTutorial } from './tutorial.js';
 
-const JO_PRICES = [{ id: '5000', label: '年5千円' }, { id: '10000', label: '年1万円' }, { id: '20000', label: '年2万円' }];
 const THEMES = [{ id: 'auto', label: '端末に合わせる' }, { id: 'light', label: 'ライト' }, { id: 'dark', label: 'ダーク' }];
 const MODES = [{ id: 'month', label: '月で入れる' }, { id: 'year', label: '年で入れる（ボーナス込み）' }];
 
@@ -19,6 +18,21 @@ function moneyInput(store, key, placeholder, { toStore = (v) => v, fromStore = (
       toast('保存しました');
     }
   });
+}
+
+// アプリの URL だけを共有する（共有メニューがなければコピー）
+async function shareApp() {
+  const url = location.origin + location.pathname;
+  if (navigator.share) {
+    try { await navigator.share({ title: 'サブスク荘', text: 'サブスクを間取り図で見るアプリ。データはスマホの中だけに保存されます。', url }); } catch { /* 閉じただけ */ }
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    toast('URL をコピーしました');
+  } catch {
+    toast(url);
+  }
 }
 
 export function renderSettings(root, store) {
@@ -46,13 +60,12 @@ export function renderSettings(root, store) {
       field('手取りの入れ方', segmented(MODES, s.takeHomeMode, (v) => store.update((x) => { x.settings.takeHomeMode = v; }), '手取りの入れ方')),
       field(yearMode ? '年の手取り（ボーナス込み）' : '月の手取り',
         moneyInput(store, 'takeHome', yearMode ? '例：3200000' : '例：240000', yearMode ? { toStore: (v) => Math.round(v / 12), fromStore: (v) => v * 12 } : {}),
-        s.takeHome ? `月 ${money(s.takeHome)}円・年 ${money(s.takeHome * 12)}円 として計算しています` : '入れると「手取りの家」が見えます（家賃・通信費・サブスク棟・リビング）'),
+        s.takeHome ? `月 ${money(s.takeHome)}円・年 ${money(s.takeHome * 12)}円 として計算しています` : '入れると「手取りの家」が見えます（家賃・通信費・サブスク・リビング）'),
       h('div', { class: 'field-row two' },
         field('家賃（月）', moneyInput(store, 'rent', '0')),
         field('通信費（月）', moneyInput(store, 'phone', '0'))),
       h('p', { class: 'muted small' }, '固定費はこの2つだけにしています（細かく入れ始めると家計簿になってしまうので）。'),
-      field('ドル円レート', moneyInput(store, 'usdJpy', '150'), 'ドル建ての部屋を円にするときに使います'),
-      field('1畳あたりの額', segmented(JO_PRICES, String(s.joPrice), (v) => store.update((x) => { x.settings.joPrice = Number(v); }), '1畳あたりの額'), '部屋の広さの単位です。大きくすると部屋がこぢんまりします')),
+      field('ドル円レート', moneyInput(store, 'usdJpy', '150'), 'ドル建ての部屋を円にするときに使います')),
 
     h('section', { class: 'card' },
       h('h2', null, '表示'),
@@ -76,6 +89,11 @@ export function renderSettings(root, store) {
         } }, '支払日をカレンダーに書き出す（.ics）')),
       h('p', { class: 'muted small' }, '.ics を開くとカレンダーに予定が入り、支払いの前日（内見おわりは2日前）に通知が出ます。サーバーを使わないので、アプリからは通知を送れません。')),
 
+    h('section', { class: 'card' },
+      h('h2', null, '友達に教える'),
+      h('p', { class: 'muted small' }, '送るのはアプリの URL だけです。あなたの部屋や金額は送られません。'),
+      h('button', { type: 'button', class: 'btn', onClick: shareApp }, 'URL を送る')),
+
     hasSample(st) ? h('section', { class: 'card' },
       h('h2', null, 'サンプル'),
       h('button', { type: 'button', class: 'btn', onClick: async () => {
@@ -97,6 +115,6 @@ export function renderSettings(root, store) {
         toast('すべて消しました');
       } }, 'すべてのデータを消す')),
 
-    h('p', { class: 'about' }, 'サブスク荘 0.2.0・データは外に送りません')
+    h('p', { class: 'about' }, 'サブスク荘 0.3.0・データは外に送りません')
   ].filter(Boolean));
 }

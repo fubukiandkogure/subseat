@@ -1,5 +1,5 @@
-import { h, money, tile, toast, ask } from '../ui.js';
-import { STATUSES, CHANNELS, catLabel, monthlyYen, yearlyYen, tatami, recentRaise, formerSaved } from '../model.js';
+import { h, money, tile, toast, ask, bigAmount, otherAmount, modeToggle } from '../ui.js';
+import { STATUSES, CHANNELS, catLabel, monthlyYen, yearlyYen, recentRaise, formerSaved } from '../model.js';
 import { parseYmd, todayYmd, diffDays } from '../dates.js';
 import { openRoomSheet } from './room-sheet.js';
 import { openContractSheet } from './contract-sheet.js';
@@ -9,7 +9,8 @@ const GROUP_LABEL = { keep: '住んでいる部屋', review: '様子見の部屋
 export function renderContracts(root, store) {
   const state = store.get();
   const today = todayYmd();
-  const { usdJpy: rate, joPrice } = state.settings;
+  const { usdJpy: rate } = state.settings;
+  const year = state.ui.mode === 'year';
   const list = state.contracts;
   const unknown = list.filter((c) => c.amount == null || !c.nextDate);
   const sumYear = list.reduce((a, c) => a + (yearlyYen(c, rate) ?? 0), 0);
@@ -29,8 +30,8 @@ export function renderContracts(root, store) {
           recentRaise(c, today) ? h('span', { class: 'badge accent' }, '値上げ') : null,
           c.sample ? h('span', { class: 'badge' }, 'サンプル') : null)),
       h('span', { class: 'row-amount' },
-        m == null ? h('span', { class: 'badge warn' }, '金額未確定') : h('span', null, `${tatami(m * 12, joPrice).toFixed(1)}畳`),
-        m == null ? null : h('small', null, `年 ${money(m * 12)}円`)));
+        m == null ? h('span', { class: 'badge warn' }, '金額未確定') : h('span', null, `${year ? '年' : '月'} ${money(year ? m * 12 : m)}円`),
+        m == null ? null : h('small', null, otherAmount(m, year))));
   };
 
   const groups = STATUSES.map((st) => {
@@ -64,9 +65,9 @@ export function renderContracts(root, store) {
 
   root.replaceChildren(...[
     h('section', { class: 'summary compact-summary' },
-      h('p', { class: 'eyebrow' }, `入居中の部屋 ${list.length}件`),
-      h('p', { class: 'big' }, h('span', { class: 'num' }, tatami(sumYear, joPrice).toFixed(1)), h('span', { class: 'unit' }, '畳')),
-      h('p', { class: 'money-line' }, h('span', { class: 'on' }, '年 ', h('b', null, money(sumYear)), '円'), h('span', { class: 'sep' }, '・'), h('span', null, '月 ', h('b', null, money(sumYear / 12)), '円'))),
+      h('div', { class: 'summary-top' }, h('p', { class: 'eyebrow' }, `入居中の部屋 ${list.length}件`), modeToggle(store)),
+      bigAmount(sumYear / 12, year),
+      h('p', { class: 'money-line' }, h('span', null, otherAmount(sumYear / 12, year)))),
     unknown.length ? h('p', { class: 'notice' }, `金額か次の支払日が未確定の部屋が ${unknown.length}件あります。タップして分かるところから埋めてください。`) : null,
     ...groups.filter(Boolean),
     !list.length ? h('p', { class: 'empty' }, 'まだ入居中の部屋はありません。') : null,

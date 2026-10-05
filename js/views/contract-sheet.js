@@ -1,5 +1,5 @@
 import { h, openSheet, toast, field, select, numberInput, segmented, money, ask } from '../ui.js';
-import { SUB_CATEGORIES, CHANNELS, STATUSES, newContract, monthlyYen, tatami, recordPrice } from '../model.js';
+import { SUB_CATEGORIES, CHANNELS, STATUSES, newContract, monthlyYen, recordPrice } from '../model.js';
 import { matchMerchant } from '../services.js';
 import { todayYmd } from '../dates.js';
 
@@ -13,13 +13,13 @@ export function openContractSheet(store, existing) {
   if (!d.trial) d.trial = { on: false, endDate: null };
 
   openSheet(isNew ? '手で入居させる' : `${d.name} を編集`, (close) => {
-    const { usdJpy: rate, joPrice } = store.get().settings;
+    const { usdJpy: rate } = store.get().settings;
     const note = h('span', { class: 'field-hint' });
     const refreshNote = () => {
       const m = monthlyYen(d, rate);
       note.textContent = d.amount == null
-        ? '金額が未確定のあいだは、部屋の広さが決まりません（合計にも入りません）'
-        : `部屋の広さ ${tatami(m * 12, joPrice).toFixed(1)}畳${d.currency === 'USD' || d.cycle === 'year' ? `（月あたり 約${money(m)}円）` : ''}`;
+        ? '金額が未確定のあいだは、間取りにも合計にも入りません'
+        : `月 ${d.currency === 'USD' || d.cycle === 'year' ? '約' : ''}${money(m)}円・年 ${money(m * 12)}円`;
     };
     refreshNote();
 

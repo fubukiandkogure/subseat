@@ -28,7 +28,6 @@ export const DEFAULT_SETTINGS = {
   takeHome: null,          // 月の手取り（年で入れたときも、ここには12で割った額を持つ）
   takeHomeMode: 'month',   // 入力欄を「月」「年」のどちらで見せるか
   rent: null, phone: null, usdJpy: 150,
-  joPrice: 10000,          // 1畳あたりの年額
   theme: 'auto'
 };
 
@@ -103,15 +102,6 @@ export function totals(state) {
   return { subs, fixed, reserved, takeHome, free: takeHome ? takeHome - reserved : null, unknown };
 }
 
-// ---------- 畳 ----------
-export const tatami = (yearYen, joPrice) => yearYen / (joPrice > 0 ? joPrice : DEFAULT_SETTINGS.joPrice);
-
-const SIZES = [[3, '押入れ'], [6, '4畳半'], [10, '6畳ひと間'], [16, '1K'], [26, '1LDK'], [38, '2LDK'], [50, '3LDK']];
-export function sizeLabel(jo) {
-  for (const [max, label] of SIZES) if (jo < max) return `${label}くらい`;
-  return '一軒家くらい';
-}
-
 // ---------- 間取り ----------
 // 面積を値に比例させて長方形を分ける（squarified treemap）。大きいものほど左上に来る。
 export function squarify(items, x, y, w, h) {
@@ -147,7 +137,7 @@ export function squarify(items, x, y, w, h) {
   return out;
 }
 
-// サブスク荘の部屋（年額の大きい順）。金額未確定のものは広さが決まらないので入れない
+// サブスク荘の部屋（年額の大きい順）。部屋の広さは年額に比例。金額未確定のものは広さが決まらないので入れない
 export function planRooms(state, today) {
   const { settings: s, contracts } = state;
   return contracts
@@ -155,35 +145,39 @@ export function planRooms(state, today) {
     .filter((x) => x.y != null && x.y > 0)
     .sort((a, b) => b.y - a.y)
     .map(({ c, y }) => ({
-      id: c.id, kind: 'sub', name: c.name, category: c.category, value: y, jo: tatami(y, s.joPrice),
+      id: c.id, kind: 'sub', name: c.name, category: c.category, value: y,
       status: c.status, trial: !!c.trial?.on, raise: recentRaise(c, today), currency: c.currency
     }));
 }
 
-// 手取りの家：家賃・通信費・サブスク棟・リビング（自由に使えるお金）
+// 手取りの家：家賃・通信費・サブスク・リビング（自由に使えるお金）
 export function housePlan(state, today) {
   const s = state.settings;
   if (!(s.takeHome > 0)) return null;
   const subs = planRooms(state, today);
   const subsYear = subs.reduce((a, r) => a + r.value, 0);
-  const fixed = fixedItems(s).map((f) => ({ ...f, value: f.monthly * 12, jo: tatami(f.monthly * 12, s.joPrice) }));
+  const fixed = fixedItems(s).map((f) => ({ ...f, value: f.monthly * 12 }));
   const take = s.takeHome * 12;
   const used = subsYear + fixed.reduce((a, f) => a + f.value, 0);
   const free = take - used;
   const blocks = [
     ...fixed,
-    { id: 'wing', kind: 'wing', name: 'サブスク棟', category: 'other', value: subsYear, jo: tatami(subsYear, s.joPrice), children: subs },
-    { id: 'free', kind: 'free', name: 'リビング', category: 'free', value: Math.max(0, free), jo: tatami(Math.max(0, free), s.joPrice), icon: 'free' }
+    { id: 'wing', kind: 'wing', name: 'サブスク', category: 'other', value: subsYear, children: subs },
+    { id: 'free', kind: 'free', name: 'リビング', category: 'free', value: Math.max(0, free), icon: 'free' }
   ].filter((b) => b.value > 0).sort((a, b) => b.value - a.value);
-  return { blocks, take, used, free, over: free < 0 ? -free : 0, jo: tatami(take, s.joPrice) };
+  return { blocks, take, used, free, over: free < 0 ? -free : 0 };
 }
 
-// 模様替え（これをやめたら？）で浮く額と広さ
+// 模様替え（これをやめたら？）で浮く額と、サブスク代のうちの割合（0〜1）
 export function savings(state, ids) {
   const rate = state.settings.usdJpy;
-  let month = 0;
-  for (const c of state.contracts) if (ids.has(c.id)) month += monthlyYen(c, rate) ?? 0;
-  return { month, year: month * 12, jo: tatami(month * 12, state.settings.joPrice) };
+  let month = 0, all = 0;
+  for (const c of state.contracts) {
+    const m = monthlyYen(c, rate) ?? 0;
+    all += m;
+    if (ids.has(c.id)) month += m;
+  }
+  return { month, year: month * 12, share: all > 0 ? month / all : 0 };
 }
 
 // 入居日からの支払いの累計（概算）

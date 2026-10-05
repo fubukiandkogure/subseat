@@ -1,5 +1,5 @@
-import { h, money, tile, toast, ask, openSheet, segmented } from '../ui.js';
-import { STATUSES, CHANNELS, catLabel, monthlyYen, tatami, sizeLabel, paidSince, recentRaise, relativeLabel } from '../model.js';
+import { h, money, tile, toast, ask, openSheet, segmented, bigAmount, otherAmount } from '../ui.js';
+import { STATUSES, CHANNELS, catLabel, monthlyYen, paidSince, recentRaise, relativeLabel } from '../model.js';
 import { todayYmd, parseYmd, rollForward } from '../dates.js';
 import { openContractSheet } from './contract-sheet.js';
 
@@ -15,7 +15,8 @@ export function openRoomSheet(store, id) {
   const today = todayYmd();
   const rate = s.settings.usdJpy;
   const m = monthlyYen(c, rate);
-  const jo = m == null ? null : tatami(m * 12, s.settings.joPrice);
+  const year = s.ui.mode === 'year';
+  const all = s.contracts.reduce((a, x) => a + (monthlyYen(x, rate) ?? 0), 0);
   const raise = recentRaise(c, today);
   const next = c.nextDate ? rollForward(c.nextDate, c.cycle, today) : null;
   const paid = paidSince(c, today, rate);
@@ -36,8 +37,8 @@ export function openRoomSheet(store, id) {
       h('div', { class: 'room-hero', style: { '--room-c': `var(--cat-${c.category})` } },
         tile(c.name, 'l'),
         h('div', null,
-          h('p', { class: 'room-jo' }, jo == null ? '広さ未確定' : [h('b', null, jo.toFixed(1)), h('span', null, '畳'), h('small', null, sizeLabel(jo))]),
-          h('p', { class: 'room-yen' }, m == null ? '金額が分かると、部屋の広さが決まります' : `月 ${money(m)}円 ・ 年 ${money(m * 12)}円`))),
+          m == null ? h('p', { class: 'big' }, h('span', { class: 'num unknown' }, '金額未確定')) : bigAmount(m, year),
+          h('p', { class: 'room-yen' }, m == null ? '金額が分かると、間取りに部屋ができます' : `${otherAmount(m, year)}・サブスク代の ${Math.round((m / all) * 100)}%`))),
       signs.length ? h('div', { class: 'signs' }, signs) : null,
       h('dl', { class: 'info' },
         row('次の支払い', next ? `${md(next)}（${relativeLabel(next, today)}）` : '未確定'),

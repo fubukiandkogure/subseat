@@ -121,6 +121,20 @@ export function download(name, text, type) {
 }
 
 // 選択肢のボタン（セグメント）
+// 大きな金額（月額／年額の切り替えに合わせる）と、もう片方の額
+export function bigAmount(monthly, yearMode) {
+  return h('p', { class: 'big' },
+    h('span', { class: 'per' }, yearMode ? '年' : '月'),
+    h('span', { class: 'num' }, money(yearMode ? monthly * 12 : monthly)),
+    h('span', { class: 'unit' }, '円'));
+}
+export const otherAmount = (monthly, yearMode) => (yearMode ? `月 ${money(monthly)}円` : `年 ${money(monthly * 12)}円`);
+
+// 月額／年額の切り替え（ホームと部屋の一覧で同じものを使う）
+export function modeToggle(store) {
+  return segmented([{ id: 'month', label: '月額' }, { id: 'year', label: '年額' }], store.get().ui.mode, (m) => store.update((s) => { s.ui.mode = m; }), '金額の出し方');
+}
+
 export function segmented(options, value, onChange, label) {
   const group = h('div', { class: 'seg', role: 'radiogroup', 'aria-label': label });
   for (const o of options) {

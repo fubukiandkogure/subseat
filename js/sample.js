@@ -12,7 +12,7 @@ export function sampleState(today) {
     ...f, sample: true
   });
   return {
-    settings: { takeHome: 240000, takeHomeMode: 'month', rent: 72000, phone: 2980, usdJpy: 150, joPrice: 10000, sample: true },
+    settings: { takeHome: 240000, takeHomeMode: 'month', rent: 72000, phone: 2980, usdJpy: 150, sample: true },
     contracts: [
       c({ name: 'Netflix', serviceId: 'netflix', category: 'video', amount: 1590, nextDate: d(3), since: m(40), history: [price(1490, 400), price(1590, 40)] }),
       c({ name: 'YouTube Premium', serviceId: 'ytpremium', category: 'video', amount: 1280, nextDate: d(12), channel: 'googleplay', since: m(22) }),

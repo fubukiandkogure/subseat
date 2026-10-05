@@ -1,7 +1,7 @@
 // オフラインでも開けるように、アプリ本体（同じサイトのファイル）をキャッシュする。
 // 開くときはキャッシュをすぐ返しつつ、裏で新しい版を取りに行く（次に開いたときに反映）。
 // ファイルを増やしたら ASSETS に足し、大きく変えたら VERSION を上げる。
-const VERSION = 'subsou-v2';
+const VERSION = 'subsou-v3';
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/app.js', 'js/store.js', 'js/ui.js', 'js/model.js', 'js/dates.js', 'js/text.js', 'js/services.js',

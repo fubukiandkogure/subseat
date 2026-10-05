@@ -18,9 +18,14 @@ export function migrate(input) {
     s.lastInspection = s.lastInspection ?? null;
     if (s.settings) {
       const { seatUnit, ...rest } = s.settings;
-      s.settings = { joPrice: 10000, takeHomeMode: 'month', ...rest };
+      s.settings = { takeHomeMode: 'month', ...rest };
     }
     s.ui = { view: 'subs', calView: 'list', welcomed: false, ...(s.ui || {}) };
+  }
+  // 0.2 で使っていた「1畳あたりの額」は、金額表示に戻したのでもう使わない
+  if (s.settings && 'joPrice' in s.settings) {
+    const { joPrice, ...rest } = s.settings;
+    s.settings = rest;
   }
   s.schema = SCHEMA;
   return s;
