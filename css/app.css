@@ -83,16 +83,35 @@ h3 { font-size: 14px; margin: 0 0 8px; color: var(--muted); display: flex; align
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
-.brand { display: inline-flex; align-items: center; text-decoration: none; }
-.nameplate {
-  position: relative; display: inline-flex; align-items: center; padding: 5px 16px 5px; border-radius: 6px;
-  background: linear-gradient(180deg, var(--wood-1), var(--wood-2));
-  box-shadow: inset 0 0 0 1.5px rgba(60, 35, 15, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.18), 0 2px 0 rgba(60, 35, 15, 0.25);
-  color: var(--wood-ink); font-weight: 900; font-size: 16px; letter-spacing: 0.18em; text-shadow: 0 1px 0 rgba(60, 35, 15, 0.5);
+.brand { display: inline-flex; align-items: center; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+/* 看板（昼）：昭和のホーロー看板。紺の二重線、朱の文字、ビス留め */
+.sign { position: relative; display: inline-flex; align-items: center; }
+.sign svg { display: block; height: 100%; width: auto; }
+.sign-day {
+  height: 38px; padding: 8px 20px; border-radius: 9px;
+  background: linear-gradient(180deg, #fffaf0, #f2e7cf);
+  box-shadow: inset 0 0 0 2.5px #1f3a5f, inset 0 0 0 5px #fbf3e2, inset 0 0 0 6.5px #1f3a5f, 0 2px 0 rgba(31, 58, 95, 0.35), 0 4px 10px rgba(70, 45, 20, 0.12);
 }
-.nameplate::before, .nameplate::after { content: ''; position: absolute; top: 50%; width: 4px; height: 4px; margin-top: -2px; border-radius: 50%; background: rgba(60, 35, 15, 0.55); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25); }
-.nameplate::before { left: 5px; }
-.nameplate::after { right: 5px; }
+.sign-day svg { fill: #c93a22; filter: drop-shadow(0 1px 0 rgba(120, 30, 15, 0.25)); }
+.sign-day::before, .sign-day::after {
+  content: ''; position: absolute; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d8dbe0, #7d838d); box-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.35);
+}
+.sign-day::before { left: 8px; }
+.sign-day::after { right: 8px; }
+/* 看板（夜）：ネオン。開いたときに一度ちらついて点く */
+.sign-night { display: none; height: 34px; padding: 6px 6px; }
+.sign-night svg { fill: #fff1d6; filter: drop-shadow(0 0 1.5px #ffb36b) drop-shadow(0 0 5px #ff7a3d) drop-shadow(0 0 12px #ff5a2a); animation: neon-on 1.4s ease-out both; }
+@keyframes neon-on {
+  0% { opacity: .15; } 8% { opacity: 1; } 12% { opacity: .25; } 20% { opacity: 1; } 24% { opacity: .5; } 34%, 100% { opacity: 1; }
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .sign-day { display: none; }
+  :root:not([data-theme="light"]) .sign-night { display: inline-flex; }
+}
+:root[data-theme="dark"] .sign-day { display: none; }
+:root[data-theme="dark"] .sign-night { display: inline-flex; }
+.brand:active .sign { transform: translateY(1px); }
 .view { max-width: 560px; margin: 0 auto; padding: 4px 16px 0; display: grid; gap: 16px; }
 
 .tabbar {

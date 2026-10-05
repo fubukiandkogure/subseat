@@ -129,12 +129,12 @@ test('Shift_JIS の CSV から通しで候補を出す（読み取り → 検出
 
 test('辞書にない店でも、毎月まったく同じ額なら候補にする（ジムの月会費など）', () => {
   const tx = [
-    ...monthly('ｴﾆﾀｲﾑﾌｨｯﾄﾈｽ ｼﾌﾞﾔ', [7700, 7700, 7700, 7700], 27),
+    ...monthly('ﾐﾄﾞﾘｼﾞﾑ ｼﾌﾞﾔ', [7700, 7700, 7700, 7700], 27),
     ...monthly('まちのパン屋', [620, 655, 690, 640], 12)
   ];
   const c = detectRecurring(tx, { today: TODAY });
   assert.equal(c.length, 1, 'パン屋（額が毎回ちがう国内の店）は候補にしない');
-  assert.equal(c[0].name, 'エニタイムフィットネス シブヤ');
+  assert.equal(c[0].name, 'ミドリジム シブヤ');
   assert.equal(c[0].confidence, 'high');
 });
 

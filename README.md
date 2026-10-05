@@ -41,6 +41,21 @@
 
 昭和の木造アパートがモチーフ。生成りの紙と朱色、木の表札、掲示板のお知らせ、判子のように押し込めるボタン。ダークモードは夜のサブスク荘。
 
+### 看板（ロゴ）
+
+昼は昭和のホーロー看板、ダークモードは夜のネオン看板（開くと一度ちらついて点く）。
+文字は Dela Gothic One（昼）と RocknRoll One（夜）の形を SVG の図形にして埋め込んでいます。アプリはフォントを読み込まず、外にも通信しません。
+フォントはどちらも SIL Open Font License 1.1（Google Fonts）。作り直すときは、2つのフォントの .ttf を用意して
+
+```bash
+node tools/make-logo.mjs DelaGothicOne-Regular.ttf RocknRollOne-Regular.ttf
+```
+
+### 辞書
+
+動画・音楽・AI・クラウドとツール・ゲーム・本とニュース・学び・運動・食べ物の宅配・SNS と応援・マッチング・携帯会社のオプションまで、約270件。
+カード明細の書き方（半角カナ、DWANGO のような会社名、GOOGLE * や MICROSOFT* の後ろの名前）でも当たり、REPAIRS の中の PAIRS のような「ほかの言葉の一部」には当てません。
+
 ### さわり心地
 
 - ボタンや部屋を押すと軽く沈み、対応端末では小さく振動する（設定で切れる）
@@ -96,7 +111,9 @@ js/migrate.js           古い保存データ（サブスク席の版）の移�
 js/csv.js               CSV：文字コード判定・列の推定・明細の読み取り
 js/detect.js            定期課金の検出・登録済みとの照合
 js/freetext.js          雑入力の分解
-js/services.js          よくあるサブスクの辞書（金額は持たない）
+js/services.js          よくあるサブスクの辞書（約270件。金額は持たない）
+js/logo.js              ロゴの文字の形（tools/make-logo.mjs で作る）
+js/facade.js            サブスク荘の外観（窓・部屋番号）
 js/ics.js               カレンダー（.ics）の書き出し
 js/sample.js            サンプルデータとサンプル明細
 js/views/*.js           各画面

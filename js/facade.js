@@ -1,5 +1,6 @@
 import { mix, FONT } from './plan.js';
 import { ROOMS_PER_FLOOR } from './model.js';
+import { LOGO_DAY, LOGO_NIGHT } from './logo.js';
 
 // サブスク荘の外観。部屋番号の場所に窓とドアがあり、窓の色はカテゴリ。
 // 昼（ライト）はカーテン、夜（ダーク）は明かりがつく。窓を押すとその部屋を開く。
@@ -50,7 +51,15 @@ export function facadeSvg(rooms, { height } = {}) {
   out.push(`<rect x="${BX}" y="${TOP}" width="${bw}" height="${floors * FH}" fill="${P.wall}"/>`);
   for (let y = TOP + 6; y < ground; y += 6) out.push(`<line x1="${BX}" y1="${y}" x2="${BX + bw}" y2="${y}" stroke="${P.line}" stroke-width="1"/>`);
   // 屋根の上の看板
-  out.push(`<g><rect x="${BX + bw / 2 - 34}" y="${TOP - 27}" width="68" height="15" rx="3" fill="#a4703f" stroke="#7a5230" stroke-width="1"/><text x="${BX + bw / 2}" y="${TOP - 16.5}" text-anchor="middle" font-size="9.5" font-weight="900" fill="#fff4e0" letter-spacing="1">サブスク荘</text></g>`);
+  const sx = BX + bw / 2 - 38, sy = TOP - 29;
+  if (P.night) {
+    out.push(`<defs><filter id="fa-neon" x="-30%" y="-80%" width="160%" height="260%"><feGaussianBlur stdDeviation="1.6" result="b"/><feFlood flood-color="#ff6a2e"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`);
+    out.push(`<rect x="${sx}" y="${sy}" width="76" height="18" rx="3" fill="#15131b" stroke="#3a3542" stroke-width="1"/>`);
+    out.push(`<svg class="fa-neon" x="${sx + 6}" y="${sy + 3}" width="64" height="12" viewBox="${LOGO_NIGHT.viewBox}"><path d="${LOGO_NIGHT.d}" fill="#fff1d6" filter="url(#fa-neon)"/></svg>`);
+  } else {
+    out.push(`<rect x="${sx}" y="${sy}" width="76" height="18" rx="3" fill="#fbf4e4" stroke="#1f3a5f" stroke-width="1.6"/>`);
+    out.push(`<svg x="${sx + 6}" y="${sy + 3.5}" width="64" height="11" viewBox="${LOGO_DAY.viewBox}"><path d="${LOGO_DAY.d}" fill="#c93a22"/></svg>`);
+  }
 
   // 外階段（右側）
   const sx1 = BX + bw + 4, sx2 = W - 18;

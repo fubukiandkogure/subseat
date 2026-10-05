@@ -7,6 +7,7 @@ import { renderSettings } from './views/settings.js';
 import { openTutorial } from './views/tutorial.js';
 import { todayYmd, diffDays } from './dates.js';
 import { installPressFeedback, setHaptics } from './feel.js';
+import { LOGO_DAY, LOGO_NIGHT } from './logo.js';
 
 // 画面の切り替えは URL の # で行う（GitHub Pages のサブパス配下でもそのまま動く）
 const ROUTES = { home: renderHome, import: renderImport, contracts: renderContracts, settings: renderSettings };
@@ -71,6 +72,11 @@ window.addEventListener('hashchange', () => {
   render();
   window.scrollTo(0, 0);
 });
+// 看板：昼はホーロー看板、夜（ダーク）はネオン。文字はフォントから作った図形
+const logoSvg = (l) => `<svg viewBox="${l.viewBox}" focusable="false"><path d="${l.d}"/></svg>`;
+document.querySelector('.sign-day').innerHTML = logoSvg(LOGO_DAY);
+document.querySelector('.sign-night').innerHTML = logoSvg(LOGO_NIGHT);
+
 store.subscribe(render);
 installPressFeedback();
 enter();

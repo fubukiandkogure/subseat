@@ -26,8 +26,8 @@ test('YouTube Music と YouTube Premium を取り違えない', () => {
 });
 
 test('辞書にない名前も、名前だけの候補にする（ひらがなの言い回しは拾わない）', () => {
-  const c = parseFreeText('NetflixとFantia、あとたぶんスタディサプリもやってる');
-  assert.deepEqual(c.map((x) => x.name), ['Netflix', 'Fantia', 'スタディサプリ']);
+  const c = parseFreeText('NetflixとZetaflix、あとたぶんモモンガプラスもやってる');
+  assert.deepEqual(c.map((x) => x.name), ['Netflix', 'Zetaflix', 'モモンガプラス']);
   assert.equal(c[1].serviceId, null);
   assert.equal(c[1].confidence, 'low');
 });
