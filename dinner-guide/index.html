@@ -1,5 +1,5 @@
 <title>スカイツリー ディナーガイド</title>
-<meta name="description" content="2026年10月31日（土）ハロウィンの夜、東京スカイツリー周辺の晩ごはん候補5軒を比べるガイド">
+<meta name="description" content="2026年10月31日（土）ハロウィンの夜、東京スカイツリー周辺の晩ごはん候補9軒を比べるガイド">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Young+Serif&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
@@ -109,6 +109,8 @@ button{font:inherit;color:inherit}
 .cover{position:relative;aspect-ratio:4/3;background:var(--night);max-width:100%}
 .cover svg{display:block;width:100%;height:100%}
 .illu{position:absolute;left:10px;bottom:8px;font-family:var(--f-latin);font-size:9.5px;letter-spacing:.14em;color:#F8EDDF;background:rgb(20 12 18 / .5);padding:1px 7px;border-radius:999px}
+.newb{position:absolute;left:10px;top:10px;font-size:11.5px;font-weight:700;color:#FFF8EF;background:#C9641F;padding:3px 10px;border-radius:999px;box-shadow:0 2px 6px rgb(0 0 0 / .2)}
+.newchip{display:inline-block;margin-right:8px;font-size:11px;font-weight:700;color:var(--on-pumpkin);background:var(--pumpkin-fill);padding:1px 8px;border-radius:999px;vertical-align:1px}
 .heart{position:absolute;top:10px;right:10px;width:42px;height:42px;border-radius:50%;border:0;display:grid;place-items:center;background:rgb(255 250 242 / .92);color:#B9561A;cursor:pointer;box-shadow:0 2px 8px rgb(0 0 0 / .18);transition:transform .15s}
 .heart .ic{font-size:21px;stroke-width:2}
 .heart[aria-pressed="true"] .ic{fill:#DE7A2F;stroke:#DE7A2F}
@@ -273,6 +275,7 @@ button{font:inherit;color:inherit}
 .act.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .act.primary .ic{color:var(--pumpkin-fill)}
 .act.primary small{color:color-mix(in srgb,var(--paper) 70%,transparent)}
+.act small.sel{user-select:text;-webkit-user-select:text;font-size:13px;color:var(--ink)}
 .act.none{color:var(--ink-3);font-weight:500;background:transparent;border-style:dashed}
 .act.none .ic{color:var(--ink-3)}
 
@@ -548,6 +551,107 @@ body.only-fav .card:not(.is-fav),body.only-fav .spread:not(.is-fav){display:none
     <g fill="#A3B873"><use href="#leaf" x="10" y="250" width="30" height="16"/><use href="#leaf" x="226" y="252" width="32" height="17"/><use href="#leaf" x="232" y="14" width="30" height="16"/></g>
     <g fill="#6B8A45"><use href="#leaf" x="356" y="140" width="30" height="16"/><use href="#leaf" x="8" y="136" width="30" height="16"/><use href="#leaf" x="120" y="270" width="30" height="16"/></g>
   </symbol>
+  <pattern id="pat-gingham" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#F6EBDD"/><rect width="20" height="40" fill="#C9413A" opacity=".28"/><rect width="40" height="20" fill="#C9413A" opacity=".28"/></pattern>
+
+  <symbol id="cov-zinanvo" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="#7A4430"/>
+    <rect width="400" height="300" fill="url(#g-glow)" opacity=".4"/>
+    <rect x="30" y="34" width="124" height="92" rx="4" fill="#2C302B" stroke="#5A3A26" stroke-width="6"/>
+    <g stroke="#EDE6D6" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M46 56h56M46 74h80M46 92h66M46 110h44"/><path d="M116 56h20" opacity=".6"/></g>
+    <clipPath id="cp-zin-win"><rect x="212" y="24" width="168" height="198" rx="6"/></clipPath>
+    <g clip-path="url(#cp-zin-win)">
+      <rect x="200" y="10" width="200" height="230" fill="url(#g-sky)"/>
+      <g fill="#F8EDDF"><circle cx="232" cy="60" r="1.2"/><circle cx="356" cy="48" r="1"/><circle cx="244" cy="140" r="1.1"/><circle cx="364" cy="122" r="1.2"/></g>
+      <ellipse cx="320" cy="110" rx="44" ry="80" fill="url(#g-glow)"/>
+      <use href="#tree" x="300" y="34" width="40" height="256" fill="url(#g-light-pump)"/>
+      <path d="M200 200h34v-16h26v12h50v-20h26v14h22v-10h30V240H200z" fill="#24182A"/>
+    </g>
+    <rect x="212" y="24" width="168" height="198" rx="6" fill="none" stroke="#2E1A12" stroke-width="8"/>
+    <rect x="256" y="24" width="6" height="198" fill="#2E1A12"/>
+    <rect x="204" y="220" width="184" height="9" rx="3" fill="#3A2416"/>
+    <rect y="232" width="400" height="68" fill="#EADCC4"/>
+    <path d="M0 232H400" stroke="#D6C4A6" stroke-width="3"/>
+    <ellipse cx="128" cy="262" rx="98" ry="34" fill="#FBF5EA"/>
+    <ellipse cx="128" cy="260" rx="76" ry="25" fill="#F1E6D2"/>
+    <ellipse cx="128" cy="254" rx="54" ry="17" fill="#E7B867"/>
+    <g fill="none" stroke="#D49A47" stroke-width="2.5" stroke-linecap="round"><path d="M86 254c10-8 30-10 44-4s30 4 40-2"/><path d="M92 260c14-6 34-6 50 0s22 2 32-4"/></g>
+    <ellipse cx="128" cy="248" rx="30" ry="10" fill="#8E3B22"/>
+    <g fill="#6E2A18"><circle cx="118" cy="247" r="3"/><circle cx="136" cy="249" r="2.6"/><circle cx="128" cy="244" r="2.2"/></g>
+    <path d="M122 240c4-6 10-6 12 0-4 2-8 2-12 0z" fill="#6E8D3E"/>
+    <path d="M238 252h70" stroke="#D9CBB8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M330 236c-10 0-13 14-10 20 2 4 6 6 10 6s8-2 10-6c3-6 0-20-10-20z" fill="#F5E8D6" opacity=".35" stroke="#F5E8D6" stroke-width="1.2"/>
+    <path d="M323 252h14c-1 5-3 7-7 7s-6-2-7-7z" fill="#9C2F2F"/>
+    <path d="M330 262v14M323 277h14" stroke="#F5E8D6" stroke-width="1.6"/>
+  </symbol>
+
+  <symbol id="cov-sangusto" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="url(#g-sky)"/>
+    <g fill="#F8EDDF"><circle cx="40" cy="40" r="1.2"/><circle cx="84" cy="96" r="1"/><circle cx="276" cy="30" r="1.1"/><circle cx="380" cy="150" r="1"/></g>
+    <circle cx="70" cy="58" r="14" fill="#F3DFA9" opacity=".9"/>
+    <ellipse cx="342" cy="100" rx="50" ry="110" fill="url(#g-glow)"/>
+    <use href="#tree" x="316" y="-24" width="52" height="333" fill="url(#g-light-pump)"/>
+    <path d="M0 150h40v-20h36v40h30V300H0z" fill="#1F1626"/>
+    <path d="M262 170h34v-24h40v40h64V300H262z" fill="#1F1626"/>
+    <rect x="112" y="40" width="144" height="260" fill="#5A4338"/>
+    <rect x="106" y="32" width="156" height="12" rx="2" fill="#3E2E27"/>
+    <path d="M112 102H256M112 164H256M112 226H256" stroke="#4A362D" stroke-width="4"/>
+    <g fill="#F3B866">
+      <path d="M128 92V62a18 18 0 0 1 36 0V92Z"/><path d="M204 92V62a18 18 0 0 1 36 0V92Z"/>
+      <path d="M128 154V124a18 18 0 0 1 36 0V154Z"/><path d="M204 154V124a18 18 0 0 1 36 0V154Z" opacity=".7"/>
+      <path d="M128 216V186a18 18 0 0 1 36 0V216Z" opacity=".85"/><path d="M204 216V186a18 18 0 0 1 36 0V216Z"/>
+    </g>
+    <g stroke="#5A4338" stroke-width="2"><path d="M146 62V92M222 62V92M146 124V154M222 124V154M146 186V216M222 186V216"/></g>
+    <g fill="#3E2E27"><rect x="124" y="92" width="44" height="5"/><rect x="200" y="92" width="44" height="5"/><rect x="124" y="154" width="44" height="5"/><rect x="200" y="154" width="44" height="5"/><rect x="124" y="216" width="44" height="5"/><rect x="200" y="216" width="44" height="5"/></g>
+    <path d="M144 300V264a40 34 0 0 1 80 0V300Z" fill="#2A140B"/>
+    <ellipse cx="184" cy="290" rx="34" ry="18" fill="url(#g-fire)"/>
+    <path d="M150 300v-22a34 26 0 0 1 68 0v22" fill="none" stroke="#B0603A" stroke-width="5"/>
+    <path d="M174 296c2-10 7-12 7-20 5 5 7 10 5 15 3-3 5-8 4-13 7 7 8 13 5 18Z" fill="#FFB347"/>
+    <circle cx="124" cy="250" r="7" fill="#F6C46D"/><path d="M124 236v7" stroke="#3E2E27" stroke-width="2"/>
+    <circle cx="244" cy="250" r="7" fill="#F6C46D"/><path d="M244 236v7" stroke="#3E2E27" stroke-width="2"/>
+    <g fill="#3E5A33"><circle cx="118" cy="292" r="12"/><circle cx="250" cy="292" r="12"/></g>
+  </symbol>
+
+  <symbol id="cov-cardinal" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="url(#pat-gingham)"/>
+    <ellipse cx="200" cy="154" rx="158" ry="106" fill="#FBF7EF" stroke="#E3D7C3" stroke-width="5"/>
+    <ellipse cx="200" cy="154" rx="132" ry="86" fill="none" stroke="#EFE5D4" stroke-width="2"/>
+    <path d="M110 150c0-34 34-56 76-56s76 22 76 56-30 52-76 52-76-18-76-52z" fill="#5A2414"/>
+    <ellipse cx="180" cy="146" rx="60" ry="40" fill="#6B3A22"/>
+    <path d="M136 132c10-12 30-18 50-16" stroke="#8A4A2A" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M150 134c6-16 30-22 46-14 16-6 30 6 26 20-2 12-18 18-34 16-14 6-36 2-40-10-6-2-4-8 2-12z" fill="#FFFDF6"/>
+    <circle cx="182" cy="136" r="14" fill="#F6B73C"/>
+    <circle cx="177" cy="131" r="4" fill="#FFE29A"/>
+    <rect x="258" y="112" width="26" height="14" rx="7" fill="#E9782F" transform="rotate(-18 271 119)"/>
+    <rect x="272" y="134" width="26" height="14" rx="7" fill="#E9782F" transform="rotate(12 285 141)"/>
+    <g fill="#5F8A3C"><circle cx="268" cy="170" r="9"/><circle cx="280" cy="164" r="9"/><circle cx="276" cy="178" r="8"/></g>
+    <g fill="#E8C27A"><rect x="236" y="186" width="34" height="12" rx="6" transform="rotate(-8 253 192)"/><rect x="222" y="200" width="34" height="12" rx="6" transform="rotate(6 239 206)"/></g>
+    <path d="M24 70V230M30 70V140M36 70V140M30 140V230" stroke="#D9CBB8" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M376 70c-8 20-8 50 0 70V230" stroke="#D9CBB8" stroke-width="4" stroke-linecap="round" fill="none"/>
+  </symbol>
+
+  <symbol id="cov-kurasuwa" viewBox="0 0 400 300">
+    <rect width="400" height="120" fill="#EFE6D6"/>
+    <path d="M0 110 60 52 96 80 150 26 214 92 262 56 318 98 360 64 400 92V120H0Z" fill="#9DB0BF"/>
+    <path d="M150 26 136 40 146 42 156 36 166 44 174 40ZM60 52 50 62 62 64 70 60ZM262 56 252 66 264 68 272 64ZM360 64 352 72 362 74 368 70Z" fill="#FFFFFF"/>
+    <path d="M0 120 80 92 140 108 220 84 300 104 400 88V120Z" fill="#7F96A8" opacity=".6"/>
+    <rect y="118" width="400" height="182" fill="#C8A06E"/>
+    <path d="M0 150c80 6 160-4 240 0s120 6 160 0M0 210c90 6 170-6 260 0s110 6 140 0M0 270c80 4 170-6 250 0" stroke="#B48A58" stroke-width="2" fill="none"/>
+    <rect x="34" y="150" width="200" height="124" rx="16" fill="#A8743F"/>
+    <path d="M44 160h180" stroke="#BD8A55" stroke-width="2"/>
+    <circle cx="100" cy="212" r="46" fill="#C98A4B"/>
+    <circle cx="100" cy="212" r="46" fill="none" stroke="#B0723A" stroke-width="3"/>
+    <g fill="none" stroke="#EDCB92" stroke-width="5" stroke-linecap="round"><path d="M76 194c10 8 10 28 0 36"/><path d="M98 188c10 10 10 38 0 48"/><path d="M120 194c10 8 10 28 0 36"/></g>
+    <rect x="150" y="180" width="26" height="92" rx="13" fill="#D19A5A" transform="rotate(28 163 226)"/>
+    <g stroke="#EDCB92" stroke-width="3.5" stroke-linecap="round"><path d="M160 196l12 4M152 214l12 4M144 232l12 4M136 250l12 4" transform="rotate(28 163 226) translate(4 -2)"/></g>
+    <circle cx="300" cy="168" r="42" fill="#F7EFE2"/>
+    <circle cx="300" cy="168" r="32" fill="#EFCB86"/>
+    <g fill="#6E8D3E"><circle cx="292" cy="160" r="2.4"/><circle cx="306" cy="172" r="2.2"/><circle cx="298" cy="178" r="2"/></g>
+    <path d="M296 160c6 4 12 4 16 0" stroke="#FFF4DA" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="322" cy="256" r="36" fill="#F7EFE2"/>
+    <g fill="#7FA35A"><circle cx="312" cy="248" r="11"/><circle cx="330" cy="244" r="10"/><circle cx="326" cy="262" r="11"/><circle cx="310" cy="264" r="9"/></g>
+    <g fill="#D9584A"><circle cx="320" cy="254" r="5"/><circle cx="336" cy="256" r="4.5"/></g>
+    <circle cx="316" cy="268" r="4" fill="#F2D06B"/>
+  </symbol>
 </defs>
 </svg>
 
@@ -570,7 +674,7 @@ body.only-fav .card:not(.is-fav),body.only-fav .spread:not(.is-fav){display:none
     <div class="hero-text">
       <p class="eyebrow">Sat. <b>October 31, 2026</b> / Halloween Night</p>
       <h1 class="h1">TOKYO SKYTREE<span>DINNER GUIDE</span></h1>
-      <p class="hero-lede">ハロウィンの夜、スカイツリーのふもとで晩ごはん。気になる5軒を、写真のリンクとメニューで見比べるためのガイドです。</p>
+      <p class="hero-lede">ハロウィンの夜、スカイツリーのふもとで晩ごはん。気になる9軒を、メニューと予算と写真のリンクで見比べるためのガイドです。</p>
       <div class="light">
         <div class="light-top"><b>この夜だけのライティング</b><span class="light-time">17:45–24:00</span></div>
         <ul class="light-modes">
@@ -601,11 +705,11 @@ body.only-fav .card:not(.is-fav),body.only-fav .spread:not(.is-fav){display:none
   <section class="sec wrap" id="stores">
     <div class="sec-h">
       <small>Pick your table</small>
-      <h2>今夜の候補、5軒</h2>
-      <p>並びはおすすめ順ではありません。ハートを押した店は「気になる」に入り、上のボタンでその店だけを表示できます。</p>
+      <h2>今夜の候補、9軒</h2>
+      <p>並びはおすすめ順ではありません。はじめの5軒に、条件に合いそうな4軒（「追加の候補」）を加えました。ハートを押した店は「気になる」に入り、上のボタンでその店だけを表示できます。</p>
     </div>
     <div class="cards" id="cards"></div>
-    <p class="swipe-hint"><svg class="ic"><use href="#i-swipe"/></svg>横にスワイプすると5軒すべて見られます</p>
+    <p class="swipe-hint"><svg class="ic"><use href="#i-swipe"/></svg>横にスワイプすると9軒すべて見られます</p>
     <p class="empty-fav" id="emptyFav" hidden>まだ「気になる」がありません。カードのハートを押すと、ここに残ります。</p>
   </section>
 
@@ -613,7 +717,7 @@ body.only-fav .card:not(.is-fav),body.only-fav .spread:not(.is-fav){display:none
     <div class="sec-h">
       <small>Budget</small>
       <h2>予算のものさし</h2>
-      <p>各店の「注文例」を1人あたりに直して並べました。ドリンクやチャージ料も入れています。</p>
+      <p>各店の「注文例」を1人あたりに直して並べました。チャージ料と、価格が分かったドリンクは入れています。ドリンクの価格が分からない店は「＋ドリンク代」と書き、点線を付けました。</p>
     </div>
     <div class="ruler">
       <ul class="ruler-legend">
@@ -693,32 +797,35 @@ body.only-fav .card:not(.is-fav),body.only-fav .spread:not(.is-fav){display:none
         </div>
 
         <div class="nbox" id="where">
-          <h3>5軒の位置関係</h3>
-          <p>押上駅のまわりに3軒、隅田川寄りに2軒。2つのエリアは東武線と浅草通りでつながっています。</p>
+          <h3>9軒の位置関係</h3>
+          <p>押上駅のまわり（スカイツリータウンの中を含む）に7軒、隅田川寄りに2軒。2つのエリアは東武線と浅草通りでつながっています。</p>
           <div class="map-wrap">
-            <svg class="map" viewBox="0 0 320 280" role="img" aria-label="位置関係の略図。西に隅田川と浅草駅、東に押上駅とスカイツリー。押上駅まわりにpiccole lampare、らんぷ＋k、ココノハ。隅田川寄りにLAND_Aとすみだcafe。">
-              <rect x="30" y="0" width="22" height="280" class="river"/>
-              <text class="lbl-river" x="41" y="272" text-anchor="middle" transform="rotate(-90 41 272)">隅田川</text>
-              <rect class="cluster" x="58" y="40" width="106" height="232" rx="14"/>
-              <rect class="cluster" x="182" y="84" width="136" height="188" rx="14"/>
+            <svg class="map" viewBox="0 0 320 290" role="img" aria-label="位置関係の略図。西に隅田川と浅草駅、東に押上駅とスカイツリー。スカイツリータウンの中にココノハ、くらすわ、グリルカーディナル。押上駅まわりにpiccole lampare、らんぷ＋k、パラッツォ サングスト、Trattoria Zinanvo。隅田川寄りにLAND_Aとすみだcafe。">
+              <rect x="30" y="0" width="22" height="290" class="river"/>
+              <text class="lbl-river" x="41" y="282" text-anchor="middle" transform="rotate(-90 41 282)">隅田川</text>
+              <rect class="cluster" x="58" y="40" width="106" height="242" rx="14"/>
+              <rect class="cluster" x="172" y="86" width="146" height="196" rx="14"/>
               <path class="rail" d="M8 70H306"/><path class="rail-tie" d="M8 70H306"/>
               <text class="lbl-s" x="200" y="60" text-anchor="middle">東武線・北十間川</text>
-              <path class="road" d="M8 200H314"/>
-              <text class="lbl-s" x="160" y="222" text-anchor="middle">浅草通り（地下に都営浅草線）</text>
-              <text class="lbl-s" x="66" y="264">隅田川寄り</text>
-              <text class="lbl-s" x="312" y="100" text-anchor="end">押上駅まわり</text>
+              <path class="road" d="M8 202H314"/>
+              <text class="lbl-s" x="120" y="222" text-anchor="middle">浅草通り（地下に都営浅草線）</text>
+              <text class="lbl-s" x="66" y="274">隅田川寄り</text>
+              <text class="lbl-s" x="180" y="102">押上駅まわり</text>
               <g class="spotm"><circle cx="41" cy="70" r="4.5"/><text x="56" y="60" class="lbl-s">リバーウォーク</text></g>
               <g class="spotm"><circle cx="306" cy="34" r="4.5"/><text x="296" y="38" text-anchor="end" class="lbl-s">十間橋（逆さツリー）</text></g>
               <g class="stn"><rect x="1" y="122" width="27" height="17" rx="4"/><text x="14.5" y="134.5" text-anchor="middle">浅草</text></g>
               <g class="stn"><rect x="191" y="62" width="114" height="17" rx="4"/><text x="248" y="74.5" text-anchor="middle" style="font-size:9.5px">とうきょうスカイツリー駅</text></g>
-              <g class="stn"><rect x="70" y="192" width="70" height="17" rx="4"/><text x="105" y="204.5" text-anchor="middle">本所吾妻橋駅</text></g>
-              <g class="stn"><rect x="262" y="192" width="44" height="17" rx="4"/><text x="284" y="204.5" text-anchor="middle">押上駅</text></g>
-              <use href="#tree" x="194" y="96" width="15" height="94" fill="url(#g-light-pump)"/>
+              <g class="stn"><rect x="70" y="194" width="70" height="17" rx="4"/><text x="105" y="206.5" text-anchor="middle">本所吾妻橋駅</text></g>
+              <g class="stn"><rect x="268" y="194" width="44" height="17" rx="4"/><text x="290" y="206.5" text-anchor="middle">押上駅</text></g>
+              <use href="#tree" x="294" y="92" width="15" height="94" fill="url(#g-light-pump)"/>
               <g class="shop"><circle cx="78" cy="96" r="6.5"/><text x="89" y="100.5">LAND_A</text></g>
-              <g class="shop"><circle cx="82" cy="238" r="6.5"/><text x="93" y="242.5">すみだCafe</text></g>
-              <g class="shop"><circle cx="226" cy="140" r="6.5"/><text x="237" y="138">ココノハ</text><text x="237" y="152" class="lbl-s">ソラマチ4F</text></g>
-              <g class="shop"><circle cx="212" cy="234" r="6.5"/><text x="222" y="238.5">らんぷ＋k</text></g>
-              <g class="shop"><circle cx="300" cy="234" r="6.5"/><text x="300" y="256" text-anchor="end">piccole</text></g>
+              <g class="shop"><circle cx="82" cy="244" r="6.5"/><text x="93" y="248.5">すみだCafe</text></g>
+              <g class="shop"><circle cx="284" cy="132" r="6.5"/><text x="274" y="128" text-anchor="end">ソラマチ</text>
+                <text x="274" y="143" text-anchor="end" class="lbl-s">ココノハ 4F</text><text x="274" y="157" text-anchor="end" class="lbl-s">くらすわ 1F</text><text x="274" y="171" text-anchor="end" class="lbl-s">カーディナル 7F</text></g>
+              <g class="shop"><circle cx="262" cy="186" r="6.5"/><text x="252" y="190" text-anchor="end">Zinanvo</text></g>
+              <g class="shop"><circle cx="186" cy="230" r="6.5"/><text x="196" y="234.5">らんぷ＋k</text></g>
+              <g class="shop"><circle cx="186" cy="256" r="6.5"/><text x="196" y="260.5">サングスト</text></g>
+              <g class="shop"><circle cx="300" cy="232" r="6.5"/><text x="306" y="252" text-anchor="end">piccole</text></g>
             </svg>
           </div>
           <p class="map-note">位置関係のイメージを描いた略図です。距離や向きは正確ではありません。正確な場所は各店の「Googleマップで見る」から。</p>
@@ -764,7 +871,7 @@ body.only-fav .card:not(.is-fav),body.only-fav .spread:not(.is-fav){display:none
 
 <script>
 const GUIDE_URL = 'https://claude.ai/artifact/5jX9zwQNdQhBv3xWcTn3Q5';
-const DOMAIN = [1500, 3500];
+const DOMAIN = [1000, 3500];
 const IDEAL = [2000, 2500];
 const CAP = 3000;
 const gmap = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
@@ -783,7 +890,7 @@ const STORES = [
       ['雰囲気', '木を使った内装とやわらかな照明の、こぢんまりとした店。総席数は20席ほどと紹介されています（2022年の掲載）。'],
       ['得意な料理', '窯で焼くピッツァ、生パスタ、石焼きのハンバーグ。醤油糀に漬けた牛肉のボロネーゼなど、発酵食材を隠し味にした料理が多いのが特徴です。'],
       ['過ごし方', '前菜とピッツァとパスタを2人で分け合うのにちょうどいい店。テラス席からはスカイツリーが見えると紹介されています。'],
-      ['ほかとの違い', '5軒のなかで、いちばん隠れ家のバルらしい店。眺めよりも、店の温かさと料理の個性で選ぶお店です。']
+      ['ほかとの違い', '候補のなかで、いちばん隠れ家のバルらしい店。眺めよりも、店の温かさと料理の個性で選ぶお店です。']
     ],
     dishes: [
       { cat: 'PIZZA', ic: 'pizza', name: 'マルゲリータ', desc: '窯で焼く、定番のピッツァ', price: 1390, check: '2024年の紹介記事では1,880円の表記もあり' },
@@ -839,7 +946,7 @@ const STORES = [
       ['雰囲気', 'エレベーターで5階に上がるとテーブル席のダイニング。階段で6階に上がると、スカイツリーを見上げる屋上テラスとバーカウンターがあります。'],
       ['得意な料理', '炭火で焼き、鉄板で仕上げる国産牛100％の粗挽きハンバーグ。ソースは3種類から選べます。パスタやグラタン、前菜もそろいます。'],
       ['過ごし方', 'ハロウィンの光をまとったスカイツリーを、すぐそばに感じながら食事。食後に6階のバーで一杯、という流れもできます。'],
-      ['ほかとの違い', '5軒のなかで、スカイツリーにいちばん近い眺め。そのぶんチャージ料がかかり、予算は上限に近づきます。']
+      ['ほかとの違い', '候補のなかで、屋上テラスからスカイツリーをいちばん間近に見られる店。そのぶんチャージ料がかかり、予算は上限に近づきます。']
     ],
     dishes: [
       { cat: 'MAIN', ic: 'meat', name: '粗挽き炭火ハンバーグ 200g', desc: '国産牛100％。ソースは3種から', price: 1680, check: '1,640円の表記もあり（掲載時期で差）' },
@@ -887,7 +994,7 @@ const STORES = [
     id: 'landa', name: 'LAND_A（ランド エー）', short: 'LAND_A', kana: 'ランド エー',
     area: '東京ミズマチ（向島）', genre: 'カフェダイニング',
     catch: '川沿いの高架下で、<br>灯りと一緒にピッツァを',
-    lead: '浅草とスカイツリーを結ぶ「東京ミズマチ」の、隅田川側にあるカフェダイニング。ピッツァやパスタ、肉料理がそろい、テラス席も含めて約70席と、5軒のなかでは広い店です。',
+    lead: '浅草とスカイツリーを結ぶ「東京ミズマチ」の、隅田川側にあるカフェダイニング。ピッツァやパスタ、肉料理がそろい、テラス席も含めて約70席と、候補のなかでは広い店です。',
     budget: '1,680円〜＋ドリンク代', budgetNote: 'ドリンク価格は要確認',
     tags: ['川沿いテラス', 'ピッツァ', '浅草から歩ける', '開放的'],
     mini: [['駅から', '本所吾妻橋A3 徒歩4分'], ['眺め', 'スカイツリーが見えるかは未確認'], ['予約', 'できる']],
@@ -994,7 +1101,7 @@ const STORES = [
     sources: [['店舗サイト', 'https://foodplace.jp/sumida-cafe/'], ['ホットペッパー', 'https://www.hotpepper.jp/strJ001275491/'], ['食べログ', 'https://tabelog.com/tokyo/A1312/A131203/13257342/']]
   },
   {
-    id: 'kokonoha', name: 'ココノハ 東京スカイツリータウン・ソラマチ店', short: 'ココノハ', kana: 'ここのは',
+    id: 'kokonoha', inTown: true, name: 'ココノハ 東京スカイツリータウン・ソラマチ店', short: 'ココノハ', kana: 'ここのは',
     area: '東京ソラマチ 4F', genre: '和カフェ',
     catch: 'スカイツリーの足もとで、<br>やさしい和パスタとデザートを',
     lead: '東京ソラマチ4階の、ナチュラルな雰囲気のカフェ。味噌や醤油など和の調味料を使ったパスタを中心に、リゾットやどんぶり、デザートがそろいます。',
@@ -1005,7 +1112,7 @@ const STORES = [
       ['雰囲気', 'ナチュラルでやわらかい雰囲気のカフェ。気負わずに入れます。'],
       ['得意な料理', '「鶏そぼろと茄子の味噌トマト」「蒸し鶏と枝豆の味噌クリーム」など、和の調味料を使ったパスタが看板です。'],
       ['過ごし方', 'スカイツリータウンの中なので、店を出ればすぐにライティングを見上げられます。食後のデザートまでゆっくり。'],
-      ['ほかとの違い', '5軒のなかでいちばん気軽で、予算も抑えやすい店。特別なレストランというより、居心地のいいカフェです。']
+      ['ほかとの違い', '候補のなかでも気軽で、予算を抑えやすい店。特別なレストランというより、居心地のいいカフェです。']
     ],
     dishes: [
       { cat: 'PASTA', ic: 'bowl', name: '鶏そぼろと茄子の味噌トマト', desc: '', price: 1298, check: '1,300円の表記もあり' },
@@ -1045,7 +1152,232 @@ const STORES = [
     },
     walk: { from: '東京スカイツリー', note: '東京スカイツリータウン（東京ソラマチ）4階' },
     sources: [['運営会社の店舗ページ', 'https://www.potomak.co.jp/shop/423/'], ['東京ソラマチ', 'https://www.tokyo-solamachi.jp/shop/232/'], ['ぐるなび', 'https://r.gnavi.co.jp/brj99bu20000/']]
+  },
+  {
+    id: 'zinanvo', added: true, name: 'Trattoria Zinanvo', short: 'Zinanvo', kana: 'トラットリア ジナンボ',
+    area: '押上駅前', genre: 'トラットリア',
+    catch: '窓の向こうにスカイツリー。<br>じっくり煮込んだラグーのパスタを',
+    lead: '2025年12月、押上駅のそばに開いたトラットリア。銀座の有名トラットリアで腕を磨いたシェフの店と紹介されています。看板は長時間煮込んだラグーソースのスパゲッティ。窓からスカイツリーが見える店内です。',
+    budget: '1,800円〜＋ドリンク代', budgetNote: 'チャージは要確認',
+    tags: ['パスタが看板', '窓からスカイツリー', '新しいお店', '駅近'],
+    mini: [['駅から', '押上駅A1 徒歩1分'], ['眺め', '窓からスカイツリー（一休掲載）'], ['予約', 'できる']],
+    charms: [
+      ['雰囲気', '押上駅すぐのマンション1階にある、こぢんまりとしたトラットリア。窓からスカイツリーが見えると紹介されています。'],
+      ['得意な料理', '6〜8時間煮込むラグーソースのスパゲッティが看板。アマトリチャーナやアラビアータ、前菜の盛り合わせ、ティラミスも口コミで人気です。'],
+      ['過ごし方', 'パスタを1皿ずつと前菜を分け合う、トラットリアらしい夜に。土曜の夜は18時開店なので、18:30〜19:00の入店にちょうど合います。'],
+      ['ほかとの違い', '開店して1年たたない新しい店で、口コミはまだ少なめ。パスタを主役に選ぶなら有力な候補です。']
+    ],
+    dishes: [
+      { cat: 'PASTA', ic: 'pasta', name: 'ラグーソースのスパゲッティ', desc: '長時間煮込んだラグーソース。店の看板', price: 1600 },
+      { cat: 'PASTA', ic: 'pasta', name: 'アマトリチャーナ', desc: '', price: 1600 },
+      { cat: 'PASTA', ic: 'pasta', name: 'スパゲッティ・アラビアータ', desc: '', price: 1300 },
+      { cat: 'PASTA', ic: 'pasta', name: 'タコのスパゲッティ トマトソース', desc: '', price: 1500 },
+      { cat: 'ANTIPASTO', ic: 'plate', name: '前菜3種盛り合わせ', desc: '', price: 1000 },
+      { cat: 'ANTIPASTO', ic: 'plate', name: 'カポナータ', desc: '', price: 700 },
+      { cat: 'DRINK', ic: 'drink', name: 'グラスワイン', desc: '口コミでは700円ほどから。ソフトドリンクの価格は未確認', price: 700, suffix: '円〜' }
+    ],
+    dishesNote: '料理の価格は食べログ掲載のメニューです。',
+    plans: [
+      { who: 'For two', title: 'パスタ2皿とカポナータ', items: [['ラグーソースのスパゲッティ', 1600], ['スパゲッティ・アラビアータ', 1300], ['カポナータ', 700], ['ドリンク ×2', null]], total: null, perText: '1,800円＋ドリンク代', stamp: 'unk' },
+      { who: 'For two', title: '前菜の盛り合わせから', items: [['前菜3種盛り合わせ', 1000], ['ラグーソースのスパゲッティ', 1600], ['アマトリチャーナ', 1600], ['ドリンク ×2', null]], total: null, perText: '2,100円＋ドリンク代', stamp: 'unk' }
+    ],
+    plansNote: 'グラスワインは700円ほどからという口コミがあり、1杯ずつ頼むと1人2,500〜2,800円の計算です。ソフトドリンクの価格とチャージ料の有無は確認できませんでした。',
+    ruler: { min: 1800, max: 2100, open: true, label: '1,800〜2,100円＋ドリンク代' },
+    cautions: [
+      '2025年12月開業の新しい店で、口コミはまだ少なめです。',
+      'ソフトドリンクの価格と、お通し・チャージ料の有無は確認できませんでした。',
+      '土曜の夜は18:00開店（昼は11:30〜14:30）。月曜定休です。',
+      '電話番号が掲載サイトによって違います。予約はネット予約サイトからが確実です。',
+      'コース（5,000円〜）は予算を超えます。'
+    ],
+    facts: [
+      ['住所', '東京都墨田区押上1-22-1 スカイグランデ押上1F'],
+      ['最寄り駅', '押上駅A1出口から徒歩1分<small>半蔵門線 押上駅から徒歩2分（一休・ぐるなび掲載）</small>'],
+      ['土曜の営業', '18:00〜23:00<small>昼は11:30〜14:30（LO14:00）。一休・ぐるなび掲載</small>'],
+      ['定休日', '月曜<small>祝日の場合は営業し、翌火曜が休み</small>'],
+      ['予約', '一休・食べログ・ぐるなびでネット予約<small>一休掲載の電話：03-6822-1379</small>']
+    ],
+    pockets: [
+      { label: '店内と料理', src: '一休.comレストラン', url: 'https://restaurant.ikyu.com/154282' },
+      { label: '訪れた人の写真', src: '食べログ', url: 'https://tabelog.com/tokyo/A1312/A131203/13316754/dtlphotolst/' },
+      { label: 'お店の紹介', src: 'ぐるなび', url: 'https://r.gnavi.co.jp/rwd68t5f0000/' },
+      { label: '開店のニュース', src: '号外NET 墨田区', url: 'https://sumida.goguynet.jp/2026/01/07/zinanbo-open/' }
+    ],
+    links: {
+      menu: 'https://tabelog.com/tokyo/A1312/A131203/13316754/dtlmenu/', photos: 'https://restaurant.ikyu.com/154282',
+      official: 'https://gjtt200.gorp.jp/', officialLabel: 'お店のページを見る',
+      reserve: { url: 'https://restaurant.ikyu.com/154282', via: '一休.comレストラン' },
+      mapq: 'Trattoria Zinanvo 東京都墨田区押上1-22-1'
+    },
+    walk: { note: '押上駅A1出口から徒歩1分（一休・ぐるなび掲載）' },
+    sources: [['一休.comレストラン', 'https://restaurant.ikyu.com/154282'], ['食べログ', 'https://tabelog.com/tokyo/A1312/A131203/13316754/'], ['ぐるなび', 'https://r.gnavi.co.jp/rwd68t5f0000/']]
+  },
+  {
+    id: 'sangusto', added: true, name: 'Palazzo SAN GUSTO', short: 'サングスト', kana: 'パラッツォ サングスト',
+    area: '押上・業平', genre: '一軒家イタリアン',
+    catch: '4階建ての一軒家で、<br>薪窯のナポリピッツァを',
+    lead: '押上駅から歩いて2〜3分、スカイツリーのすぐそばに建つ4階建ての一軒家イタリアン。薪窯で焼くナポリピッツァと、250種類のワインがそろうと紹介されています。',
+    budget: '約1,800円〜＋ドリンク代', budgetNote: 'チャージなし（掲載）',
+    tags: ['薪窯ピッツァ', '一軒家', 'チャージなし', '無休'],
+    mini: [['駅から', '押上駅 徒歩2〜3分'], ['眺め', 'スカイツリーの間近（席は要確認）'], ['予約', 'できる']],
+    charms: [
+      ['雰囲気', 'イタリアの家具でしつらえた4つのフロアが、それぞれ違う雰囲気になっていると紹介されています。ガラス窓の開放感もあります。'],
+      ['得意な料理', '薪窯で焼くナポリピッツァが主役。前菜やパスタ、炭火焼きのメインまでそろうトラットリアです。'],
+      ['過ごし方', 'マルゲリータと前菜を2人で分ければ、量も予算もちょうどよく収まります。食後は目の前のスカイツリーへ。'],
+      ['ほかとの違い', 'チャージ料がかからないとされる店。窯焼きピッツァで迷ったら、らんぷ＋kと見比べてみてください。']
+    ],
+    dishes: [
+      { cat: 'PIZZA', ic: 'pizza', name: 'マルゲリータ', desc: '薪窯で焼くナポリピッツァ', price: 1870, check: 'ヒトサラでは1,650円の表記' },
+      { cat: 'PIZZA', ic: 'pizza', name: 'マルゲリータ・ブッファラ', desc: '水牛のモッツァレラで', price: 2310 },
+      { cat: 'ANTIPASTO', ic: 'plate', name: 'トマトとモッツァレラのカプレーゼ', desc: '', price: 1760, check: 'Retty掲載（時期不明）' },
+      { cat: 'ANTIPASTO', ic: 'plate', name: '季節野菜の自家製ピクルス', desc: '', price: 610, check: 'Retty掲載（時期不明）' },
+      { cat: 'DRINK', ic: 'drink', name: 'ワイン・ドリンク', desc: '250種類のワインがあると紹介。価格は未確認', price: null }
+    ],
+    dishesNote: 'ピッツァの価格は公式サイト掲載です。前菜はRetty掲載の価格で、時期が古い可能性があります。',
+    plans: [
+      { who: 'For two', title: 'ピッツァ1枚と前菜を分ける', items: [['マルゲリータ', 1870], ['トマトとモッツァレラのカプレーゼ', 1760], ['ドリンク ×2', null]], total: null, perText: '1,815円＋ドリンク代', stamp: 'unk' },
+      { who: 'For two', title: 'ピッツァ2枚を食べ比べ', items: [['マルゲリータ', 1870], ['マルゲリータ・ブッファラ', 2310], ['ドリンク ×2', null]], total: null, perText: '2,090円＋ドリンク代', stamp: 'unk' }
+    ],
+    plansNote: 'チャージ料・サービス料は「なし」と掲載されています（一休）。ドリンクの価格は確認できませんでした。',
+    ruler: { min: 1815, max: 2090, open: true, label: '1,815〜2,090円＋ドリンク代' },
+    cautions: [
+      '一休では夜の予算が5,000〜5,999円と表示されています（コース中心の目安とみられます）。単品で頼めば抑えられますが、ドリンク次第です。',
+      'ドリンクの価格は確認できませんでした。',
+      'スカイツリーが見える席があるか、どの階に案内されるかは予約時に確認を。',
+      '土日祝の夜の営業時間が掲載元で違います（公式：17:00〜23:00〈LO22:00〉／ヒトサラ：17:00〜22:30〈LO21:30〉）。'
+    ],
+    facts: [
+      ['住所', '東京都墨田区業平1-21-7'],
+      ['最寄り駅', '押上駅から徒歩2〜3分<small>Retty掲載：徒歩3分（200m）</small>'],
+      ['土曜の営業', '17:00〜23:00（LO22:00）<small>公式サイト掲載。土日祝は22:30まで（LO21:30）とする掲載もあり</small>'],
+      ['定休日', 'なし（無休と掲載）'],
+      ['予約', '公式ネット予約／TableCheck<small>電話 03-6658-4111（OZmall掲載）</small>'],
+      ['チャージ', 'なし（一休掲載）']
+    ],
+    pockets: [
+      { label: '一軒家の外観と店内', src: '公式サイト', url: 'https://palazzosangusto.jp/' },
+      { label: 'ピッツァと料理', src: 'ヒトサラ「料理」', url: 'https://hitosara.com/0006128736/food.html' },
+      { label: 'お店の写真', src: '一休.comレストラン', url: 'https://restaurant.ikyu.com/103844' },
+      { label: 'ディナーの紹介', src: 'OZmall', url: 'https://www.ozmall.co.jp/restaurant/1602/dinner/' }
+    ],
+    links: {
+      menu: 'https://hitosara.com/0006128736/food.html', photos: 'https://restaurant.ikyu.com/103844', official: 'https://palazzosangusto.jp/',
+      reserve: { url: 'https://plazzosangusto.owst.jp/', via: '公式予約サイト' },
+      mapq: 'Palazzo SAN GUSTO 東京都墨田区業平1-21-7'
+    },
+    walk: { note: '押上駅から徒歩2〜3分（Retty・OZmall掲載）' },
+    sources: [['公式サイト', 'https://palazzosangusto.jp/'], ['一休.comレストラン', 'https://restaurant.ikyu.com/103844'], ['ヒトサラ', 'https://hitosara.com/0006128736/'], ['Retty', 'https://retty.me/area/PRE13/ARE9/SUB904/100000508668/']]
+  },
+  {
+    id: 'cardinal', added: true, inTown: true, name: '洋食屋 銀座グリルカーディナル', short: 'グリルカーディナル', kana: 'ようしょくや ぎんざグリルカーディナル',
+    area: '東京ソラマチ 7F', genre: '洋食',
+    catch: 'ソラマチの7階で、<br>デミグラスのハンバーグを',
+    lead: '東京ソラマチ7階にある洋食店。デミグラスソースのハンバーグや、ふわとろオムライス、ビーフシチューなど、王道の洋食がそろいます。',
+    budget: '約1,500円〜＋ドリンク代', budgetNote: '',
+    tags: ['王道の洋食', 'ハンバーグ', 'スカイツリータウン内', '遅くまで営業'],
+    mini: [['駅から', '押上駅B3 徒歩約4分（ソラマチ7F）'], ['眺め', '未確認'], ['予約', 'できる']],
+    charms: [
+      ['雰囲気', 'スカイツリータウンの中にある洋食レストラン。食べログの予算は2,000〜2,999円で、気負わずに入れます。'],
+      ['得意な料理', 'デミグラスソースのハンバーグが口コミで好評。フォアグラをのせた特製ハンバーグ、ビーフカツレツ、ビーフシチューもあります。'],
+      ['過ごし方', '食事のあとは、そのままソラマチを下りてスカイツリーの足もとへ。雨や寒さを気にせず行き来できます。'],
+      ['ほかとの違い', '候補のなかで唯一の洋食屋。イタリアンが続いて迷ったときの、別の選択肢になります。']
+    ],
+    dishes: [
+      { cat: 'MAIN', ic: 'meat', name: '洋食屋さんのハンバーグステーキ', desc: 'デミグラスソース', price: 1490 },
+      { cat: 'MAIN', ic: 'meat', name: '特製ハンバーグ フォアグラとシャンピニオンのデュクセルのせ', desc: '', price: 1740 },
+      { cat: 'MAIN', ic: 'plate', name: 'ふわとろオムライス', desc: 'キノコ入りデミグラスソース', price: 1380 },
+      { cat: 'MAIN', ic: 'gratin', name: 'ビーフシチュー', desc: '', price: 2380 },
+      { cat: 'DRINK', ic: 'drink', name: 'ドリンク', desc: '価格は未確認', price: null }
+    ],
+    dishesNote: '価格はRetty掲載のメニュー一覧によるもので、掲載時期が古い可能性があります。',
+    plans: [
+      { who: 'For one', title: 'ハンバーグとドリンク', items: [['洋食屋さんのハンバーグステーキ', 1490], ['ドリンク 1杯', null]], total: null, perText: '1,490円＋ドリンク代', stamp: 'unk' },
+      { who: 'For two', title: 'ハンバーグとオムライス', items: [['特製ハンバーグ（フォアグラのせ）', 1740], ['ふわとろオムライス', 1380], ['ドリンク ×2', null]], total: null, perText: '1,560円＋ドリンク代', stamp: 'unk' }
+    ],
+    plansNote: 'ドリンクの価格とチャージ料の有無は確認できませんでした。ビーフシチュー（2,380円）を選ぶと、ドリンク代によっては3,000円に近づきます。',
+    ruler: { min: 1490, max: 1560, open: true, label: '1,490〜1,560円＋ドリンク代' },
+    cautions: [
+      'メニューの価格は掲載時期が古い可能性があります。最新は店舗ページで確認を。',
+      'ドリンクの価格と、チャージ料の有無は確認できませんでした。',
+      '閉店時間が掲載元で違います（23:00〈LO22:00〉／22:00）。',
+      '窓からスカイツリーが見えるかは確認できませんでした。'
+    ],
+    facts: [
+      ['場所', '東京都墨田区押上1-1-2 東京ソラマチ7F'],
+      ['最寄り駅', '半蔵門線 押上駅B3出口から徒歩約4分'],
+      ['営業時間', '11:00〜23:00（料理LO22:00）<small>ホットペッパー掲載。22:00閉店とする掲載もあり</small>'],
+      ['定休日', 'なし（ホットペッパー掲載）'],
+      ['予約', 'ホットペッパー・食べログでネット予約<small>電話 03-5610-2872</small>']
+    ],
+    pockets: [
+      { label: 'お店と料理の写真', src: 'ホットペッパー', url: 'https://www.hotpepper.jp/strJ004469864/' },
+      { label: '訪れた人の写真', src: '食べログ', url: 'https://tabelog.com/tokyo/A1312/A131203/13141265/dtlphotolst/' },
+      { label: 'メニュー一覧', src: 'Retty', url: 'https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/' },
+      { label: 'お店の紹介', src: 'ぐるなび', url: 'https://r.gnavi.co.jp/4d2yvzg80000/' }
+    ],
+    links: {
+      menu: 'https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/', photos: 'https://www.hotpepper.jp/strJ004469864/',
+      official: 'https://tabelog.com/tokyo/A1312/A131203/13141265/', officialLabel: '食べログの店舗ページ',
+      reserve: { url: 'https://www.hotpepper.jp/strJ004469864/', via: 'ホットペッパー' },
+      mapq: '洋食屋 銀座グリルカーディナル 東京ソラマチ'
+    },
+    walk: { note: '東京ソラマチ7階（押上駅B3出口から徒歩約4分）' },
+    sources: [['ホットペッパー', 'https://www.hotpepper.jp/strJ004469864/'], ['Retty', 'https://retty.me/area/PRE13/ARE9/SUB904/100000716108/'], ['食べログ', 'https://tabelog.com/tokyo/A1312/A131203/13141265/']]
+  },
+  {
+    id: 'kurasuwa', added: true, inTown: true, name: 'くらすわ 東京スカイツリータウン・ソラマチ店', short: 'くらすわ', kana: 'くらすわ',
+    area: '東京ソラマチ 1F', genre: '信州の食材のレストラン',
+    catch: '信州の野菜とパンで、<br>あたたかい晩ごはんを',
+    lead: '長野・諏訪の「くらすわ」の東京店。養命酒製造がプロデュースし、信州の野菜や信州十四豚を使った料理と自家製パンを出しています。入口にパンのショップがあり、オープンキッチンが見えるレストランです。',
+    budget: '2,200円〜＋ドリンク代', budgetNote: '夜はセット',
+    tags: ['信州の食材', '自家製パン', 'ソファ席あり', 'スカイツリータウン内'],
+    mini: [['駅から', '押上駅A2 徒歩約2分（ソラマチ1F）'], ['眺め', 'テラス席あり（8席）'], ['予約', '電話で']],
+    charms: [
+      ['雰囲気', '大きなテーブル席、少人数のテーブル席、くつろげるソファ席がある全48席のレストラン（うちテラス8席）。'],
+      ['得意な料理', '信州十四豚や信州の野菜を使った料理。夜はサラダ・スープ・自家製パンが付くディナーセットが2,000円台からです。'],
+      ['過ごし方', 'パンとスープでほっとする、やさしい晩ごはんに。ソラマチ1階なので、店を出ればすぐスカイツリーです。'],
+      ['ほかとの違い', 'パンと野菜が主役の店。ディナーのラストオーダーが20時と早いのが注意点です。']
+    ],
+    dishes: [
+      { cat: 'DINNER SET', ic: 'pasta', name: '信州十四豚のボロネーゼ', desc: 'くらすわガーデンサラダ・自家製パン・スープ付き', price: 2200 },
+      { cat: 'MAIN', ic: 'meat', name: '信州十四豚のグリル わさびチーズソース', desc: '夜のメニューかは未確認', price: 2500 },
+      { cat: 'DRINK', ic: 'drink', name: 'ドリンク', desc: '価格は未確認', price: null }
+    ],
+    dishesNote: 'ディナーセットは「2,000円〜」と公式サイトに掲載されています。',
+    plans: [
+      { who: 'For one', title: 'ボロネーゼのディナーセット', items: [['信州十四豚のボロネーゼ（サラダ・パン・スープ付き）', 2200], ['ドリンク 1杯', null]], total: null, perText: '2,200円＋ドリンク代', stamp: 'unk' }
+    ],
+    plansNote: 'ドリンクの価格は確認できませんでした。',
+    ruler: { min: 2200, max: 2200, open: true, label: '2,200円〜＋ドリンク代' },
+    cautions: [
+      'ディナーのラストオーダーは20:00（公式）。19時の入店だと、注文を急ぐことになります。',
+      '営業時間が掲載元で違います（公式のディナー17:00〜21:00、ソラマチの店舗ページは9:00〜22:00 など）。',
+      'ネット予約の窓口は確認できませんでした。予約は電話で（03-3624-8721）。',
+      'ドリンクの価格は確認できませんでした。'
+    ],
+    facts: [
+      ['場所', '東京都墨田区押上1-1-2 東京ソラマチ1F イーストヤード12番地'],
+      ['最寄り駅', '押上駅A2出口から徒歩約2分'],
+      ['夜の営業', 'ディナー 17:00〜21:00（LO20:00）<small>公式サイト掲載。ソラマチの店舗ページでは9:00〜22:00（LO20:00）</small>'],
+      ['予約', '電話 03-3624-8721'],
+      ['席', '48席（うちテラス8席）・ソファ席あり']
+    ],
+    pockets: [
+      { label: 'レストランとメニュー', src: '公式サイト', url: 'https://www.clasuwa.jp/shops/solamachi/restaurant/' },
+      { label: 'お店の紹介', src: '東京ソラマチ公式', url: 'https://www.tokyo-solamachi.jp/restaurant/1029/' },
+      { label: '訪れた人の写真', src: '食べログ', url: 'https://tabelog.com/tokyo/A1312/A131203/13245792/dtlphotolst/' },
+      { label: '開業時の店内写真', src: 'PR TIMES', url: 'https://prtimes.jp/main/html/rd/p/000000091.000023613.html' }
+    ],
+    links: {
+      menu: 'https://www.clasuwa.jp/shops/solamachi/restaurant/', photos: 'https://www.tokyo-solamachi.jp/restaurant/1029/',
+      official: 'https://www.clasuwa.jp/shops/solamachi/information/restaurant/', officialLabel: '公式のお知らせを見る',
+      reserve: { tel: '03-3624-8721' },
+      mapq: 'くらすわ 東京スカイツリータウン・ソラマチ店'
+    },
+    walk: { note: '東京ソラマチ1階（押上駅A2出口から徒歩約2分）' },
+    sources: [['公式サイト', 'https://www.clasuwa.jp/shops/solamachi/restaurant/'], ['東京ソラマチ', 'https://www.tokyo-solamachi.jp/restaurant/1029/'], ['開業時の発表（PR TIMES）', 'https://prtimes.jp/main/html/rd/p/000000091.000023613.html']]
   }
+
 ];
 
 const ICON = id => `<svg class="ic" aria-hidden="true"><use href="#i-${id}"/></svg>`;
@@ -1070,7 +1402,7 @@ function renderCards() {
     <article class="card" data-store="${s.id}">
       <div class="cover">
         <svg viewBox="0 0 400 300" role="img" aria-label="${s.short}のイメージイラスト"><use href="#cov-${s.id}"/></svg>
-        <span class="illu">ILLUSTRATION</span>
+        <span class="illu">ILLUSTRATION</span>${s.added ? '<span class="newb">追加の候補</span>' : ''}
         <button class="heart" type="button" data-fav="${s.id}" aria-pressed="false" aria-label="${s.short}を気になるに入れる">${ICON('heart')}</button>
       </div>
       <div class="card-b">
@@ -1100,7 +1432,7 @@ function renderRuler() {
         <span class="ideal"></span><span class="cap"></span><span class="bar-r"></span>${open}${dots}${over}
       </div></li>`;
   }).join('');
-  const ticks = [1500, 2000, 2500, 3000, 3500];
+  const ticks = [1000, 1500, 2000, 2500, 3000, 3500];
   document.getElementById('rulerAxis').innerHTML = ticks.map(t =>
     `<span style="left:${pct(t)}"${t === CAP ? ' class="capl"' : ''}>${yen(t)}</span>`).join('');
 }
@@ -1145,8 +1477,9 @@ function actionsHTML(s) {
   a.push(`<a class="act primary" href="${L.menu}" ${ext}>${ICON('menu')}<span>メニューを見る<small>お店の最新メニュー</small></span></a>`);
   a.push(`<a class="act" href="${L.photos}" ${ext}>${ICON('camera')}<span>お店の写真をもっと見る</span></a>`);
   a.push(`<a class="act" href="${L.map}" ${ext}>${ICON('pin')}<span>Googleマップで見る</span></a>`);
-  a.push(`<a class="act" href="${L.official}" ${ext}>${ICON('home')}<span>公式サイトを見る</span></a>`);
-  if (L.reserve) a.push(`<a class="act" href="${L.reserve.url}" ${ext}>${ICON('cal')}<span>予約する<small>${L.reserve.via}</small></span></a>`);
+  a.push(`<a class="act" href="${L.official}" ${ext}>${ICON('home')}<span>${L.officialLabel || '公式サイトを見る'}</span></a>`);
+  if (L.reserve && L.reserve.tel) a.push(`<span class="act">${ICON('phone')}<span>予約は電話で<small class="sel">${L.reserve.tel}</small></span></span>`);
+  else if (L.reserve) a.push(`<a class="act" href="${L.reserve.url}" ${ext}>${ICON('cal')}<span>予約する<small>${L.reserve.via}</small></span></a>`);
   else a.push(`<span class="act none">${ICON('cal')}<span>予約はできません<small>当日、直接お店へ</small></span></span>`);
   return a.join('');
 }
@@ -1160,7 +1493,7 @@ function renderSpreads() {
           <span class="illu">ILLUSTRATION</span>
         </div>
         <header class="sp-head">
-          <p class="sp-eyebrow">${s.area}・${s.genre}</p>
+          <p class="sp-eyebrow">${s.added ? '<span class="newchip">追加の候補</span>' : ''}${s.area}・${s.genre}</p>
           <h2 class="sp-name">${s.name}</h2>
           <p class="sp-kana">${s.kana}</p>
           <p class="sp-catch">${s.catch}</p>
@@ -1221,7 +1554,7 @@ function renderSpreads() {
 function renderWalk() {
   document.getElementById('walkList').innerHTML = STORES.map(s => `
     <li><b>${s.short}</b><span>${s.walk.note}</span>
-      ${s.id === 'kokonoha' ? '' : `<a href="${gdir('東京スカイツリー', s.links.mapq)}" ${ext}>スカイツリーからの徒歩ルートを地図で見る</a>`}</li>`).join('');
+      ${s.inTown ? '' : `<a href="${gdir('東京スカイツリー', s.links.mapq)}" ${ext}>スカイツリーからの徒歩ルートを地図で見る</a>`}</li>`).join('');
 }
 
 function renderSources() {
@@ -1246,19 +1579,19 @@ function syncFavs() {
   const list = STORES.filter(s => favs.has(s.id));
   document.getElementById('shareList').innerHTML = list.length
     ? list.map(s => `<li>${s.short}</li>`).join('')
-    : '<li class="empty">まだ選ばれていません（選ばないときは5軒すべてを送ります）</li>';
+    : `<li class="empty">まだ選ばれていません（選ばないときは${STORES.length}軒すべてを送ります）</li>`;
   document.getElementById('lineBtn').href = 'https://line.me/R/share?text=' + encodeURIComponent(shareText());
 }
 
 function shareText() {
   const list = STORES.filter(s => favs.has(s.id));
   const pick = list.length ? list : STORES;
-  const head = list.length ? '【10/31 晩ごはん 気になるお店】' : '【10/31 晩ごはん 候補5軒】';
+  const head = list.length ? '【10/31 晩ごはん 気になるお店】' : `【10/31 晩ごはん 候補${STORES.length}軒】`;
   const body = pick.map(s => [
     `♡ ${s.name}（1人 ${s.budget}）`,
     `メニュー：${s.links.menu}`,
     `地図：${s.links.map}`,
-    s.links.reserve ? `予約：${s.links.reserve.url}` : '予約：できない（当日直接）'
+    !s.links.reserve ? '予約：できない（当日直接）' : s.links.reserve.tel ? `予約：電話 ${s.links.reserve.tel}` : `予約：${s.links.reserve.url}`
   ].join('\n')).join('\n\n');
   return head + '\n\n' + body + (GUIDE_URL ? `\n\nガイド：${GUIDE_URL}` : '');
 }
