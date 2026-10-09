@@ -1,0 +1,67 @@
+url	status	final_url	opens	note	suggested_url
+https://claude.ai/artifact/5jX9zwQNdQhBv3xWcTn3Q5	200	https://claude.ai/artifact/5jX9zwQNdQhBv3xWcTn3Q5	yes	HTTP 200（ページの中身は未確認）	
+https://ekitan.com/transit/route/sf-1923/st-1752	200	https://ekitan.com/transit/route/sf-1923/st-1752	yes		
+https://fonts.googleapis.com	404	https://fonts.googleapis.com/	n/a	preconnect用のオリジン（ルートの404は正常。問題なし）	
+https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Young+Serif&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap	200	https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Young+Serif&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap	n/a	preconnect用のオリジン（ルートの404は正常。問題なし）	
+https://fonts.gstatic.com	404	https://fonts.gstatic.com/	n/a	preconnect用のオリジン（ルートの404は正常。問題なし）	
+https://foodplace.jp/sumida-cafe/	200	https://foodplace.jp/sumida-cafe/	yes		
+https://gjtt200.gorp.jp/	200	https://gjtt200.gorp.jp/	yes		
+https://hitosara.com/0006128736/	200	https://hitosara.com/0006128736/	yes		
+https://hitosara.com/0006128736/food.html	200	https://hitosara.com/0006128736/food.html	yes		
+https://hitosara.com/0031327590/	200	https://hitosara.com/0031327590/	yes		
+https://hitosara.com/0031327590/photo/	200	https://hitosara.com/0031327590/photo/	yes		
+https://lamp-oshiage.com/	200	https://lamp-oshiage.com/	yes		
+https://lamp-oshiage.com/drink/	200	https://lamp-oshiage.com/drink/	yes		
+https://lamp-oshiage.com/menu/	200	https://lamp-oshiage.com/menu/	yes		
+https://lamp-oshiage.com/space/	200	https://lamp-oshiage.com/space/	yes		
+https://land-a.jp/	200	https://land-a.jp/	yes		
+https://land-a.jp/menu/	200	https://land-a.jp/menu/	yes		
+https://palazzosangusto.jp/	200	https://palazzosangusto.jp/	yes		
+https://piccole-oshiage.com/menu/	200	https://piccole-oshiage.com/menu/	yes		
+https://piccole-oshiage.com/space/	200	https://piccole-oshiage.com/space/	yes		
+https://piccole-oshiage.com/top/	200	https://piccole-oshiage.com/top/	yes		
+https://piccolelampare.owst.jp/	200	https://piccolelampare.owst.jp/	yes		
+https://plazzosangusto.owst.jp/	200	https://plazzosangusto.owst.jp/	yes	つづりは誤っていそうだが実在し、サングストの公式予約サイト（owst）として開ける	
+https://prtimes.jp/main/html/rd/p/000000091.000023613.html	200	https://prtimes.jp/main/html/rd/p/000000091.000023613.html	yes	記事自体は開ける。ただし、くらすわソラマチ店は2026-02-28に閉店	https://www.clasuwa.jp/3148/
+https://prtimes.jp/main/html/rd/p/000000168.000025087.html	200	https://prtimes.jp/main/html/rd/p/000000168.000025087.html	yes		
+https://r.gnavi.co.jp/4d2yvzg80000/	200	https://r.gnavi.co.jp/4d2yvzg80000/	yes		
+https://r.gnavi.co.jp/b369901/	200	https://r.gnavi.co.jp/b369901/	yes		
+https://r.gnavi.co.jp/brj99bu20000/	200	https://r.gnavi.co.jp/brj99bu20000/	yes		
+https://r.gnavi.co.jp/je5ywfpu0000/	200	https://r.gnavi.co.jp/je5ywfpu0000/	yes		
+https://r.gnavi.co.jp/rwd68t5f0000/	200	https://r.gnavi.co.jp/rwd68t5f0000/	yes		
+https://restaurant.balnibarbi.com/shops/land_a/	200	https://brands.balnibarbi.com/brands/restaurants/land_a	yes	転送されるが、同じ店舗ページなので問題なし（最終URLへの書き換え推奨）	https://brands.balnibarbi.com/brands/restaurants/land_a
+https://restaurant.ikyu.com/103844	403	https://restaurant.ikyu.com/103844	blocked	一休は自動アクセスを403で拒否。中身は確認できず	
+https://restaurant.ikyu.com/154282	403	https://restaurant.ikyu.com/154282	blocked	一休は自動アクセスを403で拒否。中身は確認できず	
+https://retty.me/area/PRE13/ARE9/SUB904/100000508668/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000508668/	blocked	Rettyは自動アクセスを406で拒否。中身は確認できず	
+https://retty.me/area/PRE13/ARE9/SUB904/100000716108/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000716108/	blocked	Rettyは自動アクセスを406で拒否。中身は確認できず	
+https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/	blocked	Rettyは自動アクセスを406で拒否。中身は確認できず	
+https://sumida.goguynet.jp/2026/01/07/zinanbo-open/	200	https://sumida.goguynet.jp/2026/01/07/zinanbo-open/	yes		
+https://tabelog.com/tokyo/A1311/A131102/13247604/dtlmenu/	403	https://tabelog.com/tokyo/A1311/A131102/13247604/dtlmenu/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1311/A131102/13247604/dtlphotolst/	403	https://tabelog.com/tokyo/A1311/A131102/13247604/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13138974/	403	https://tabelog.com/tokyo/A1312/A131203/13138974/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13138974/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13138974/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13141258/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13141258/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13141265/	403	https://tabelog.com/tokyo/A1312/A131203/13141265/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13141265/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13141265/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13208347/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13208347/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13245792/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13245792/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13257342/	403	https://tabelog.com/tokyo/A1312/A131203/13257342/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13257342/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13257342/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13316754/	403	https://tabelog.com/tokyo/A1312/A131203/13316754/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13316754/dtlmenu/	403	https://tabelog.com/tokyo/A1312/A131203/13316754/dtlmenu/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://tabelog.com/tokyo/A1312/A131203/13316754/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13316754/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
+https://www.clasuwa.jp/shops/solamachi/information/restaurant/	200	https://www.clasuwa.jp/shops/suwa/restaurant/	no	ソラマチ店ページは削除済み（くらすわのトップ／諏訪本店へ転送）。2026-02-28に閉店	https://www.clasuwa.jp/3148/ （閉店のお知らせ）
+https://www.clasuwa.jp/shops/solamachi/restaurant/	200	https://www.clasuwa.jp/	no	ソラマチ店ページは削除済み（くらすわのトップ／諏訪本店へ転送）。2026-02-28に閉店	https://www.clasuwa.jp/3148/ （閉店のお知らせ）
+https://www.hotpepper.jp/strJ001275491/	200	https://www.hotpepper.jp/strJ001275491/	yes		
+https://www.hotpepper.jp/strJ001275491/food/	200	https://www.hotpepper.jp/strJ001275491/food/	yes		
+https://www.hotpepper.jp/strJ001275491/photo/	200	https://www.hotpepper.jp/strJ001275491/photo/	yes		
+https://www.hotpepper.jp/strJ003694009/photo/	200	https://www.hotpepper.jp/strJ003694009/photo/	yes		
+https://www.hotpepper.jp/strJ004469864/	200	https://www.hotpepper.jp/strJ004469864/	yes		
+https://www.ozmall.co.jp/restaurant/1602/dinner/	403	https://www.ozmall.co.jp/restaurant/1602/dinner/	blocked	OZmallは自動アクセスを403で拒否。中身は確認できず	https://www.tablecheck.com/ja/palazzosangusto
+https://www.potomak.co.jp/shop/423/	200	https://www.potomak.co.jp/shop/423/	yes		
+https://www.tablecheck.com/en/land-a	200	https://www.tablecheck.com/en/land-a	yes		
+https://www.tablecheck.com/ja/shops/land-a/reserve	200	https://www.tablecheck.com/ja/shops/land-a/reserve	yes		
+https://www.tokyo-mizumachi.jp/	200	https://www.tokyo-mizumachi.jp/	yes		
+https://www.tokyo-skytree.jp/event/autumn2026/	200	https://www.tokyo-skytree.jp/event/autumn2026/	yes		
+https://www.tokyo-solamachi.jp/restaurant/1029/	200	https://www.tokyo-solamachi.jp/	no	ソラマチ公式はシステム障害中で、どのページもトップ（障害の告知）へ転送される（2026-10-09時点）。復旧すれば元のURLで開ける可能性あり	
+https://www.tokyo-solamachi.jp/shop/232/	200	https://www.tokyo-solamachi.jp/	no	ソラマチ公式はシステム障害中で、どのページもトップ（障害の告知）へ転送される（2026-10-09時点）。復旧すれば元のURLで開ける可能性あり	https://www.potomak.co.jp/shop/423/
