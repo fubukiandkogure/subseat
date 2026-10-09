@@ -1,0 +1,1296 @@
+<title>スカイツリー ディナーガイド</title>
+<meta name="description" content="2026年10月31日（土）ハロウィンの夜、東京スカイツリー周辺の晩ごはん候補5軒を比べるガイド">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Young+Serif&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+:root{
+  /* Layout: a night-sky hero, a sticky bar of store chips, a swipeable row of five illustrated "window" cards,
+     a budget ruler, then one magazine spread per store, then the after-dinner walk and access. One column on
+     phones; each spread splits into two columns from 960px. */
+  --paper:#F6EEE2; --sheet:#FFFAF2; --sheet-2:#F2E6D4; --ink:#3A281D; --ink-2:#6A5343; --ink-3:#97806D; --line:#E4D4BE;
+  --pumpkin:#B9561A; --pumpkin-soft:#F8E0C8; --pumpkin-fill:#DE7A2F; --on-pumpkin:#FFF8EF;
+  --moss:#566A35; --moss-soft:#E4E9D2; --warn:#A13F1B; --warn-soft:#F9E2D4;
+  --night:#251A25; --night-2:#3C2937; --on-night:#F8EDDF; --on-night-2:#D3C0AE; --moon:#F3DFA9;
+  --shadow:0 1px 2px rgb(58 40 29 / .06), 0 10px 28px rgb(58 40 29 / .09);
+  --f-display:"Kaisei Decol","Hiragino Mincho ProN","Yu Mincho","YuMincho",serif;
+  --f-latin:"Young Serif","Kaisei Decol",Georgia,serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+  --r:18px; --bar-h:58px; --nw:7.2rem; --drop:rgb(58 40 29 / .13);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#1A1411; --sheet:#241C17; --sheet-2:#2E251E; --ink:#F3E7D6; --ink-2:#CFBAA4; --ink-3:#9C8671; --line:#3C3027;
+  --pumpkin:#F29A55; --pumpkin-soft:#4A2D18; --pumpkin-fill:#E07D33; --on-pumpkin:#21130A;
+  --moss:#AEC08B; --moss-soft:#2B3222; --warn:#F2A07A; --warn-soft:#47251A;
+  --night:#120C11; --night-2:#251A24; --on-night:#F8EDDF; --on-night-2:#D3C0AE; --moon:#F3DFA9;
+  --shadow:0 1px 2px rgb(0 0 0 / .35), 0 10px 28px rgb(0 0 0 / .3); --drop:rgb(0 0 0 / .45); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#1A1411; --sheet:#241C17; --sheet-2:#2E251E; --ink:#F3E7D6; --ink-2:#CFBAA4; --ink-3:#9C8671; --line:#3C3027;
+  --pumpkin:#F29A55; --pumpkin-soft:#4A2D18; --pumpkin-fill:#E07D33; --on-pumpkin:#21130A;
+  --moss:#AEC08B; --moss-soft:#2B3222; --warn:#F2A07A; --warn-soft:#47251A;
+  --night:#120C11; --night-2:#251A24; --on-night:#F8EDDF; --on-night-2:#D3C0AE; --moon:#F3DFA9;
+  --shadow:0 1px 2px rgb(0 0 0 / .35), 0 10px 28px rgb(0 0 0 / .3); --drop:rgb(0 0 0 / .45); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.75;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2.5px solid var(--pumpkin);outline-offset:2px;border-radius:8px}
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+.ic{width:1em;height:1em;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:1100px;margin-inline:auto;padding-inline:18px}
+.num{font-family:var(--f-latin);font-variant-numeric:tabular-nums}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:radial-gradient(120% 80% at 75% 10%,var(--night-2),var(--night) 62%);color:var(--on-night);overflow:hidden;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.75;
+  background-image:radial-gradient(1.2px 1.2px at 12% 18%,var(--on-night) 50%,transparent 51%),radial-gradient(1px 1px at 32% 8%,var(--on-night) 50%,transparent 51%),radial-gradient(1.4px 1.4px at 46% 28%,var(--on-night) 50%,transparent 51%),radial-gradient(1px 1px at 8% 52%,var(--on-night) 50%,transparent 51%),radial-gradient(1.2px 1.2px at 24% 70%,var(--on-night) 50%,transparent 51%),radial-gradient(1px 1px at 58% 12%,var(--on-night) 50%,transparent 51%),radial-gradient(1.3px 1.3px at 92% 40%,var(--on-night) 50%,transparent 51%),radial-gradient(1px 1px at 66% 60%,var(--on-night) 50%,transparent 51%)}
+.hero-in{position:relative;padding-block:34px 30px;min-height:540px;display:grid;align-content:start}
+.hero-art{position:absolute;right:-34px;bottom:0;height:100%;width:min(58%,420px);z-index:-1;pointer-events:none}
+.hero-art svg{position:absolute;right:0;bottom:0;height:100%;width:100%}
+.hero-text{max-width:min(66%,560px);display:grid;gap:14px}
+.eyebrow{margin:0;font-family:var(--f-latin);font-size:12.5px;letter-spacing:.16em;color:var(--on-night-2);text-transform:uppercase}
+.eyebrow b{color:var(--moon);font-weight:400}
+.h1{margin:0;font-family:var(--f-latin);font-weight:400;font-size:clamp(34px,9.6vw,64px);line-height:1.02;letter-spacing:.01em}
+.h1 span{display:block;color:var(--moon)}
+.hero-lede{margin:0;font-family:var(--f-display);font-size:clamp(16px,4.4vw,20px);line-height:1.7;text-wrap:balance}
+.light{margin-top:6px;border:1px solid rgb(243 223 169 / .35);border-radius:16px;padding:14px 14px 12px;background:rgb(20 12 18 / .55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;gap:8px;max-width:420px}
+.light-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.light-top b{font-size:13px;letter-spacing:.06em}
+.light-time{font-family:var(--f-latin);font-size:20px;color:var(--moon)}
+.light-modes{display:flex;gap:6px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.light-modes li{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:3px 10px 3px 6px;border-radius:999px;background:rgb(255 255 255 / .08);transition:background .6s,color .6s}
+.light-modes i{width:14px;height:14px;border-radius:50%;flex:none}
+.light-modes .m-moon i{background:radial-gradient(circle at 35% 35%,#FFF7E0,#B7A6F0 60%,#5B4DB0)}
+.light-modes .m-pump i{background:radial-gradient(circle at 35% 35%,#FFE6B0,#F39A3B 60%,#B24A16)}
+.light-note{margin:0;font-size:12px;color:var(--on-night-2);line-height:1.6}
+.light-note a{color:var(--moon)}
+.conds{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0;padding:0;list-style:none}
+.conds li{font-size:12.5px;border:1px solid rgb(248 237 223 / .35);border-radius:999px;padding:3px 11px;white-space:nowrap}
+.hero-cap{position:absolute;right:14px;bottom:8px;margin:0;font-size:10.5px;letter-spacing:.08em;color:var(--on-night-2);opacity:.8}
+.hero.anim .lt-pump{animation:swapLight 9s ease-in-out infinite}
+.hero.anim .light-modes .m-moon{animation:chipMoon 9s ease-in-out infinite}
+.hero.anim .light-modes .m-pump{animation:chipPump 9s ease-in-out infinite}
+@keyframes swapLight{0%,38%{opacity:0}50%,88%{opacity:1}100%{opacity:0}}
+@keyframes chipMoon{0%,38%{background:rgb(183 166 240 / .32)}50%,88%{background:rgb(255 255 255 / .08)}100%{background:rgb(183 166 240 / .32)}}
+@keyframes chipPump{0%,38%{background:rgb(255 255 255 / .08)}50%,88%{background:rgb(243 154 59 / .34)}100%{background:rgb(255 255 255 / .08)}}
+@media (prefers-reduced-motion: reduce){.hero.anim .lt-pump,.hero.anim .light-modes li{animation:none}}
+@media (max-width:420px){.hero-text{max-width:74%}.hero-art{width:62%;right:-46px}}
+
+/* ---------- sticky bar ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--paper) 88%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar-in{display:flex;align-items:center;gap:8px;min-height:var(--bar-h)}
+.bar-nav{flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.bar-nav::-webkit-scrollbar{display:none}
+.bar-nav ol{display:flex;gap:6px;margin:0;padding:8px 28px 8px 0;list-style:none;width:max-content}
+.bar-nav a{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px;background:var(--sheet);border:1px solid var(--line);white-space:nowrap}
+.bar-nav a .ic{font-size:13px;color:var(--pumpkin);stroke-width:2;display:none}
+.bar-nav a.is-fav .ic{display:block;fill:var(--pumpkin)}
+.bar-nav a:hover{border-color:var(--pumpkin)}
+.favbtn{flex:none;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--ink);background:var(--sheet);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.favbtn .ic{color:var(--pumpkin);font-size:15px;stroke-width:2}
+.favbtn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.favbtn[aria-pressed="true"] .ic{fill:var(--pumpkin)}
+.favbtn .cnt{font-family:var(--f-latin);font-weight:400}
+
+/* ---------- sections ---------- */
+.sec{padding-block:44px 8px;scroll-margin-top:calc(var(--bar-h) + 10px)}
+.sec-h{display:grid;gap:4px;margin:0 0 18px}
+.sec-h small{font-family:var(--f-latin);font-size:12px;letter-spacing:.2em;color:var(--pumpkin);text-transform:uppercase}
+.sec-h h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(24px,6.4vw,32px);line-height:1.35;text-wrap:balance}
+.sec-h p{margin:4px 0 0;color:var(--ink-2);font-size:14px;max-width:40em}
+
+/* ---------- cards ---------- */
+.cards{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 18px 18px;margin-inline:-18px;scroll-padding-inline:18px;scrollbar-width:thin}
+.card{flex:0 0 min(80vw,300px);scroll-snap-align:start;background:var(--sheet);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.cover{position:relative;aspect-ratio:4/3;background:var(--night);max-width:100%}
+.cover svg{display:block;width:100%;height:100%}
+.illu{position:absolute;left:10px;bottom:8px;font-family:var(--f-latin);font-size:9.5px;letter-spacing:.14em;color:#F8EDDF;background:rgb(20 12 18 / .5);padding:1px 7px;border-radius:999px}
+.heart{position:absolute;top:10px;right:10px;width:42px;height:42px;border-radius:50%;border:0;display:grid;place-items:center;background:rgb(255 250 242 / .92);color:#B9561A;cursor:pointer;box-shadow:0 2px 8px rgb(0 0 0 / .18);transition:transform .15s}
+.heart .ic{font-size:21px;stroke-width:2}
+.heart[aria-pressed="true"] .ic{fill:#DE7A2F;stroke:#DE7A2F}
+.heart:active{transform:scale(.92)}
+.card-b{padding:14px 16px 16px;display:grid;gap:8px;flex:1;align-content:start}
+.card-area{margin:0;font-size:12px;color:var(--ink-3);letter-spacing:.04em}
+.card-name{margin:0;font-size:17px;font-weight:700;line-height:1.4}
+.card-catch{margin:0;font-family:var(--f-display);font-size:15px;line-height:1.6;color:var(--ink-2)}
+.card-budget{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:2px 0 0;padding:8px 10px;border-radius:12px;background:var(--pumpkin-soft)}
+.card-budget small{font-size:11.5px;color:var(--ink-2)}
+.card-budget b{font-family:var(--f-latin);font-weight:400;font-size:19px;color:var(--ink)}
+.card-budget em{font-style:normal;font-size:11.5px;color:var(--ink-2)}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
+.tags li{font-size:11.5px;padding:2px 9px;border-radius:999px;background:var(--sheet-2);color:var(--ink-2)}
+.minifacts{margin:2px 0 0;display:grid;gap:3px;font-size:12.5px;color:var(--ink-2)}
+.minifacts div{display:grid;grid-template-columns:5.2em minmax(0,1fr);gap:6px}
+.minifacts dt{color:var(--ink-3)}
+.minifacts dd{margin:0}
+.card-go{margin-top:4px;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-weight:700;font-size:14px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--ink)}
+.card-go:hover{background:var(--ink);color:var(--paper)}
+.swipe-hint{margin:0;font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:6px}
+.fair{margin:10px 0 0;font-size:12.5px;color:var(--ink-2);max-width:42em}
+
+/* ---------- ruler ---------- */
+.ruler{background:var(--sheet);border-radius:var(--r);padding:18px 16px 14px;box-shadow:var(--shadow)}
+.ruler-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 14px;padding:0;list-style:none;font-size:12px;color:var(--ink-2)}
+.ruler-legend i{display:inline-block;vertical-align:-2px;margin-right:6px}
+.lg-ideal{width:18px;height:12px;border-radius:3px;background:var(--moss-soft);box-shadow:inset 0 0 0 1px var(--moss)}
+.lg-cap{width:0;height:14px;border-left:2px dashed var(--warn)}
+.lg-bar{width:22px;height:8px;border-radius:4px;background:var(--pumpkin-fill)}
+.lg-over{width:10px;height:10px;border-radius:50%;border:2px solid var(--warn);background:var(--sheet)}
+.rr-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.rr{display:grid;grid-template-columns:var(--nw) minmax(0,1fr);gap:10px;align-items:center}
+.rr-name{display:grid;line-height:1.35;min-width:0}
+.rr-name a{font-size:13px;font-weight:700;text-decoration:none}
+.rr-name small{font-size:11.5px;color:var(--ink-2)}
+.rr-track,.ruler-axis{position:relative;height:30px}
+.rr-track{border-radius:8px;background:var(--sheet-2)}
+.rr-track .ideal{position:absolute;top:0;bottom:0;left:var(--i1);width:calc(var(--i2) - var(--i1));background:var(--moss-soft);border-inline:1px solid var(--moss)}
+.rr-track .cap{position:absolute;top:-4px;bottom:-4px;left:var(--cap);border-left:2px dashed var(--warn)}
+.rr-track .bar-r{position:absolute;top:11px;height:8px;left:var(--a);width:max(8px,calc(var(--b) - var(--a)));border-radius:4px;background:var(--pumpkin-fill)}
+.rr-track .dot{position:absolute;top:9px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--pumpkin-fill);box-shadow:0 0 0 2px var(--sheet)}
+.rr-track .dot.over{background:var(--sheet);border:2px solid var(--warn);box-shadow:none}
+.rr-track .open{position:absolute;top:14px;width:26px;border-top:2px dashed var(--pumpkin-fill)}
+.ruler-axis{height:22px;margin-left:calc(var(--nw) + 10px);font-size:11px;color:var(--ink-3)}
+.ruler-axis span{position:absolute;top:4px;transform:translateX(-50%);font-family:var(--f-latin);white-space:nowrap}
+.ruler-axis span.capl{color:var(--warn)}
+.ruler-note{margin:10px 0 0;font-size:12px;color:var(--ink-2)}
+
+/* ---------- spreads ---------- */
+.spread{scroll-margin-top:calc(var(--bar-h) + 8px);padding-block:42px 18px;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
+.spread > *{min-width:0}
+.spread:first-of-type{border-top:0}
+.sp-top{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.sp-cover{border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.sp-head{display:grid;gap:8px}
+.sp-eyebrow{margin:0;font-size:12.5px;color:var(--ink-3);letter-spacing:.04em}
+.sp-name{margin:0;font-size:clamp(22px,6vw,30px);font-weight:700;line-height:1.3;text-wrap:balance}
+.sp-kana{margin:-4px 0 0;font-size:12px;color:var(--ink-3)}
+.sp-catch{margin:4px 0 0;font-family:var(--f-display);font-size:clamp(19px,5.2vw,24px);line-height:1.55;color:var(--pumpkin);text-wrap:balance}
+.sp-lead{margin:0;font-size:15px;max-width:38em}
+.sp-favrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill-fav{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--pumpkin);background:var(--sheet);color:var(--pumpkin);border-radius:999px;padding:7px 14px;font-weight:700;font-size:13.5px;cursor:pointer}
+.pill-fav .ic{font-size:16px;stroke-width:2}
+.pill-fav[aria-pressed="true"]{background:var(--pumpkin-fill);border-color:var(--pumpkin-fill);color:var(--on-pumpkin)}
+.pill-fav[aria-pressed="true"] .ic{fill:currentColor}
+.pill-budget{font-size:13px;color:var(--ink-2)}
+.pill-budget b{font-family:var(--f-latin);font-weight:400;font-size:17px;color:var(--ink)}
+.blk h3{margin:0 0 12px;font-size:13px;letter-spacing:.14em;color:var(--ink-2);font-weight:700;display:flex;align-items:center;gap:8px}
+.blk h3::after{content:"";flex:1;border-top:1px dashed var(--line)}
+
+/* photo pockets */
+.pockets{display:flex;gap:12px;overflow-x:auto;padding:10px 18px 12px;margin-inline:-18px;scroll-snap-type:x mandatory;scroll-padding-inline:18px}
+.pocket{flex:0 0 min(62vw,220px);scroll-snap-align:start;text-decoration:none;background:var(--sheet);padding:9px 9px 12px;border-radius:6px;box-shadow:var(--shadow);transform:rotate(var(--tilt,0deg));display:grid;gap:8px;transition:transform .2s}
+.pocket:hover{transform:rotate(0) translateY(-2px)}
+.pocket-ph{aspect-ratio:4/3;border-radius:3px;display:grid;place-items:center;align-content:center;gap:6px;background:
+  repeating-linear-gradient(135deg,var(--sheet-2) 0 10px,color-mix(in srgb,var(--sheet-2) 70%,var(--line)) 10px 20px);color:var(--ink-2);text-align:center;padding:10px}
+.pocket-ph .ic{font-size:30px;color:var(--pumpkin);stroke-width:1.5}
+.pocket-ph span{font-size:12px;font-weight:700;color:var(--ink)}
+.pocket-cap{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);padding-inline:2px}
+.pocket-cap b{color:var(--ink);font-weight:700}
+.pocket-cap .ic{font-size:13px}
+.blk-note{margin:6px 0 0;font-size:12px;color:var(--ink-3)}
+
+/* charm */
+.charm{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px;margin:0}
+.charm div{background:var(--sheet);border-radius:14px;padding:12px 14px;min-width:0}
+.charm dt{font-family:var(--f-display);font-weight:700;font-size:14px;color:var(--pumpkin);margin-bottom:2px}
+.charm dd{margin:0;font-size:14px;line-height:1.75}
+
+/* dishes */
+.dishes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dish.wide{grid-column:1 / -1}
+.dish.row{grid-column:1 / -1;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:12px;padding-block:10px}
+.dish.row .dish-top{grid-row:1 / span 3}
+.dish.row .dish-top .dish-cat{display:none}
+.dish.row .dish-price{grid-column:3;grid-row:1 / span 3;margin:0;border:0;padding:0;justify-self:end;text-align:right;flex-wrap:wrap;justify-content:flex-end}
+.dish.row .dish-name,.dish.row .dish-desc,.dish.row .dish-check{grid-column:2}
+.dish{position:relative;background:var(--sheet);border-radius:16px;padding:14px 14px 12px;display:grid;gap:6px;align-content:start;min-width:0;border:1px solid var(--line)}
+.dish-top{display:flex;align-items:center;gap:8px}
+.dish-ic{width:38px;height:38px;border-radius:50%;background:var(--pumpkin-soft);color:var(--pumpkin);display:grid;place-items:center;flex:none}
+.dish-ic .ic{font-size:22px;stroke-width:1.6}
+.dish-cat{font-family:var(--f-latin);font-size:10.5px;letter-spacing:.16em;color:var(--ink-3)}
+.dish-name{margin:0;font-family:var(--f-display);font-weight:700;font-size:15.5px;line-height:1.5;overflow-wrap:anywhere}
+.dish-desc{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.dish-price{margin:auto 0 0;padding-top:4px;display:flex;align-items:baseline;gap:3px;border-top:1px dotted var(--line)}
+.dish-price b{font-family:var(--f-latin);font-weight:400;font-size:23px;line-height:1.3}
+.dish-price small{font-size:12px;color:var(--ink-2)}
+.dish-price .q{font-family:var(--f-body);font-size:13px;font-weight:700;color:var(--warn)}
+.dish-check{margin:0;font-size:11.5px;line-height:1.5;color:var(--warn)}
+.more-row{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:12px}
+.more-link{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px;text-decoration:none;border-bottom:1.5px solid var(--pumpkin);padding-bottom:1px}
+.more-link .ic{color:var(--pumpkin)}
+
+/* receipts */
+.rc{filter:drop-shadow(0 6px 12px var(--drop));min-width:0}
+.receipts{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:14px;align-items:start}
+.receipt{position:relative;background:var(--sheet);padding:16px 16px 22px;border-radius:6px 6px 0 0;min-width:0;
+  -webkit-mask:radial-gradient(7px at 50% 100%,#0000 97%,#000) 50% / 14px 100% repeat-x;mask:radial-gradient(7px at 50% 100%,#0000 97%,#000) 50% / 14px 100% repeat-x}
+.r-who{margin:0;font-family:var(--f-latin);font-size:10.5px;letter-spacing:.18em;color:var(--ink-3);text-transform:uppercase}
+.r-title{margin:2px 0 10px;font-family:var(--f-display);font-weight:700;font-size:16px;line-height:1.5;padding-right:64px}
+.r-items{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:13px}
+.r-items li{display:flex;align-items:baseline;gap:6px}
+.r-items li span:first-child{min-width:0}
+.r-items li i{flex:1;border-bottom:1.5px dotted var(--line);transform:translateY(-4px);min-width:12px}
+.r-items li span:last-child{font-family:var(--f-latin);white-space:nowrap}
+.r-items li.unk span:last-child{font-family:var(--f-body);font-size:12px;font-weight:700;color:var(--warn)}
+.r-sum{margin:10px 0 0;padding-top:8px;border-top:1.5px solid var(--ink);display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;color:var(--ink-2)}
+.r-sum b{font-family:var(--f-latin);font-weight:400;color:var(--ink);font-size:14px}
+.r-per{margin:6px 0 0;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.r-per small{font-size:12.5px;font-weight:700}
+.r-per b{font-family:var(--f-latin);font-weight:400;font-size:28px;line-height:1.1}
+.r-per b em{font-style:normal;font-family:var(--f-body);font-size:13px;margin-left:2px}
+.r-per .txt{font-family:var(--f-body);font-weight:700;font-size:16px}
+.stamp{position:absolute;top:12px;right:12px;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;text-align:center;font-size:11px;font-weight:700;line-height:1.25;transform:rotate(-12deg);border:2px solid currentColor;box-shadow:inset 0 0 0 2px var(--sheet),inset 0 0 0 3.5px currentColor}
+.stamp.ok{color:var(--moss)}
+.stamp.edge{color:var(--pumpkin)}
+.stamp.over{color:var(--warn)}
+.stamp.unk{color:var(--ink-3)}
+.plans-note{margin:12px 0 0;font-size:12.5px;color:var(--ink-2);max-width:44em}
+
+/* cautions */
+.care{list-style:none;margin:0;padding:14px 16px;border-radius:16px;background:var(--warn-soft);display:grid;gap:8px}
+.care li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;font-size:13.5px;line-height:1.7}
+.care li::before{content:"!";display:grid;place-items:center;width:18px;height:18px;margin-top:3px;border-radius:50%;background:var(--warn);color:var(--sheet);font-size:11px;font-weight:700}
+
+/* facts */
+.facts{margin:0;display:grid;background:var(--sheet);border-radius:16px;padding:4px 16px}
+.facts div{display:grid;grid-template-columns:6.4em minmax(0,1fr);gap:10px;padding-block:10px;border-top:1px solid var(--line)}
+.facts div:first-child{border-top:0}
+.facts dt{font-size:12.5px;color:var(--ink-3)}
+.facts dd{margin:0;font-size:13.5px;line-height:1.7;overflow-wrap:anywhere}
+.facts dd small{display:block;font-size:12px;color:var(--ink-3)}
+
+/* actions */
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.act.primary{grid-column:1 / -1}
+.act{display:flex;align-items:center;gap:10px;text-decoration:none;padding:12px 14px;border-radius:14px;background:var(--sheet);border:1px solid var(--line);font-size:14px;font-weight:700;line-height:1.35;min-height:52px}
+.act .ic{font-size:20px;color:var(--pumpkin);stroke-width:1.8}
+.act small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-3)}
+.act:hover{border-color:var(--pumpkin)}
+.act.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.act.primary .ic{color:var(--pumpkin-fill)}
+.act.primary small{color:color-mix(in srgb,var(--paper) 70%,transparent)}
+.act.none{color:var(--ink-3);font-weight:500;background:transparent;border-style:dashed}
+.act.none .ic{color:var(--ink-3)}
+
+@media (min-width:960px){
+  .spread{grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:36px;align-items:start}
+  .sp-top{grid-column:1;grid-row:1 / span 8;position:sticky;top:calc(var(--bar-h) + 18px)}
+  .spread > .blk{grid-column:2}
+  .pockets{margin-inline:0;padding-inline:6px}
+}
+
+/* ---------- night & access ---------- */
+.night{background:var(--night);color:var(--on-night);margin-top:40px;scroll-margin-top:var(--bar-h)}
+.night .sec{padding-block:48px 44px}
+.night .sec-h small{color:var(--moon)}
+.night .sec-h p{color:var(--on-night-2)}
+.night-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.nbox{scroll-margin-top:calc(var(--bar-h) + 12px);background:rgb(255 255 255 / .05);border:1px solid rgb(248 237 223 / .14);border-radius:var(--r);padding:16px;min-width:0}
+.nbox h3{margin:0 0 8px;font-family:var(--f-display);font-size:18px;line-height:1.45}
+.nbox p{margin:0;font-size:14px;line-height:1.75;color:var(--on-night)}
+.nbox p+p{margin-top:8px}
+.nbox small{color:var(--on-night-2);font-size:12px}
+.nbox a{color:var(--moon)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.duo div{border-radius:14px;padding:10px 10px 12px;text-align:center;background:rgb(255 255 255 / .05);display:grid;gap:4px;justify-items:center}
+.duo svg{width:56px;height:56px}
+.duo b{font-size:13px;line-height:1.4}
+.duo span{font-size:11.5px;color:var(--on-night-2);line-height:1.5}
+.spots{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.spot{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
+.spot-ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgb(243 223 169 / .14);color:var(--moon)}
+.spot-ic .ic{font-size:18px}
+.spot b{display:block;font-size:14.5px}
+.spot p{font-size:13px!important;color:var(--on-night-2)!important;line-height:1.65}
+.spot a{font-size:12.5px;font-weight:700;text-decoration:none;border-bottom:1px solid var(--moon)}
+
+.route{display:grid;gap:4px;margin:10px 0 0;padding:12px;border-radius:14px;background:rgb(255 255 255 / .05)}
+.route-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.route-h b{font-size:14px}
+.route-h span{font-family:var(--f-latin);font-size:13px;color:var(--moon)}
+.legs{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:0}
+.legs li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;font-size:13px}
+.legs .st{font-weight:700}
+.legs .st i{width:12px;height:12px;border-radius:50%;border:2.5px solid var(--moon);margin-top:6px;background:var(--night)}
+.legs .ride i{width:2px;justify-self:center;background:var(--line-c,var(--moon));min-height:26px;opacity:.7}
+.legs .ride span{color:var(--on-night-2);font-size:12px;padding-block:3px}
+.line-g{--line-c:#F39A00}
+.line-a{--line-c:#E85298}
+.line-z{--line-c:#8F76D6}
+
+/* map */
+.map-wrap{overflow-x:auto;margin-top:6px}
+.map{display:block;width:100%;max-width:520px;margin-inline:auto;height:auto}
+.map .river{fill:#2A3D55}
+.map .road{stroke:rgb(248 237 223 / .35);stroke-width:2;fill:none;stroke-dasharray:1 5;stroke-linecap:round}
+.map .rail{stroke:rgb(248 237 223 / .55);stroke-width:3;fill:none}
+.map .rail-tie{stroke:var(--night);stroke-width:3;fill:none;stroke-dasharray:2 7}
+.map .cluster{fill:rgb(243 223 169 / .08);stroke:rgb(243 223 169 / .35);stroke-dasharray:3 4}
+.map text{font-family:var(--f-body);fill:var(--on-night);font-size:10.5px}
+.map .lbl-s{fill:var(--on-night-2);font-size:10.5px}
+.map .lbl-river{fill:#9EB4CF;font-size:11px;letter-spacing:.3em}
+.map .stn rect{fill:var(--night);stroke:var(--on-night);stroke-width:1.5}
+.map .shop circle{fill:#DE7A2F;stroke:var(--night);stroke-width:2}
+.map .shop text{font-weight:700;font-size:12.5px}
+.map .spotm circle{fill:var(--night);stroke:var(--moon);stroke-width:1.5}
+.map-note{margin:8px 0 0;font-size:12px;color:var(--on-night-2)}
+.walk-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.walk-list li{display:grid;gap:2px;font-size:13px;padding:10px 12px;border-radius:12px;background:rgb(255 255 255 / .05)}
+.walk-list b{font-size:13.5px}
+.walk-list span{color:var(--on-night-2);font-size:12.5px}
+.walk-list a{font-size:12.5px;font-weight:700;color:var(--moon);text-decoration:none;border-bottom:1px solid var(--moon);justify-self:start}
+
+/* share + footer */
+.share{background:var(--sheet);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 16px;display:grid;gap:12px}
+.share h3{margin:0;font-family:var(--f-display);font-size:19px}
+.share p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.share-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.share-list li{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--pumpkin-soft);font-weight:700}
+.share-list li.empty{background:var(--sheet-2);font-weight:400;color:var(--ink-2)}
+.share-btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1.5px solid var(--ink);background:var(--sheet);font-weight:700;font-size:14px;cursor:pointer;text-decoration:none}
+.btn .ic{font-size:18px}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn[aria-disabled="true"]{opacity:.45;pointer-events:none}
+.copied{font-size:13px;color:var(--moss);font-weight:700}
+.copy-fallback{width:100%;min-height:150px;font:13px/1.6 var(--f-body);padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.empty-fav{margin:0;padding:18px;border-radius:var(--r);border:1.5px dashed var(--line);text-align:center;color:var(--ink-2);font-size:14px}
+body.only-fav .card:not(.is-fav),body.only-fav .spread:not(.is-fav){display:none}
+.foot{padding-block:40px 60px;color:var(--ink-2);font-size:13px;display:grid;gap:16px}
+.foot h2{margin:0;font-family:var(--f-display);font-size:20px;color:var(--ink)}
+.foot h3{margin:0 0 6px;font-size:13px;color:var(--ink);letter-spacing:.06em}
+.foot p,.foot ul{margin:0}
+.foot ul{padding-left:1.2em;display:grid;gap:4px}
+.foot a{color:var(--ink)}
+.src{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.bye{font-family:var(--f-latin);font-size:clamp(24px,7vw,36px);color:var(--ink);margin:10px 0 0;line-height:1.2}
+.bye span{color:var(--pumpkin)}
+</style>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#191530"/><stop offset=".62" stop-color="#3B2943"/><stop offset="1" stop-color="#7A4636"/></linearGradient>
+  <linearGradient id="g-light-moon" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".35" stop-color="#C9BEF7"/><stop offset=".7" stop-color="#7D6BD6"/><stop offset="1" stop-color="#3E3486"/></linearGradient>
+  <linearGradient id="g-light-pump" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF0C9"/><stop offset=".35" stop-color="#FFB25A"/><stop offset=".7" stop-color="#E9772A"/><stop offset="1" stop-color="#8E3610"/></linearGradient>
+  <linearGradient id="g-tree-warm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE7BD"/><stop offset=".45" stop-color="#F0A04D"/><stop offset="1" stop-color="#8A3D1C"/></linearGradient>
+  <radialGradient id="g-glow"><stop offset="0" stop-color="#FFC069" stop-opacity=".55"/><stop offset="1" stop-color="#FFC069" stop-opacity="0"/></radialGradient>
+  <radialGradient id="g-glow-moon"><stop offset="0" stop-color="#F3DFA9" stop-opacity=".45"/><stop offset="1" stop-color="#F3DFA9" stop-opacity="0"/></radialGradient>
+  <radialGradient id="g-fire" cx=".5" cy=".7"><stop offset="0" stop-color="#FFE08A"/><stop offset=".45" stop-color="#F28A2E"/><stop offset="1" stop-color="#F28A2E" stop-opacity="0"/></radialGradient>
+  <linearGradient id="g-cone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD58A" stop-opacity=".55"/><stop offset="1" stop-color="#FFD58A" stop-opacity="0"/></linearGradient>
+  <linearGradient id="g-river" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1F2B40"/><stop offset="1" stop-color="#121826"/></linearGradient>
+
+  <symbol id="tree" viewBox="0 0 100 640"><path d="M15 640C24 560 32 440 35 305L28 297V279L36 275L39 193L36 191V184L41 181L43 140L47 138L49 10L50 0L51 10L53 138L57 140L59 181L64 184V191L61 193L64 275L72 279V297L65 305C68 440 76 560 85 640Z"/></symbol>
+  <symbol id="leaf" viewBox="0 0 30 16"><path d="M0 8C8-2 22-2 30 8C22 18 8 18 0 8Z"/><path d="M2 8H27" stroke="#F2E8D5" stroke-width="1" opacity=".55"/></symbol>
+
+  <!-- icons -->
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.3s-7.6-4.5-7.6-10.1A4.3 4.3 0 0 1 12 7.5a4.3 4.3 0 0 1 7.6 2.7c0 5.6-7.6 10.1-7.6 10.1z"/></symbol>
+  <symbol id="i-pizza" viewBox="0 0 24 24"><path d="M3.5 6.5c5.4-3 11.6-3 17 0L12 21.5z"/><path d="M5.2 9.4c4.4-2 9.2-2 13.6 0"/><circle cx="10" cy="12" r="1.3"/><circle cx="14" cy="11.4" r="1.1"/><circle cx="12" cy="15.6" r="1.1"/></symbol>
+  <symbol id="i-pasta" viewBox="0 0 24 24"><path d="M3 13h18a9 7 0 0 1-18 0z"/><path d="M6.5 13c.8-3 2.4-3 3.2-.4.6-3.4 2.6-3.6 3.4-.3.6-3 2.4-3.2 3.4 0"/><path d="M16.5 3.5 13 11"/><path d="M18.5 4.5 14.6 11.2"/></symbol>
+  <symbol id="i-meat" viewBox="0 0 24 24"><ellipse cx="12" cy="15.5" rx="9.5" ry="4.5"/><path d="M6.5 14.2c0-3.4 2.5-5.4 5.5-5.4s5.5 2 5.5 5.4c-1.6 1.2-3.5 1.6-5.5 1.6s-3.9-.4-5.5-1.6z"/><path d="M9.5 11.3c.8-.6 1.6-.9 2.6-.9"/></symbol>
+  <symbol id="i-pan" viewBox="0 0 24 24"><circle cx="10" cy="13" r="7"/><path d="M17 13h5.5"/><circle cx="8" cy="12" r="1.4"/><circle cx="12.2" cy="14.4" r="1.3"/><path d="M8 4.5c.6-1 .6-1.8 0-2.6M11 5c.6-1 .6-1.8 0-2.6"/></symbol>
+  <symbol id="i-dessert" viewBox="0 0 24 24"><path d="M5 12h14l-2.2 8.5H7.2z"/><path d="M7.5 12a4.5 4.5 0 0 1 9 0"/><path d="M12 7.5V5.6"/><circle cx="12" cy="4.6" r="1.1"/></symbol>
+  <symbol id="i-drink" viewBox="0 0 24 24"><path d="M6 7h12l-1.4 13.5H7.4z"/><path d="M6.6 12.5h10.8"/><path d="m14 7 2.5-4.5h2.5"/><circle cx="10" cy="16" r="1"/></symbol>
+  <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M3 11h18c0 5-4 8.5-9 8.5S3 16 3 11z"/><path d="M8 19.5h8"/><path d="M7 8.5c1.5-1.2 3-1.2 4.5 0s3 1.2 4.5 0"/><path d="M15 3 19.5 9"/><path d="M17.5 2.5 21 8"/></symbol>
+  <symbol id="i-fish" viewBox="0 0 24 24"><path d="M3 12c3-4.5 9-5.5 13.5-2.3L21 7v10l-4.5-2.7C12 17.5 6 16.5 3 12z"/><circle cx="7.5" cy="11.3" r=".9"/></symbol>
+  <symbol id="i-gratin" viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="8" rx="3"/><path d="M1.5 12H3M21 12h1.5"/><path d="M6 10c1-2 2.5-2 3.5-.6C10.5 8 12 8 13 9.4c1-1.4 2.5-1.4 3.5 0 .6-.6 1.2-.6 1.8 0"/></symbol>
+  <symbol id="i-plate" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><circle cx="12" cy="13" r="4.5"/><path d="M2.5 4v6M4.5 4v6M2.5 7h2M3.5 10v10M21 4c-1.7 1-2 3-2 5h2v11"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M5 3.5h11.5a2 2 0 0 1 2 2V20.5H7a2 2 0 0 1-2-2z"/><path d="M5 18.5a2 2 0 0 1 2-2h11.5"/><path d="M9 8h6M9 11h4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="m9 14.5 2 2 4-4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.2a11 11 0 0 0 6.3 6.3l1.2-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M12 4c5 0 9 3.1 9 7s-4 7-9 7c-.8 0-1.6-.1-2.3-.2L5 20l.9-3.6C4.1 15.1 3 13.1 3 11c0-3.9 4-7 9-7z"/></symbol>
+  <symbol id="i-swipe" viewBox="0 0 24 24"><path d="M4 12h15"/><path d="m15 8 4 4-4 4"/></symbol>
+  <symbol id="i-bridge" viewBox="0 0 24 24"><path d="M2 15h20M2 11h20"/><path d="M5 11v8M19 11v8M12 11v8"/><path d="M5 11c2-3 5-4.5 7-4.5S17 8 19 11"/></symbol>
+  <symbol id="i-tree" viewBox="0 0 24 24"><path d="M9 21c1.2-4 2-9 2.3-13.5h1.4C13 12 13.8 17 15 21"/><path d="M10.2 12.5h3.6M11 7.5h2M12 7.5V2.5"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19 15.5A8 8 0 0 1 8.5 5a8 8 0 1 0 10.5 10.5z"/></symbol>
+  <symbol id="i-water" viewBox="0 0 24 24"><path d="M2 9c2.5-2 4.5-2 7 0s4.5 2 7 0 4.5-2 6 0"/><path d="M2 15c2.5-2 4.5-2 7 0s4.5 2 7 0 4.5-2 6 0"/></symbol>
+  <symbol id="i-train" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 20.5l-2 1.5M15 20.5l2 1.5M8 17l-1.5 3M16 17l1.5 3"/><circle cx="9" cy="14" r=".8"/><circle cx="15" cy="14" r=".8"/></symbol>
+
+  <!-- covers (illustrations) -->
+  <symbol id="cov-lamp" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="#5B3A26"/>
+    <path d="M30 0V300M64 0V300M98 0V300M132 0V300M166 0V300M200 0V300M234 0V300M268 0V300M302 0V300M336 0V300M370 0V300" stroke="#4B2F1F" stroke-width="2"/>
+    <circle cx="120" cy="120" r="200" fill="url(#g-glow)" opacity=".55"/>
+    <clipPath id="cp-lamp-win"><path d="M222 226V100a68 68 0 0 1 136 0V226z"/></clipPath>
+    <g clip-path="url(#cp-lamp-win)">
+      <rect x="200" y="20" width="180" height="220" fill="url(#g-sky)"/>
+      <g fill="#F8EDDF"><circle cx="240" cy="70" r="1.2"/><circle cx="330" cy="58" r="1"/><circle cx="345" cy="120" r="1.3"/><circle cx="252" cy="135" r="1"/><circle cx="300" cy="44" r="1.1"/></g>
+      <ellipse cx="290" cy="110" rx="40" ry="70" fill="url(#g-glow)"/>
+      <use href="#tree" x="270" y="52" width="40" height="256" fill="url(#g-tree-warm)"/>
+      <path d="M200 205h40v-14h18v20h22v-10h36v16h24v-20h20V240H200z" fill="#24182A"/>
+    </g>
+    <path d="M222 226V100a68 68 0 0 1 136 0V226z" fill="none" stroke="#2E1C12" stroke-width="10"/>
+    <rect x="210" y="224" width="160" height="10" rx="3" fill="#3A2416"/>
+    <path d="M120 0V56" stroke="#2E1C12" stroke-width="2.5"/>
+    <path d="M98 82 107 56H133L142 82Z" fill="#E9A23B"/>
+    <ellipse cx="120" cy="83" rx="22" ry="4.5" fill="#FFE3A3"/>
+    <path d="M100 85 46 290H194L140 85Z" fill="url(#g-cone)"/>
+    <path d="M12 300V222a83 70 0 0 1 166 0V300Z" fill="#9C5536"/>
+    <g stroke="#82442A" stroke-width="2.5" fill="none" opacity=".8"><path d="M30 200a70 58 0 0 1 130 0"/><path d="M22 232h20M58 214h22M100 210h24M140 228h24M26 260h18M150 262h18"/></g>
+    <path d="M55 300V256a40 34 0 0 1 80 0V300Z" fill="#2A140B"/>
+    <ellipse cx="95" cy="290" rx="40" ry="22" fill="url(#g-fire)"/>
+    <path d="M78 296c2-12 8-14 8-24 6 6 8 12 6 18 4-4 6-10 5-16 8 8 9 16 6 22Z" fill="#FFB347"/>
+    <rect y="284" width="400" height="16" fill="#3A2416"/>
+    <ellipse cx="300" cy="280" rx="56" ry="11" fill="#B07A4A"/>
+    <ellipse cx="300" cy="276" rx="44" ry="8.5" fill="#E9B866"/>
+    <ellipse cx="300" cy="276" rx="36" ry="6.5" fill="#D9643A"/>
+    <g fill="#F7EBD3"><circle cx="286" cy="275" r="3.4"/><circle cx="306" cy="273" r="3"/><circle cx="314" cy="278" r="2.8"/></g>
+    <g fill="#6E8D3E"><circle cx="296" cy="279" r="2"/><circle cx="320" cy="274" r="1.8"/></g>
+  </symbol>
+
+  <symbol id="cov-piccole" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="url(#g-sky)"/>
+    <g fill="#F8EDDF"><circle cx="60" cy="50" r="1.2"/><circle cx="95" cy="110" r="1"/><circle cx="330" cy="140" r="1.2"/><circle cx="280" cy="40" r="1"/><circle cx="135" cy="35" r="1.3"/><circle cx="355" cy="95" r="1"/></g>
+    <circle cx="322" cy="64" r="15" fill="#F3DFA9" opacity=".9"/>
+    <circle cx="322" cy="64" r="44" fill="url(#g-glow-moon)"/>
+    <ellipse cx="200" cy="96" rx="70" ry="120" fill="url(#g-glow)"/>
+    <use href="#tree" x="158" y="-150" width="84" height="538" fill="url(#g-light-pump)"/>
+    <path d="M0 214h28v-18h22v12h30v-26h24v20h22v-8h18v20H234v-16h28v10h20v-22h26v16h24v-10h26v18h42V300H0z" fill="#1F1626"/>
+    <g fill="#F6C46D" opacity=".75"><rect x="34" y="204" width="3" height="3"/><rect x="88" y="192" width="3" height="3"/><rect x="246" y="208" width="3" height="3"/><rect x="316" y="202" width="3" height="3"/><rect x="292" y="196" width="3" height="3"/></g>
+    <path d="M0 0H400V300H0ZM18 18V236H382V18Z" fill="#2B1D16" fill-rule="evenodd"/>
+    <rect x="104" y="18" width="7" height="218" fill="#2B1D16"/><rect x="289" y="18" width="7" height="218" fill="#2B1D16"/>
+    <path d="M18 18 150 18 60 236H18Z" fill="#FFFFFF" opacity=".04"/>
+    <rect y="236" width="400" height="64" fill="#4A2E20"/>
+    <rect y="236" width="400" height="3" fill="#6B4430"/>
+    <g opacity=".9">
+      <path d="M140 246c-12 0-16 18-12 26 2 5 7 7 12 7s10-2 12-7c4-8 0-26-12-26z" fill="#F5E8D6" opacity=".22" stroke="#F5E8D6" stroke-width="1.2"/>
+      <path d="M131 266h18c-1 6-4 9-9 9s-8-3-9-9z" fill="#E9A23B"/>
+      <path d="M140 279v14M132 294h16" stroke="#F5E8D6" stroke-width="1.6"/>
+      <path d="M260 246c-12 0-16 18-12 26 2 5 7 7 12 7s10-2 12-7c4-8 0-26-12-26z" fill="#F5E8D6" opacity=".22" stroke="#F5E8D6" stroke-width="1.2"/>
+      <path d="M251 266h18c-1 6-4 9-9 9s-8-3-9-9z" fill="#B23A3A"/>
+      <path d="M260 279v14M252 294h16" stroke="#F5E8D6" stroke-width="1.6"/>
+    </g>
+    <ellipse cx="200" cy="270" rx="30" ry="18" fill="url(#g-glow)"/>
+    <rect x="193" y="266" width="14" height="22" rx="2" fill="#F3E6D0"/>
+    <path d="M200 254c4 5 4 9 0 12-4-3-4-7 0-12z" fill="#FFC56B"/>
+  </symbol>
+
+  <symbol id="cov-landa" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="url(#g-sky)"/>
+    <g fill="#F8EDDF"><circle cx="40" cy="40" r="1.2"/><circle cx="120" cy="22" r="1"/><circle cx="200" cy="60" r="1.2"/><circle cx="250" cy="28" r="1"/><circle cx="380" cy="50" r="1.1"/></g>
+    <ellipse cx="318" cy="60" rx="40" ry="90" fill="url(#g-glow)"/>
+    <use href="#tree" x="300" y="-30" width="36" height="232" fill="url(#g-light-pump)"/>
+    <path d="M0 128h40v-12h30v8h44v-16h26v20H400V140H0z" fill="#2A1F2E"/>
+    <rect y="112" width="400" height="16" fill="#2C2230"/>
+    <rect y="108" width="400" height="4" fill="#4C3D4E"/>
+    <rect x="30" y="86" width="170" height="22" rx="6" fill="#3B2F3E"/>
+    <g fill="#F6C46D"><rect x="40" y="91" width="14" height="8" rx="2"/><rect x="60" y="91" width="14" height="8" rx="2"/><rect x="80" y="91" width="14" height="8" rx="2"/><rect x="104" y="91" width="14" height="8" rx="2"/><rect x="124" y="91" width="14" height="8" rx="2"/><rect x="148" y="91" width="14" height="8" rx="2"/><rect x="168" y="91" width="14" height="8" rx="2"/></g>
+    <rect y="128" width="400" height="86" fill="#2C2230"/>
+    <path d="M14 214V166a33 33 0 0 1 66 0V214Z" fill="#F2B35E"/>
+    <path d="M94 214V166a33 33 0 0 1 66 0V214Z" fill="#7A5A55"/>
+    <path d="M174 214V166a33 33 0 0 1 66 0V214Z" fill="#E9A85A"/>
+    <path d="M254 214V166a33 33 0 0 1 66 0V214Z" fill="#6E5050"/>
+    <path d="M334 214V166a33 33 0 0 1 66 0V214Z" fill="#D99A55"/>
+    <g fill="#5A3A28"><rect x="26" y="196" width="18" height="3"/><rect x="34" y="199" width="2" height="15"/><rect x="50" y="196" width="18" height="3"/><rect x="58" y="199" width="2" height="15"/></g>
+    <path d="M20 176h54" stroke="#FFF1CF" stroke-width="2" stroke-dasharray="2 6" opacity=".9"/>
+    <rect y="214" width="400" height="10" fill="#3B2E35"/>
+    <rect y="224" width="400" height="76" fill="url(#g-river)"/>
+    <g stroke="#F2B35E" stroke-width="2.5" stroke-linecap="round" opacity=".5"><path d="M28 238h30M38 252h22M30 268h16M186 240h30M196 256h18M346 240h26M352 256h16"/></g>
+    <g stroke="#F39A3B" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M312 236h14M314 248h10M316 262h8M317 276h6"/></g>
+  </symbol>
+
+  <symbol id="cov-sumida" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="#8A5A3A"/>
+    <path d="M0 52H400M0 112H400M0 172H400M0 232H400" stroke="#76492D" stroke-width="2.5"/>
+    <path d="M30 20c40 6 80-4 120 2M210 84c50 6 90-6 160 0M20 140c60 4 120-4 170 0M220 200c50 6 100-6 160 2M40 260c60 4 100-4 150 0" stroke="#9C6A47" stroke-width="1.5" fill="none" opacity=".7"/>
+    <circle cx="200" cy="150" r="160" fill="url(#g-glow)" opacity=".5"/>
+    <circle cx="128" cy="160" r="74" fill="#F5EADB"/>
+    <circle cx="128" cy="160" r="58" fill="#EEDFC9"/>
+    <g fill="none" stroke="#E2774A" stroke-width="5" stroke-linecap="round"><path d="M98 150c10-22 50-22 58 2s-26 34-44 22-8-34 14-32 22 18 8 24"/><path d="M92 170c6 20 46 28 64 4"/><path d="M104 136c20-12 46-6 54 10"/></g>
+    <g fill="#F2A08A" stroke="#D9643A" stroke-width="1.5"><path d="M104 182c4-8 14-8 16 0-4 3-12 3-16 0z"/><path d="M140 140c4-8 14-8 16 0-4 3-12 3-16 0z"/></g>
+    <g fill="#EDE3D2" stroke="#BFA88A" stroke-width="1"><ellipse cx="122" cy="160" rx="7" ry="5"/><ellipse cx="146" cy="170" rx="6" ry="4.5"/></g>
+    <circle cx="272" cy="160" r="74" fill="#F5EADB"/>
+    <circle cx="272" cy="160" r="58" fill="#EEDFC9"/>
+    <g fill="none" stroke="#F1D49A" stroke-width="5" stroke-linecap="round"><path d="M244 150c10-22 50-22 58 2s-26 34-44 22-8-34 14-32 22 18 8 24"/><path d="M238 170c6 20 46 28 64 4"/><path d="M250 136c20-12 46-6 54 10"/></g>
+    <g fill="#B5543A"><rect x="256" y="152" width="12" height="6" rx="2"/><rect x="282" y="168" width="12" height="6" rx="2"/><rect x="270" y="136" width="10" height="5" rx="2"/></g>
+    <g fill="#3A281D"><circle cx="262" cy="170" r="1.2"/><circle cx="290" cy="150" r="1.2"/><circle cx="276" cy="182" r="1.2"/></g>
+    <path d="M34 120V200M40 120V200M46 120V200M40 200V250" stroke="#D9CBB8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M366 120V250" stroke="#D9CBB8" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="200" cy="52" r="24" fill="#F7D57E" opacity=".92"/>
+    <circle cx="200" cy="52" r="24" fill="none" stroke="#FFF4D6" stroke-width="3"/>
+    <circle cx="206" cy="48" r="9" fill="#FCEFB0"/>
+    <path d="M206 39V57M197 48H215M200 42l12 12M212 42l-12 12" stroke="#E9C65A" stroke-width="1"/>
+    <rect x="182" y="40" width="7" height="7" rx="1.5" fill="#FFFFFF" opacity=".6"/>
+    <circle cx="200" cy="262" r="24" fill="#F7D57E" opacity=".92"/>
+    <circle cx="200" cy="262" r="24" fill="none" stroke="#FFF4D6" stroke-width="3"/>
+    <circle cx="194" cy="266" r="9" fill="#FCEFB0"/>
+    <path d="M194 257V275M185 266H203M188 260l12 12M200 260l-12 12" stroke="#E9C65A" stroke-width="1"/>
+  </symbol>
+
+  <symbol id="cov-kokonoha" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="#C59B6D"/>
+    <path d="M0 40c80 8 160-6 240 0s120 6 160 0M0 120c90 8 170-8 260 0s110 6 140 0M0 200c80 6 160-6 250 0s110 8 150 0M0 270c90 6 170-6 260 0" stroke="#B48A5E" stroke-width="2" fill="none"/>
+    <rect x="48" y="34" width="304" height="232" rx="16" fill="#F2E8D5"/>
+    <rect x="48" y="34" width="304" height="232" rx="16" fill="none" stroke="#E4D6BC" stroke-width="2" stroke-dasharray="6 6"/>
+    <circle cx="164" cy="152" r="84" fill="#5E4030"/>
+    <circle cx="164" cy="152" r="72" fill="#3E2A20"/>
+    <circle cx="164" cy="152" r="66" fill="#E7C08A"/>
+    <g fill="none" stroke="#D9784A" stroke-width="5" stroke-linecap="round"><path d="M128 146c12-26 60-26 70 2s-30 40-52 26-10-40 16-38 26 22 10 28"/><path d="M120 168c8 22 54 30 76 4"/><path d="M134 128c24-14 54-8 64 12"/></g>
+    <g fill="#5B3A5E"><ellipse cx="146" cy="170" rx="9" ry="6"/><ellipse cx="184" cy="132" rx="8" ry="5.5"/><ellipse cx="190" cy="168" rx="7" ry="5"/></g>
+    <g fill="#8DAA5B"><circle cx="150" cy="140" r="3"/><circle cx="170" cy="156" r="2.6"/><circle cx="160" cy="178" r="2.6"/><circle cx="180" cy="148" r="2.4"/><circle cx="140" cy="158" r="2.4"/></g>
+    <circle cx="292" cy="106" r="38" fill="#F7EFE2" stroke="#E4D6BC" stroke-width="3"/>
+    <circle cx="292" cy="106" r="30" fill="#8FAF6A"/>
+    <path d="M276 104c6-10 26-10 32 0-6 8-26 8-32 0z" fill="#FFF7EA"/>
+    <g fill="#6E3A2E"><circle cx="283" cy="118" r="3"/><circle cx="296" cy="122" r="3"/><circle cx="305" cy="114" r="2.6"/></g>
+    <circle cx="292" cy="204" r="30" fill="#F7EFE2" stroke="#E4D6BC" stroke-width="3"/>
+    <circle cx="292" cy="204" r="22" fill="#B9783F"/>
+    <path d="M321 196c10 0 12 16 0 16" fill="none" stroke="#E4D6BC" stroke-width="5"/>
+    <path d="M70 70 98 238" stroke="#D9CBB8" stroke-width="4" stroke-linecap="round"/>
+    <g fill="#7E9A55"><use href="#leaf" x="18" y="18" width="34" height="18"/><use href="#leaf" x="350" y="250" width="34" height="18"/><use href="#leaf" x="356" y="20" width="30" height="16"/></g>
+    <g fill="#A3B873"><use href="#leaf" x="10" y="250" width="30" height="16"/><use href="#leaf" x="226" y="252" width="32" height="17"/><use href="#leaf" x="232" y="14" width="30" height="16"/></g>
+    <g fill="#6B8A45"><use href="#leaf" x="356" y="140" width="30" height="16"/><use href="#leaf" x="8" y="136" width="30" height="16"/><use href="#leaf" x="120" y="270" width="30" height="16"/></g>
+  </symbol>
+</defs>
+</svg>
+
+<header class="hero anim" id="top">
+  <div class="hero-art" aria-hidden="true">
+    <svg viewBox="0 0 360 560" preserveAspectRatio="xMaxYMax meet">
+      <circle cx="262" cy="118" r="70" fill="url(#g-glow-moon)"/>
+      <circle cx="262" cy="118" r="40" fill="#F3DFA9"/>
+      <circle cx="248" cy="106" r="7" fill="#E7CF92"/><circle cx="276" cy="130" r="5" fill="#E7CF92"/>
+      <path d="M86 92c4-6 9-7 12-3 3-4 8-3 12 3-4-1-7 0-8 3-1-2-3-3-4-3s-3 1-4 3c-1-3-4-4-8-3z" fill="#120C11"/>
+      <path d="M318 196c3-4 6-5 8-2 2-3 5-2 8 2-3-1-5 0-5 2l-3-2-3 2c0-2-2-3-5-2z" fill="#120C11"/>
+      <ellipse cx="190" cy="300" rx="90" ry="230" fill="url(#g-glow)" opacity=".7"/>
+      <use class="lt-moon" href="#tree" x="152" y="40" width="76" height="487" fill="url(#g-light-moon)"/>
+      <use class="lt-pump" href="#tree" x="152" y="40" width="76" height="487" fill="url(#g-light-pump)" opacity="0"/>
+      <path d="M0 520h26v-26h18v14h24v-30h20v22h18v-12h22v24h80v-18h26v10h22v-26h20v16h26v-8h20v20h38V560H0z" fill="#120C11"/>
+      <g fill="#F6C46D" opacity=".7"><rect x="30" y="502" width="3" height="3"/><rect x="74" y="488" width="3" height="3"/><rect x="132" y="512" width="3" height="3"/><rect x="262" y="504" width="3" height="3"/><rect x="312" y="510" width="3" height="3"/><rect x="290" y="498" width="3" height="3"/></g>
+    </svg>
+  </div>
+  <div class="wrap hero-in">
+    <div class="hero-text">
+      <p class="eyebrow">Sat. <b>October 31, 2026</b> / Halloween Night</p>
+      <h1 class="h1">TOKYO SKYTREE<span>DINNER GUIDE</span></h1>
+      <p class="hero-lede">ハロウィンの夜、スカイツリーのふもとで晩ごはん。気になる5軒を、写真のリンクとメニューで見比べるためのガイドです。</p>
+      <div class="light">
+        <div class="light-top"><b>この夜だけのライティング</b><span class="light-time">17:45–24:00</span></div>
+        <ul class="light-modes">
+          <li class="m-moon"><i></i>ムーンナイト・ハロウィン</li>
+          <li class="m-pump"><i></i>スマイルパンプキン</li>
+        </ul>
+        <p class="light-note">2種類の演出が約2分半ごとに切り替わります（10月29日・31日の2日間）。予告なく変わることがあるので、当日は<a href="https://www.tokyo-skytree.jp/event/autumn2026/" target="_blank" rel="noopener">公式サイト</a>で確認を。</p>
+      </div>
+      <ul class="conds">
+        <li>入店 18:30〜19:00</li>
+        <li>2名</li>
+        <li>1人 3,000円まで</li>
+        <li>理想は 2,000〜2,500円</li>
+      </ul>
+    </div>
+  </div>
+  <p class="hero-cap">イラストはイメージです</p>
+</header>
+
+<div class="bar" id="bar">
+  <div class="wrap bar-in">
+    <nav class="bar-nav" aria-label="お店へ移動"><ol id="barNav"></ol></nav>
+    <button class="favbtn" id="favFilter" type="button" aria-pressed="false"><svg class="ic"><use href="#i-heart"/></svg><span id="favFilterLabel">気になる</span><span class="cnt" id="favCount">0</span></button>
+  </div>
+</div>
+
+<main>
+  <section class="sec wrap" id="stores">
+    <div class="sec-h">
+      <small>Pick your table</small>
+      <h2>今夜の候補、5軒</h2>
+      <p>並びはおすすめ順ではありません。ハートを押した店は「気になる」に入り、上のボタンでその店だけを表示できます。</p>
+    </div>
+    <div class="cards" id="cards"></div>
+    <p class="swipe-hint"><svg class="ic"><use href="#i-swipe"/></svg>横にスワイプすると5軒すべて見られます</p>
+    <p class="empty-fav" id="emptyFav" hidden>まだ「気になる」がありません。カードのハートを押すと、ここに残ります。</p>
+  </section>
+
+  <section class="sec wrap" id="budget">
+    <div class="sec-h">
+      <small>Budget</small>
+      <h2>予算のものさし</h2>
+      <p>各店の「注文例」を1人あたりに直して並べました。ドリンクやチャージ料も入れています。</p>
+    </div>
+    <div class="ruler">
+      <ul class="ruler-legend">
+        <li><i class="lg-ideal"></i>理想 2,000〜2,500円</li>
+        <li><i class="lg-cap"></i>上限 3,000円</li>
+        <li><i class="lg-bar"></i>注文例の幅</li>
+        <li><i class="lg-over"></i>デザートまで頼んだ場合</li>
+      </ul>
+      <ul class="rr-list" id="ruler"></ul>
+      <div class="ruler-axis" id="rulerAxis" aria-hidden="true"></div>
+      <p class="ruler-note">価格は2026年10月9日に確認できた掲載価格（税込）で計算しています。掲載元によって価格が違う品は、高いほうで計算しました。</p>
+    </div>
+  </section>
+
+  <div class="wrap" id="spreads"></div>
+
+  <section class="night" id="night">
+    <div class="wrap sec">
+      <div class="sec-h">
+        <small>Before &amp; after dinner</small>
+        <h2>ハロウィンの夜を、少し歩く</h2>
+        <p>主役は晩ごはん。そのうえで、食事の前後にスカイツリーを眺めるための小さなメモです。</p>
+      </div>
+      <div class="night-grid">
+        <div class="nbox">
+          <h3>2種類のライティングが交互に</h3>
+          <div class="duo">
+            <div>
+              <svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" fill="#2A2350"/><circle cx="32" cy="22" r="11" fill="#F3DFA9"/><circle cx="37" cy="18" r="10" fill="#2A2350"/><use href="#tree" x="20" y="10" width="14" height="46" fill="url(#g-light-moon)"/></svg>
+              <b>ムーンナイト・ハロウィン</b>
+              <span>ミステリアスで幻想的な月夜がテーマ</span>
+            </div>
+            <div>
+              <svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" fill="#3A1E12"/><ellipse cx="28" cy="32" rx="17" ry="14" fill="#E9772A"/><path d="M28 18v-5" stroke="#6E8D3E" stroke-width="3" stroke-linecap="round"/><path d="M19 28l4 3-4 2zM37 28l-4 3 4 2zM20 38c5 4 11 4 16 0-2 4-5 5-8 5s-6-1-8-5z" fill="#FFE08A"/></svg>
+              <b>スマイルパンプキン</b>
+              <span>ユニークな表情のジャック・オー・ランタンがテーマ</span>
+            </div>
+          </div>
+          <p>点灯は17:45〜24:00。約2分半ごとに入れ替わるので、食事の前でも後でも両方見られます。</p>
+          <p><small>出典：<a href="https://www.tokyo-skytree.jp/event/autumn2026/" target="_blank" rel="noopener">東京スカイツリー公式「DISCOVER AUTUMN at TOKYO SKYTREE」</a>。点灯時間や内容は予告なく変更される場合があります。上の図は演出のテーマを表したイラストで、実際の見え方とは異なります。</small></p>
+        </div>
+
+        <div class="nbox">
+          <h3>見上げる・撮る・歩く</h3>
+          <ul class="spots">
+            <li class="spot"><span class="spot-ic"><svg class="ic"><use href="#i-water"/></svg></span><div><b>十間橋（じっけんばし）</b><p>北十間川の水面にスカイツリーが映る「逆さツリー」の定番スポット。スカイツリーから徒歩10分ほどと紹介されています。三脚を禁止とする情報もあるので、撮るなら手持ちで。</p><a href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8D%81%E9%96%93%E6%A9%8B%20%E5%A2%A8%E7%94%B0%E5%8C%BA" target="_blank" rel="noopener">地図で見る</a></div></li>
+            <li class="spot"><span class="spot-ic"><svg class="ic"><use href="#i-bridge"/></svg></span><div><b>すみだリバーウォーク</b><p>東武線の鉄橋に沿った歩道橋で、浅草側から隅田川を歩いて渡れます。渡った先が東京ミズマチ（LAND_Aがある場所）。通れるのは7:00〜22:00。</p><a href="https://www.google.com/maps/search/?api=1&amp;query=%E3%81%99%E3%81%BF%E3%81%A0%E3%83%AA%E3%83%90%E3%83%BC%E3%82%A6%E3%82%A9%E3%83%BC%E3%82%AF" target="_blank" rel="noopener">地図で見る</a></div></li>
+            <li class="spot"><span class="spot-ic"><svg class="ic"><use href="#i-moon"/></svg></span><div><b>隅田公園・吾妻橋のたもと</b><p>浅草駅からすぐの川沿い。川越しにスカイツリーとアサヒビールの建物が並んで見えます。</p><a href="https://www.google.com/maps/search/?api=1&amp;query=%E9%9A%85%E7%94%B0%E5%85%AC%E5%9C%92%20%E5%A2%A8%E7%94%B0%E5%8C%BA" target="_blank" rel="noopener">地図で見る</a></div></li>
+            <li class="spot"><span class="spot-ic"><svg class="ic"><use href="#i-tree"/></svg></span><div><b>スカイツリーの足もと</b><p>東京スカイツリータウンは押上駅・とうきょうスカイツリー駅のすぐ上。真下から見上げるライティングは迫力があります。</p><a href="https://www.google.com/maps/search/?api=1&amp;query=%E6%9D%B1%E4%BA%AC%E3%82%B9%E3%82%AB%E3%82%A4%E3%83%84%E3%83%AA%E3%83%BC" target="_blank" rel="noopener">地図で見る</a></div></li>
+          </ul>
+        </div>
+
+        <div class="nbox" id="access">
+          <h3>神田駅から、約20分</h3>
+          <p>17:30に仕事が終わってから向かっても、押上には18時ごろ。ライティングはもう灯っています。</p>
+          <div class="route">
+            <div class="route-h"><b>浅草で乗り換え</b><span>約20分・IC 286円</span></div>
+            <ol class="legs">
+              <li class="st"><i></i>神田</li>
+              <li class="ride line-g"><i></i><span>東京メトロ銀座線（浅草行き）約11分</span></li>
+              <li class="st"><i></i>浅草</li>
+              <li class="ride line-a"><i></i><span>都営浅草線 約3分（次の本所吾妻橋で降りれば、すみだCafe方面）</span></li>
+              <li class="st"><i></i>押上〈スカイツリー前〉</li>
+            </ol>
+          </div>
+          <div class="route">
+            <div class="route-h"><b>三越前で乗り換え</b><span>約21分・IC 209円</span></div>
+            <ol class="legs">
+              <li class="st"><i></i>神田</li>
+              <li class="ride line-g"><i></i><span>東京メトロ銀座線 1駅</span></li>
+              <li class="st"><i></i>三越前</li>
+              <li class="ride line-z"><i></i><span>東京メトロ半蔵門線</span></li>
+              <li class="st"><i></i>押上〈スカイツリー前〉</li>
+            </ol>
+          </div>
+          <p style="margin-top:10px"><small>所要時間と運賃は駅探の検索例（平日昼）です。土曜の夕方は乗換案内で確かめてください。LAND_Aへは、浅草で降りてすみだリバーウォークを歩くのもおすすめです。<br><a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E7%A5%9E%E7%94%B0%E9%A7%85&amp;destination=%E6%8A%BC%E4%B8%8A%E9%A7%85&amp;travelmode=transit" target="_blank" rel="noopener">Googleマップで経路を見る</a> ／ <a href="https://ekitan.com/transit/route/sf-1923/st-1752" target="_blank" rel="noopener">駅探で見る</a></small></p>
+        </div>
+
+        <div class="nbox" id="where">
+          <h3>5軒の位置関係</h3>
+          <p>押上駅のまわりに3軒、隅田川寄りに2軒。2つのエリアは東武線と浅草通りでつながっています。</p>
+          <div class="map-wrap">
+            <svg class="map" viewBox="0 0 320 280" role="img" aria-label="位置関係の略図。西に隅田川と浅草駅、東に押上駅とスカイツリー。押上駅まわりにpiccole lampare、らんぷ＋k、ココノハ。隅田川寄りにLAND_Aとすみだcafe。">
+              <rect x="30" y="0" width="22" height="280" class="river"/>
+              <text class="lbl-river" x="41" y="272" text-anchor="middle" transform="rotate(-90 41 272)">隅田川</text>
+              <rect class="cluster" x="58" y="40" width="106" height="232" rx="14"/>
+              <rect class="cluster" x="182" y="84" width="136" height="188" rx="14"/>
+              <path class="rail" d="M8 70H306"/><path class="rail-tie" d="M8 70H306"/>
+              <text class="lbl-s" x="200" y="60" text-anchor="middle">東武線・北十間川</text>
+              <path class="road" d="M8 200H314"/>
+              <text class="lbl-s" x="160" y="222" text-anchor="middle">浅草通り（地下に都営浅草線）</text>
+              <text class="lbl-s" x="66" y="264">隅田川寄り</text>
+              <text class="lbl-s" x="312" y="100" text-anchor="end">押上駅まわり</text>
+              <g class="spotm"><circle cx="41" cy="70" r="4.5"/><text x="56" y="60" class="lbl-s">リバーウォーク</text></g>
+              <g class="spotm"><circle cx="306" cy="34" r="4.5"/><text x="296" y="38" text-anchor="end" class="lbl-s">十間橋（逆さツリー）</text></g>
+              <g class="stn"><rect x="1" y="122" width="27" height="17" rx="4"/><text x="14.5" y="134.5" text-anchor="middle">浅草</text></g>
+              <g class="stn"><rect x="191" y="62" width="114" height="17" rx="4"/><text x="248" y="74.5" text-anchor="middle" style="font-size:9.5px">とうきょうスカイツリー駅</text></g>
+              <g class="stn"><rect x="70" y="192" width="70" height="17" rx="4"/><text x="105" y="204.5" text-anchor="middle">本所吾妻橋駅</text></g>
+              <g class="stn"><rect x="262" y="192" width="44" height="17" rx="4"/><text x="284" y="204.5" text-anchor="middle">押上駅</text></g>
+              <use href="#tree" x="194" y="96" width="15" height="94" fill="url(#g-light-pump)"/>
+              <g class="shop"><circle cx="78" cy="96" r="6.5"/><text x="89" y="100.5">LAND_A</text></g>
+              <g class="shop"><circle cx="82" cy="238" r="6.5"/><text x="93" y="242.5">すみだCafe</text></g>
+              <g class="shop"><circle cx="226" cy="140" r="6.5"/><text x="237" y="138">ココノハ</text><text x="237" y="152" class="lbl-s">ソラマチ4F</text></g>
+              <g class="shop"><circle cx="212" cy="234" r="6.5"/><text x="222" y="238.5">らんぷ＋k</text></g>
+              <g class="shop"><circle cx="300" cy="234" r="6.5"/><text x="300" y="256" text-anchor="end">piccole</text></g>
+            </svg>
+          </div>
+          <p class="map-note">位置関係のイメージを描いた略図です。距離や向きは正確ではありません。正確な場所は各店の「Googleマップで見る」から。</p>
+          <ul class="walk-list" id="walkList"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="share">
+    <div class="share">
+      <h3>気になるお店を送る</h3>
+      <p>ハートはこの端末のブラウザにだけ保存されます。相手の画面には反映されないので、決まったら店名とリンクをコピーしてLINEで送ってください。</p>
+      <ul class="share-list" id="shareList"></ul>
+      <div class="share-btns">
+        <button class="btn solid" id="copyBtn" type="button"><svg class="ic"><use href="#i-copy"/></svg>店名とリンクをコピー</button>
+        <a class="btn" id="lineBtn" href="https://line.me/R/share?text=" target="_blank" rel="noopener"><svg class="ic"><use href="#i-chat"/></svg>LINEで送る</a>
+        <span class="copied" id="copied" role="status" hidden>コピーしました</span>
+      </div>
+      <textarea class="copy-fallback" id="copyFallback" readonly hidden aria-label="コピー用テキスト"></textarea>
+    </div>
+  </section>
+
+  <footer class="wrap foot" id="about">
+    <h2>このガイドについて</h2>
+    <div class="src">
+      <div>
+        <h3>情報の確認</h3>
+        <p>2026年10月9日に、各店の公式サイト・予約サイト・東京スカイツリー公式の掲載内容を検索して確認しました。価格・営業時間・チャージ料などは変わることがあります。「要確認」と書いた項目は、掲載元で食い違いがあるか、確認できなかったものです。予約のときにお店へ確かめてください。</p>
+      </div>
+      <div>
+        <h3>写真について</h3>
+        <p>お店の写真は、転載や再利用の許可を確認できたものがなかったため、このページには載せていません。各店の「写真で見る」から、公式サイトや予約サイトの写真ページを開けます。カードや店の上部の絵は、お店の特徴をもとに描いたイラストで、実際の店内や料理ではありません。</p>
+      </div>
+      <div>
+        <h3>おもな出典</h3>
+        <ul id="srcList"></ul>
+      </div>
+    </div>
+    <p class="bye">Have a lovely <span>Halloween night.</span></p>
+  </footer>
+</main>
+
+<script>
+const GUIDE_URL = 'https://claude.ai/artifact/5jX9zwQNdQhBv3xWcTn3Q5';
+const DOMAIN = [1500, 3500];
+const IDEAL = [2000, 2500];
+const CAP = 3000;
+const gmap = q => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+const gdir = (o, d) => 'https://www.google.com/maps/dir/?api=1&origin=' + encodeURIComponent(o) + '&destination=' + encodeURIComponent(d) + '&travelmode=walking';
+
+const STORES = [
+  {
+    id: 'lamp', name: '窯焼きバルカフェ らんぷ＋k', short: 'らんぷ＋k', kana: 'かまやきバルカフェ らんぷ',
+    area: '押上・業平', genre: '窯焼きイタリアン・バル',
+    catch: '木の温もりに包まれて、<br>窯焼きピッツァを',
+    lead: '押上駅から歩いて2〜3分の、小さなバルカフェ。「発酵×窯焼き」をうたい、イタリア産小麦と天然酵母の生地を窯で焼くピッツァや、醤油糀・酒粕など発酵食材を使った料理を出しています。',
+    budget: '約2,200〜2,400円', budgetNote: 'お通し等は要確認',
+    tags: ['窯焼きピッツァ', '発酵料理', '木の温もり', 'テラス席あり'],
+    mini: [['駅から', '押上駅A2 徒歩2〜3分'], ['眺め', 'テラスからスカイツリー（季節次第）'], ['予約', 'できる']],
+    charms: [
+      ['雰囲気', '木を使った内装とやわらかな照明の、こぢんまりとした店。総席数は20席ほどと紹介されています（2022年の掲載）。'],
+      ['得意な料理', '窯で焼くピッツァ、生パスタ、石焼きのハンバーグ。醤油糀に漬けた牛肉のボロネーゼなど、発酵食材を隠し味にした料理が多いのが特徴です。'],
+      ['過ごし方', '前菜とピッツァとパスタを2人で分け合うのにちょうどいい店。テラス席からはスカイツリーが見えると紹介されています。'],
+      ['ほかとの違い', '5軒のなかで、いちばん隠れ家のバルらしい店。眺めよりも、店の温かさと料理の個性で選ぶお店です。']
+    ],
+    dishes: [
+      { cat: 'PIZZA', ic: 'pizza', name: 'マルゲリータ', desc: '窯で焼く、定番のピッツァ', price: 1390, check: '2024年の紹介記事では1,880円の表記もあり' },
+      { cat: 'PASTA', ic: 'pasta', name: '自家製醤油糀ボロネーゼ', desc: '醤油糀に漬け込んだ牛肉を使ったボロネーゼ', price: 1480 },
+      { cat: 'MAIN', ic: 'meat', name: '石焼きポークハンバーグ', desc: '公式メニュー（英語版）でも1,600円を確認', price: 1600 },
+      { cat: 'TAPAS', ic: 'pan', name: '小エビとキノコのMisoアヒージョ', desc: '味噌を合わせたアヒージョ', price: 750, check: 'ぐるなびでは700円の表記' },
+      { cat: 'DRINK', ic: 'drink', name: 'ソフトドリンク', desc: '品目により異なります', price: 580, suffix: '円前後' }
+    ],
+    plans: [
+      { who: 'For two', title: '2人で3皿をシェア', items: [['マルゲリータ', 1390], ['自家製醤油糀ボロネーゼ', 1480], ['小エビとキノコのMisoアヒージョ', 750], ['ソフトドリンク ×2', 1160]], total: 4780, per: 2390, stamp: 'ok' },
+      { who: 'For one', title: 'ハンバーグでしっかり', items: [['石焼きポークハンバーグ', 1600], ['ソフトドリンク', 580]], total: 2180, per: 2180, stamp: 'ok' }
+    ],
+    plansNote: 'お通し・チャージ料の有無は掲載が見つからず未確認です。マルゲリータが1,880円だった場合、シェアの例は1人2,635円になります。',
+    ruler: { min: 2180, max: 2390 },
+    cautions: [
+      'テラス席は「春〜秋は利用可」との掲載（ぐるなび）。10月31日の夜に使えるか、寒さ対策があるかは予約時に確認を。',
+      '席数の少ない店です。土曜の夜は予約しておくと安心です。',
+      'お通し・チャージ料の有無は確認できませんでした。',
+      '価格は掲載元で差があります。最新は公式メニューで確認してください。'
+    ],
+    facts: [
+      ['住所', '東京都墨田区業平1-22-5'],
+      ['最寄り駅', '都営浅草線 押上駅A2出口から徒歩2分<small>ぐるなび掲載。事前調査では徒歩3分</small>'],
+      ['土曜の営業', '11:30〜24:00<small>公式・ぐるなび掲載。料理のラストオーダーは23:00との掲載あり（ホットペッパー）</small>'],
+      ['定休日', '火曜'],
+      ['予約', '電話 03-5637-8308／ネット予約（ひとサラ）'],
+      ['支払い', '現金・カード・PayPay<small>掲載情報</small>']
+    ],
+    pockets: [
+      { label: '店内とテラス', src: '公式サイト「空間」', url: 'https://lamp-oshiage.com/space/' },
+      { label: '窯焼きピッツァと料理', src: '公式サイト「お料理」', url: 'https://lamp-oshiage.com/menu/' },
+      { label: '料理・店内の写真', src: 'ひとサラ', url: 'https://hitosara.com/0031327590/photo/' },
+      { label: '訪れた人の写真', src: '食べログ', url: 'https://tabelog.com/tokyo/A1312/A131203/13208347/dtlphotolst/' }
+    ],
+    links: {
+      menu: 'https://lamp-oshiage.com/menu/', menu2: { label: 'ドリンクを見る', url: 'https://lamp-oshiage.com/drink/' },
+      photos: 'https://lamp-oshiage.com/space/', official: 'https://lamp-oshiage.com/',
+      reserve: { url: 'https://hitosara.com/0031327590/', via: 'ひとサラ' },
+      mapq: '窯焼きバルカフェ らんぷ＋k 東京都墨田区業平1-22-5'
+    },
+    walk: { from: '押上駅', note: '押上駅A2出口から徒歩2〜3分（店舗掲載）' },
+    sources: [['公式サイト', 'https://lamp-oshiage.com/'], ['ぐるなび', 'https://r.gnavi.co.jp/je5ywfpu0000/'], ['ひとサラ', 'https://hitosara.com/0031327590/']]
+  },
+  {
+    id: 'piccole', name: 'piccole lampare & rooftop Sky Bar', short: 'piccole lampare', kana: 'ピッコレ ランパーレ',
+    area: '押上駅前', genre: 'トラットリア＆屋上バー',
+    catch: '目の前にスカイツリー。<br>屋上のある店で、特別な夜を',
+    lead: '押上駅A2出口から徒歩1分、ビルの5・6階にあるイタリアン。5階はテーブル席のダイニング、6階は屋上テラスとカウンター。国産牛100％の粗挽き炭火ハンバーグなど、炭火の料理が看板です。',
+    budget: '約2,600〜3,000円', budgetNote: 'チャージ330円込み',
+    tags: ['スカイツリーが間近', '屋上テラス', '炭火ハンバーグ', 'チャージあり'],
+    mini: [['駅から', '押上駅A2 徒歩1分'], ['眺め', '5F窓際・6Fテラス（席による）'], ['予約', 'できる']],
+    charms: [
+      ['雰囲気', 'エレベーターで5階に上がるとテーブル席のダイニング。階段で6階に上がると、スカイツリーを見上げる屋上テラスとバーカウンターがあります。'],
+      ['得意な料理', '炭火で焼き、鉄板で仕上げる国産牛100％の粗挽きハンバーグ。ソースは3種類から選べます。パスタやグラタン、前菜もそろいます。'],
+      ['過ごし方', 'ハロウィンの光をまとったスカイツリーを、すぐそばに感じながら食事。食後に6階のバーで一杯、という流れもできます。'],
+      ['ほかとの違い', '5軒のなかで、スカイツリーにいちばん近い眺め。そのぶんチャージ料がかかり、予算は上限に近づきます。']
+    ],
+    dishes: [
+      { cat: 'MAIN', ic: 'meat', name: '粗挽き炭火ハンバーグ 200g', desc: '国産牛100％。ソースは3種から', price: 1680, check: '1,640円の表記もあり（掲載時期で差）' },
+      { cat: 'GRATIN', ic: 'gratin', name: '牛肉100％ラグーミートグラタン', desc: '', price: 1430 },
+      { cat: 'APPETIZER', ic: 'plate', name: 'チリコンカーンとタコスチップ', desc: '', price: 990, check: 'ホットペッパーでは880円' },
+      { cat: 'DESSERT', ic: 'dessert', name: 'ワッフルバニラアイス ベリーソース', desc: '「本日のデザート」として掲載', price: 770 },
+      { cat: 'DRINK', ic: 'drink', name: 'ウーロン茶', desc: 'ジンジャーエール・ペリエは650円（公式ドリンク表）', price: 580 }
+    ],
+    plans: [
+      { who: 'For one', title: 'ハンバーグとウーロン茶', items: [['粗挽き炭火ハンバーグ 200g', 1680], ['ウーロン茶', 580], ['チャージ料', 330]], total: 2590, per: 2590, stamp: 'ok' },
+      { who: 'For two', title: '2人で3皿をシェア', items: [['粗挽き炭火ハンバーグ 200g', 1680], ['ラグーミートグラタン', 1430], ['チリコンカーンとタコスチップ', 990], ['ウーロン茶 ×2', 1160], ['チャージ料 ×2', 660]], total: 5920, per: 2960, stamp: 'edge' },
+      { who: 'For two', title: 'シェア＋デザートまで', items: [['3皿シェア一式（チャージ込み）', 5920], ['ワッフルバニラアイス', 770]], total: 6690, per: 3345, stamp: 'over' }
+    ],
+    plansNote: '土・日・祝の17時以降は、単品注文だと1人330円のチャージ料がかかります（コースの場合はかかりません）。',
+    ruler: { min: 2590, max: 2960, over: 3345 },
+    cautions: [
+      '土・日・祝の17時以降、単品注文はチャージ料が1人330円かかります。',
+      '5階のテーブル席と6階のテラス・カウンターは別の席です。窓際やテラスの指定は予約時に確認を。時間帯や天候で希望の階が取れない場合があると案内されています。',
+      '6階へは階段のみ。10月末の夜のテラスは冷えるので上着を。公式ではテラスにパラソルヒーターとブランケットを用意しているとしています。',
+      'ぐるなびの平均予算は4,500円。ドリンクやデザートを足すと3,000円を超えやすい店です。'
+    ],
+    facts: [
+      ['住所', '東京都墨田区業平2-19-3 JTCビル5F・6F'],
+      ['最寄り駅', '都営浅草線 押上駅A2出口から徒歩1分<small>半蔵門線 押上駅B2出口から徒歩2分、とうきょうスカイツリー駅から徒歩5分（ぐるなび掲載）</small>'],
+      ['土曜の営業', '夜 16:30〜23:00<small>料理LO 22:00・ドリンクLO 22:30。昼から通し営業とする表記もあり（公式サイト内でも表記に差）</small>'],
+      ['定休日', '火曜<small>祝日の場合は営業し、翌日が休み</small>'],
+      ['予約', '電話 03-3625-7171／公式ネット予約（24時間）'],
+      ['席', '5F テーブル22席、6F テラステーブル8席・テラスカウンター10席・バーカウンター9席<small>食べログ掲載</small>']
+    ],
+    pockets: [
+      { label: '5Fの席と6Fテラス', src: '公式サイト「空間」', url: 'https://piccole-oshiage.com/space/' },
+      { label: '炭火ハンバーグと料理', src: '公式サイト「メニュー」', url: 'https://piccole-oshiage.com/menu/' },
+      { label: '店内・料理の写真', src: 'ホットペッパー', url: 'https://www.hotpepper.jp/strJ003694009/photo/' },
+      { label: '訪れた人の写真', src: '食べログ', url: 'https://tabelog.com/tokyo/A1312/A131203/13138974/dtlphotolst/' }
+    ],
+    links: {
+      menu: 'https://piccole-oshiage.com/menu/', photos: 'https://piccole-oshiage.com/space/', official: 'https://piccole-oshiage.com/top/',
+      reserve: { url: 'https://piccolelampare.owst.jp/', via: '公式予約サイト' },
+      mapq: 'piccole lampare 東京都墨田区業平2-19-3'
+    },
+    walk: { from: '押上駅', note: '押上駅A2出口から徒歩1分（店舗掲載）' },
+    sources: [['公式サイト', 'https://piccole-oshiage.com/top/'], ['公式予約サイト', 'https://piccolelampare.owst.jp/'], ['食べログ', 'https://tabelog.com/tokyo/A1312/A131203/13138974/'], ['ぐるなび', 'https://r.gnavi.co.jp/b369901/']]
+  },
+  {
+    id: 'landa', name: 'LAND_A（ランド エー）', short: 'LAND_A', kana: 'ランド エー',
+    area: '東京ミズマチ（向島）', genre: 'カフェダイニング',
+    catch: '川沿いの高架下で、<br>灯りと一緒にピッツァを',
+    lead: '浅草とスカイツリーを結ぶ「東京ミズマチ」の、隅田川側にあるカフェダイニング。ピッツァやパスタ、肉料理がそろい、テラス席も含めて約70席と、5軒のなかでは広い店です。',
+    budget: '1,680円〜＋ドリンク代', budgetNote: 'ドリンク価格は要確認',
+    tags: ['川沿いテラス', 'ピッツァ', '浅草から歩ける', '開放的'],
+    mini: [['駅から', '本所吾妻橋A3 徒歩4分'], ['眺め', 'スカイツリーが見えるかは未確認'], ['予約', 'できる']],
+    charms: [
+      ['雰囲気', '東武線の高架下に店が並ぶ東京ミズマチの一角。川沿いにテラスがある、明るく開放的なカフェです。'],
+      ['得意な料理', 'ピッツァ、パスタ、肉料理など。和の「うまみ」を合わせたピッツァもあります。'],
+      ['過ごし方', '浅草から、すみだリバーウォークで隅田川を歩いて渡れる場所。食後は川沿いをスカイツリーのほうへ散歩できます。'],
+      ['ほかとの違い', '水辺の開放感がいちばんの店。ただし閉店が早めなので、時間の確認が欠かせません。']
+    ],
+    dishes: [
+      { cat: 'PIZZA', ic: 'pizza', name: 'マルゲリータ', desc: '', price: 1680 },
+      { cat: 'PIZZA', ic: 'pizza', name: 'PIZZA JAPANESE うまみ', desc: '和のうまみを合わせたピッツァ', price: 1680 },
+      { cat: 'PIZZA', ic: 'pizza', name: 'ピッツァ ラザーニャ', desc: '', price: 2080 },
+      { cat: 'DRINK', ic: 'drink', name: 'ドリンク', desc: '16時以降のメイン単品注文は1人1ドリンクが必要', price: null }
+    ],
+    dishesNote: 'ピッツァの価格は事前調査で公式メニューから控えたものです。今回の検索ではディナーの単品価格を確認しきれなかったため、公式メニューで確かめてください。',
+    plans: [
+      { who: 'For one', title: 'ピッツァ1枚とドリンク', items: [['マルゲリータ', 1680], ['ドリンク 1杯', null]], total: null, perText: '1,680円＋ドリンク代', stamp: 'unk' },
+      { who: 'For two', title: '2人でピッツァ2枚', items: [['マルゲリータ', 1680], ['PIZZA JAPANESE うまみ', 1680], ['ドリンク ×2', null]], total: null, perText: '1,680円＋ドリンク代', stamp: 'unk' }
+    ],
+    plansNote: '16時以降にメイン料理を単品で頼む場合は、1人1ドリンク＋1フードの注文が必要です（事前調査の情報）。ドリンクの価格を確認できなかったため、合計は出していません。',
+    ruler: { min: 1680, max: 1680, open: true, label: '1,680円＋ドリンク代' },
+    cautions: [
+      '土曜の閉店時間が掲載元で違います。「21時まで（料理LO20時）」の表記と、「ディナー17〜20時（料理LO19時）」の表記があります。19時入店だとラストオーダーが近い可能性があるので、予約時に必ず確認を。',
+      '16時以降のメイン単品注文は、1人1ドリンク＋1フードが条件です（事前調査）。',
+      '席からスカイツリーが直接見えるかは確認できませんでした。',
+      '予約時の滞在時間の制限は要確認。コース（4,500円〜、飲み放題付き）は予算を超えます。'
+    ],
+    facts: [
+      ['住所', '東京都墨田区向島1-2-4 東京ミズマチ WEST ZONE'],
+      ['最寄り駅', '都営浅草線 本所吾妻橋駅A3出口から徒歩4分<small>銀座線 浅草駅5番出口から、すみだリバーウォーク経由で徒歩7分（2020年の紹介記事・東京ミズマチWEST ZONEまで）</small>'],
+      ['土曜の営業', '要確認<small>掲載により「9:00〜21:00（料理LO20:00・ドリンクLO20:30）」「ディナー17:00〜20:00（料理LO19:00・ドリンクLO19:30）」</small>'],
+      ['予約', '電話 03-5637-0107／TableCheck'],
+      ['席', '約70席（店内とテラス、2020年開業時の発表）']
+    ],
+    pockets: [
+      { label: '店内とテラス', src: '運営会社の店舗ページ', url: 'https://restaurant.balnibarbi.com/shops/land_a/' },
+      { label: 'ピッツァとメニュー', src: '公式サイト「メニュー」', url: 'https://land-a.jp/menu/' },
+      { label: '訪れた人の写真', src: '食べログ', url: 'https://tabelog.com/tokyo/A1311/A131102/13247604/dtlphotolst/' },
+      { label: '東京ミズマチの街並み', src: '東京ミズマチ公式', url: 'https://www.tokyo-mizumachi.jp/' }
+    ],
+    links: {
+      menu: 'https://land-a.jp/menu/', menu2: { label: '価格の参考（食べログ）', url: 'https://tabelog.com/tokyo/A1311/A131102/13247604/dtlmenu/' },
+      photos: 'https://restaurant.balnibarbi.com/shops/land_a/', official: 'https://land-a.jp/',
+      reserve: { url: 'https://www.tablecheck.com/ja/shops/land-a/reserve', via: 'TableCheck' },
+      mapq: 'LAND_A 東京ミズマチ 東京都墨田区向島1-2-4'
+    },
+    walk: { from: '浅草駅', note: '浅草駅（銀座線5番出口）から、すみだリバーウォーク経由で徒歩7分（2020年の紹介記事）' },
+    sources: [['公式サイト', 'https://land-a.jp/'], ['TableCheck', 'https://www.tablecheck.com/en/land-a'], ['開業時の発表（PR TIMES）', 'https://prtimes.jp/main/html/rd/p/000000168.000025087.html']]
+  },
+  {
+    id: 'sumida', name: 'すみだCafe', short: 'すみだCafe', kana: 'すみだカフェ',
+    area: '本所吾妻橋', genre: 'カフェ・イタリアン',
+    catch: '下町の小さなカフェで、<br>パスタと会話をゆっくり',
+    lead: '本所吾妻橋駅の近くにある、地元のカフェ。パスタ・リゾットの種類が多く、前菜から肉・魚のメインまで一皿ずつ頼めます。自家製ハニーレモンソーダなど、手づくりのドリンクも楽しみのひとつです。',
+    budget: '約2,100〜2,900円', budgetNote: 'お通し等は要確認',
+    tags: ['料理充実', 'パスタ豊富', '落ち着いたカフェ', '自家製ドリンク'],
+    mini: [['駅から', '本所吾妻橋駅 徒歩3分'], ['眺め', '料理と会話が主役'], ['予約', 'できる']],
+    charms: [
+      ['雰囲気', '観光地の店というより、近所の人が通うカフェ。肩ひじ張らずに過ごせます。'],
+      ['得意な料理', 'パスタはトマトクリーム、カルボナーラ、ペスカトーレなど種類が豊富。大山鶏のローストや自家製スモークサーモンのポワレなど、メインも頼めます。'],
+      ['過ごし方', '夜景より、何を食べるか迷いながら話す夜に。食後はスカイツリーまで歩いて、ライティングを見に行けます。'],
+      ['ほかとの違い', 'メニューの幅がいちばん広い店。眺めはないぶん、料理を選ぶ楽しさがあります。']
+    ],
+    dishes: [
+      { cat: 'PASTA', ic: 'pasta', name: 'エビとマッシュルームのトマトクリーム', desc: '', price: 1400 },
+      { cat: 'PASTA', ic: 'pasta', name: '厚切りベーコンのカルボナーラ', desc: '', price: 1400 },
+      { cat: 'MAIN', ic: 'meat', name: '大山鶏のロースト', desc: '', price: 1680, check: 'ホットペッパーでは1,250円の表記' },
+      { cat: 'MAIN', ic: 'fish', name: '自家製スモークサーモンのポワレ', desc: '', price: 1680, check: 'ホットペッパーでは1,350円の表記' },
+      { cat: 'DRINK', ic: 'drink', name: '自家製ハニーレモンソーダ', desc: '', price: 680, check: '口コミでは650円' }
+    ],
+    plans: [
+      { who: 'For one', title: 'パスタとハニーレモンソーダ', items: [['エビとマッシュルームのトマトクリーム', 1400], ['自家製ハニーレモンソーダ', 680]], total: 2080, per: 2080, stamp: 'ok' },
+      { who: 'For two', title: 'パスタ2皿と前菜をシェア', items: [['パスタ ×2', 2800], ['自家製スモークサーモンのマリネ', 780], ['自家製ハニーレモンソーダ ×2', 1360]], total: 4940, per: 2470, stamp: 'ok' },
+      { who: 'For two', title: 'パスタ2皿とメインをシェア', items: [['パスタ ×2', 2800], ['大山鶏のロースト', 1680], ['自家製ハニーレモンソーダ ×2', 1360]], total: 5840, per: 2920, stamp: 'edge' }
+    ],
+    plansNote: 'スモークサーモンのマリネ（780円）はホットペッパー掲載の価格です。お通し・チャージ料の有無は確認できませんでした。',
+    ruler: { min: 2080, max: 2920 },
+    cautions: [
+      '食べログでは夜の予算が「3,000〜3,999円」。単品中心なら予算内ですが、頼み方で超えます。',
+      'メイン料理の価格は掲載元で差があります（1,250〜1,680円）。',
+      'お通し・チャージ料の有無は確認できませんでした。',
+      '店内からスカイツリーが見えるという情報はありません。'
+    ],
+    facts: [
+      ['住所', '東京都墨田区吾妻橋2-1-4'],
+      ['最寄り駅', '都営浅草線 本所吾妻橋駅から徒歩3分<small>事前調査の情報。スカイツリーまでは徒歩8分ほど</small>'],
+      ['土曜の営業', '11:00〜22:00<small>料理LO 21:00・ドリンクLO 21:30（ホットペッパー掲載）</small>'],
+      ['定休日', '月曜'],
+      ['予約', '電話 03-5637-8681／ホットペッパー・食べログでネット予約']
+    ],
+    pockets: [
+      { label: '店内と料理', src: 'ホットペッパー「写真」', url: 'https://www.hotpepper.jp/strJ001275491/photo/' },
+      { label: 'パスタとメイン料理', src: 'ホットペッパー「料理」', url: 'https://www.hotpepper.jp/strJ001275491/food/' },
+      { label: '訪れた人の写真', src: '食べログ', url: 'https://tabelog.com/tokyo/A1312/A131203/13257342/dtlphotolst/' },
+      { label: 'お店の紹介', src: '店舗サイト', url: 'https://foodplace.jp/sumida-cafe/' }
+    ],
+    links: {
+      menu: 'https://www.hotpepper.jp/strJ001275491/food/', photos: 'https://www.hotpepper.jp/strJ001275491/photo/', official: 'https://foodplace.jp/sumida-cafe/',
+      reserve: { url: 'https://www.hotpepper.jp/strJ001275491/', via: 'ホットペッパー' },
+      mapq: 'すみだCafe 東京都墨田区吾妻橋2-1-4'
+    },
+    walk: { from: '本所吾妻橋駅', note: '本所吾妻橋駅から徒歩3分、スカイツリーから徒歩8分ほど（事前調査）' },
+    sources: [['店舗サイト', 'https://foodplace.jp/sumida-cafe/'], ['ホットペッパー', 'https://www.hotpepper.jp/strJ001275491/'], ['食べログ', 'https://tabelog.com/tokyo/A1312/A131203/13257342/']]
+  },
+  {
+    id: 'kokonoha', name: 'ココノハ 東京スカイツリータウン・ソラマチ店', short: 'ココノハ', kana: 'ここのは',
+    area: '東京ソラマチ 4F', genre: '和カフェ',
+    catch: 'スカイツリーの足もとで、<br>やさしい和パスタとデザートを',
+    lead: '東京ソラマチ4階の、ナチュラルな雰囲気のカフェ。味噌や醤油など和の調味料を使ったパスタを中心に、リゾットやどんぶり、デザートがそろいます。',
+    budget: '約1,600〜2,200円', budgetNote: 'ドリンク価格は要確認',
+    tags: ['スカイツリーの真下', '和パスタ', 'スイーツ', '予約なし'],
+    mini: [['駅から', 'スカイツリータウンの中'], ['眺め', '店を出れば真上に'], ['予約', 'できない']],
+    charms: [
+      ['雰囲気', 'ナチュラルでやわらかい雰囲気のカフェ。気負わずに入れます。'],
+      ['得意な料理', '「鶏そぼろと茄子の味噌トマト」「蒸し鶏と枝豆の味噌クリーム」など、和の調味料を使ったパスタが看板です。'],
+      ['過ごし方', 'スカイツリータウンの中なので、店を出ればすぐにライティングを見上げられます。食後のデザートまでゆっくり。'],
+      ['ほかとの違い', '5軒のなかでいちばん気軽で、予算も抑えやすい店。特別なレストランというより、居心地のいいカフェです。']
+    ],
+    dishes: [
+      { cat: 'PASTA', ic: 'bowl', name: '鶏そぼろと茄子の味噌トマト', desc: '', price: 1298, check: '1,300円の表記もあり' },
+      { cat: 'PASTA', ic: 'bowl', name: '蒸し鶏と枝豆の味噌クリーム', desc: '', price: 1298 },
+      { cat: 'SET', ic: 'plate', name: '蒸し鶏と枝豆の味噌クリームプレート', desc: '2025年12月の口コミで確認', price: 1610 },
+      { cat: 'DESSERT', ic: 'dessert', name: 'デザート', desc: '事前調査の価格', price: 530, suffix: '円〜' }
+    ],
+    dishesNote: 'パスタの価格はぐるなび掲載です。最新は運営会社の店舗ページにあるグランドメニュー（PDF）で確認できます。',
+    plans: [
+      { who: 'For one', title: '和パスタのプレート', items: [['蒸し鶏と枝豆の味噌クリームプレート', 1610]], total: 1610, per: 1610, stamp: 'ok' },
+      { who: 'For one', title: 'プレートとデザート', items: [['蒸し鶏と枝豆の味噌クリームプレート', 1610], ['デザート', 530]], total: 2140, per: 2140, stamp: 'ok', perSuffix: '〜' }
+    ],
+    plansNote: 'プレートにドリンクが付くかどうかと、ドリンク単品の価格は確認できませんでした。',
+    ruler: { min: 1610, max: 2140, label: '1,610〜2,140円・ドリンク別' },
+    cautions: [
+      '予約はできません（掲載情報）。ハロウィンの土曜夜は待ち時間が出るかもしれません。',
+      '営業時間が掲載元で「9:00〜22:00（LO21:00）」「8:00〜23:00（LO22:00）」と異なります。',
+      'ドリンクの単品価格は確認できませんでした。',
+      '店内からスカイツリーが見えるかは確認できませんでした。'
+    ],
+    facts: [
+      ['住所', '東京都墨田区押上1-1-2 東京ソラマチ4F'],
+      ['最寄り駅', '押上駅・とうきょうスカイツリー駅からすぐ<small>東京スカイツリータウンの中</small>'],
+      ['営業時間', '要確認<small>事前調査では22:00まで（LO21:00）</small>'],
+      ['予約', 'できない（掲載情報）'],
+      ['電話', '050-5492-7403<small>掲載情報</small>']
+    ],
+    pockets: [
+      { label: 'メニュー（PDF）とお店', src: '運営会社の店舗ページ', url: 'https://www.potomak.co.jp/shop/423/' },
+      { label: 'お店の紹介', src: '東京ソラマチ公式', url: 'https://www.tokyo-solamachi.jp/shop/232/' },
+      { label: '訪れた人の写真', src: '食べログ', url: 'https://tabelog.com/tokyo/A1312/A131203/13141258/dtlphotolst/' }
+    ],
+    links: {
+      menu: 'https://www.potomak.co.jp/shop/423/', photos: 'https://www.tokyo-solamachi.jp/shop/232/', official: 'https://www.tokyo-solamachi.jp/shop/232/',
+      reserve: null,
+      mapq: 'ココノハ 東京スカイツリータウン・ソラマチ店'
+    },
+    walk: { from: '東京スカイツリー', note: '東京スカイツリータウン（東京ソラマチ）4階' },
+    sources: [['運営会社の店舗ページ', 'https://www.potomak.co.jp/shop/423/'], ['東京ソラマチ', 'https://www.tokyo-solamachi.jp/shop/232/'], ['ぐるなび', 'https://r.gnavi.co.jp/brj99bu20000/']]
+  }
+];
+
+const ICON = id => `<svg class="ic" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const yen = n => n.toLocaleString('ja-JP');
+const pct = v => ((Math.min(Math.max(v, DOMAIN[0]), DOMAIN[1]) - DOMAIN[0]) / (DOMAIN[1] - DOMAIN[0]) * 100).toFixed(2) + '%';
+const ext = 'target="_blank" rel="noopener"';
+
+/* favorites (stored only in this browser) */
+const FKEY = 'skytree-dinner-favs-v1';
+let favs = new Set();
+try { favs = new Set(JSON.parse(localStorage.getItem(FKEY) || '[]')); } catch (e) { favs = new Set(); }
+function saveFavs() { try { localStorage.setItem(FKEY, JSON.stringify([...favs])); } catch (e) {} }
+
+function renderNav() {
+  document.getElementById('barNav').innerHTML = STORES.map(s =>
+    `<li><a href="#${s.id}" data-fav-nav="${s.id}">${ICON('heart')}${s.short}</a></li>`).join('') +
+    `<li><a href="#night">夜の散歩</a></li><li><a href="#access">アクセス</a></li>`;
+}
+
+function renderCards() {
+  document.getElementById('cards').innerHTML = STORES.map(s => `
+    <article class="card" data-store="${s.id}">
+      <div class="cover">
+        <svg viewBox="0 0 400 300" role="img" aria-label="${s.short}のイメージイラスト"><use href="#cov-${s.id}"/></svg>
+        <span class="illu">ILLUSTRATION</span>
+        <button class="heart" type="button" data-fav="${s.id}" aria-pressed="false" aria-label="${s.short}を気になるに入れる">${ICON('heart')}</button>
+      </div>
+      <div class="card-b">
+        <p class="card-area">${s.area}・${s.genre}</p>
+        <h3 class="card-name">${s.name}</h3>
+        <p class="card-catch">${s.catch.replace('<br>', '')}</p>
+        <p class="card-budget"><small>1人あたり</small><b>${s.budget}</b><em>${s.budgetNote}</em></p>
+        <ul class="tags">${s.tags.map(t => `<li>${t}</li>`).join('')}</ul>
+        <dl class="minifacts">${s.mini.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+        <a class="card-go" href="#${s.id}">写真・メニュー・予算を見る</a>
+      </div>
+    </article>`).join('');
+}
+
+function renderRuler() {
+  const host = document.getElementById('ruler');
+  host.innerHTML = STORES.map(s => {
+    const r = s.ruler;
+    const label = r.label || `${yen(r.min)}〜${yen(r.max)}円`;
+    const dots = s.plans.filter(p => p.per).map(p => `<span class="dot" style="left:${pct(p.per)}" title="${p.title}：1人${yen(p.per)}円"></span>`).join('');
+    const over = r.over ? `<span class="dot over" style="left:${pct(r.over)}" title="デザートまで：1人${yen(r.over)}円"></span>` : '';
+    const open = r.open ? `<span class="open" style="left:${pct(r.max)}"></span>` : '';
+    const overTxt = r.over ? `<small>デザートまでで${yen(r.over)}円</small>` : '';
+    return `<li class="rr">
+      <span class="rr-name"><a href="#${s.id}">${s.short}</a><small>${label}</small>${overTxt}</span>
+      <div class="rr-track" style="--i1:${pct(IDEAL[0])};--i2:${pct(IDEAL[1])};--cap:${pct(CAP)};--a:${pct(r.min)};--b:${pct(r.max)}" role="img" aria-label="${s.short} 1人あたり ${label}">
+        <span class="ideal"></span><span class="cap"></span><span class="bar-r"></span>${open}${dots}${over}
+      </div></li>`;
+  }).join('');
+  const ticks = [1500, 2000, 2500, 3000, 3500];
+  document.getElementById('rulerAxis').innerHTML = ticks.map(t =>
+    `<span style="left:${pct(t)}"${t === CAP ? ' class="capl"' : ''}>${yen(t)}</span>`).join('');
+}
+
+function dishHTML(d, cls) {
+  const price = d.price == null ? `<span class="q">価格は公式メニューで</span>`
+    : `<b>${yen(d.price)}</b><small>${d.suffix || '円'}</small>`;
+  return `<li class="dish${cls ? ' ' + cls : ''}">
+    <div class="dish-top"><span class="dish-ic">${ICON(d.ic)}</span><span class="dish-cat">${d.cat}</span></div>
+    <p class="dish-name">${d.name}</p>
+    ${d.desc ? `<p class="dish-desc">${d.desc}</p>` : ''}
+    <p class="dish-price">${price}</p>
+    ${d.check ? `<p class="dish-check">要確認：${d.check}</p>` : ''}
+  </li>`;
+}
+
+function dishList(list) {
+  const food = list.filter(d => d.cat !== 'DRINK'), drink = list.filter(d => d.cat === 'DRINK');
+  return food.map((d, i) => dishHTML(d, food.length % 2 && i === 0 ? 'wide' : '')).join('') + drink.map(d => dishHTML(d, 'row')).join('');
+}
+
+function receiptHTML(p) {
+  const stampText = { ok: '予算内', edge: '上限<br>ぎりぎり', over: '3,000円<br>超え', unk: '合計は<br>要確認' }[p.stamp];
+  const items = p.items.map(([n, v]) => v == null
+    ? `<li class="unk"><span>${n}</span><i></i><span>価格要確認</span></li>`
+    : `<li><span>${n}</span><i></i><span>${yen(v)}</span></li>`).join('');
+  const sum = p.total != null ? `<p class="r-sum"><span>合計</span><b>${yen(p.total)}円</b></p>` : `<p class="r-sum"><span>合計</span><b>—</b></p>`;
+  const per = p.per != null ? `<b>${yen(p.per)}<em>円${p.perSuffix || ''}</em></b>` : `<span class="txt">${p.perText}</span>`;
+  return `<div class="rc"><div class="receipt">
+    <span class="stamp ${p.stamp}">${stampText}</span>
+    <p class="r-who">${p.who}</p>
+    <p class="r-title">${p.title}</p>
+    <ul class="r-items">${items}</ul>
+    ${sum}
+    <p class="r-per"><small>1人あたり</small>${per}</p>
+  </div></div>`;
+}
+
+function actionsHTML(s) {
+  const L = s.links;
+  const a = [];
+  a.push(`<a class="act primary" href="${L.menu}" ${ext}>${ICON('menu')}<span>メニューを見る<small>お店の最新メニュー</small></span></a>`);
+  a.push(`<a class="act" href="${L.photos}" ${ext}>${ICON('camera')}<span>お店の写真をもっと見る</span></a>`);
+  a.push(`<a class="act" href="${L.map}" ${ext}>${ICON('pin')}<span>Googleマップで見る</span></a>`);
+  a.push(`<a class="act" href="${L.official}" ${ext}>${ICON('home')}<span>公式サイトを見る</span></a>`);
+  if (L.reserve) a.push(`<a class="act" href="${L.reserve.url}" ${ext}>${ICON('cal')}<span>予約する<small>${L.reserve.via}</small></span></a>`);
+  else a.push(`<span class="act none">${ICON('cal')}<span>予約はできません<small>当日、直接お店へ</small></span></span>`);
+  return a.join('');
+}
+
+function renderSpreads() {
+  document.getElementById('spreads').innerHTML = STORES.map((s, i) => `
+    <article class="spread" id="${s.id}" data-store="${s.id}">
+      <div class="sp-top">
+        <div class="sp-cover cover">
+          <svg viewBox="0 0 400 300" role="img" aria-label="${s.short}のイメージイラスト"><use href="#cov-${s.id}"/></svg>
+          <span class="illu">ILLUSTRATION</span>
+        </div>
+        <header class="sp-head">
+          <p class="sp-eyebrow">${s.area}・${s.genre}</p>
+          <h2 class="sp-name">${s.name}</h2>
+          <p class="sp-kana">${s.kana}</p>
+          <p class="sp-catch">${s.catch}</p>
+          <div class="sp-favrow">
+            <button class="pill-fav" type="button" data-fav="${s.id}" aria-pressed="false">${ICON('heart')}<span>気になる</span></button>
+            <span class="pill-budget">1人 <b>${s.budget}</b></span>
+          </div>
+        </header>
+        <p class="sp-lead">${s.lead}</p>
+      </div>
+
+      <section class="blk">
+        <h3>写真で見る</h3>
+        <div class="pockets">${s.pockets.map((p, j) => `
+          <a class="pocket" href="${p.url}" ${ext} style="--tilt:${[-1.6, 1.2, -0.8, 1.6][j % 4]}deg">
+            <span class="pocket-ph">${ICON('camera')}<span>${p.label}</span></span>
+            <span class="pocket-cap"><span><b>${p.src}</b>で見る</span>${ICON('out')}</span>
+          </a>`).join('')}
+        </div>
+        <p class="blk-note">写真は掲載元のページで見られます（このページには転載していません）。</p>
+      </section>
+
+      <section class="blk">
+        <h3>このお店の魅力</h3>
+        <dl class="charm">${s.charms.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      </section>
+
+      <section class="blk">
+        <h3>おすすめメニュー</h3>
+        <ul class="dishes">${dishList(s.dishes)}</ul>
+        ${s.dishesNote ? `<p class="plans-note">${s.dishesNote}</p>` : ''}
+        <div class="more-row"><a class="more-link" href="${s.links.menu}" ${ext}>メニューをすべて見る${ICON('out')}</a>${s.links.menu2 ? `<a class="more-link" href="${s.links.menu2.url}" ${ext}>${s.links.menu2.label}${ICON('out')}</a>` : ''}</div>
+      </section>
+
+      <section class="blk">
+        <h3>予算のイメージ</h3>
+        <div class="receipts">${s.plans.map(receiptHTML).join('')}</div>
+        <p class="plans-note">${s.plansNote}</p>
+      </section>
+
+      <section class="blk">
+        <h3>知っておきたいこと</h3>
+        <ul class="care">${s.cautions.map(c => `<li>${c}</li>`).join('')}</ul>
+      </section>
+
+      <section class="blk">
+        <h3>基本情報</h3>
+        <dl class="facts">${s.facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      </section>
+
+      <section class="blk">
+        <h3>リンク</h3>
+        <nav class="actions" aria-label="${s.short}のリンク">${actionsHTML(s)}</nav>
+      </section>
+    </article>`).join('');
+}
+
+function renderWalk() {
+  document.getElementById('walkList').innerHTML = STORES.map(s => `
+    <li><b>${s.short}</b><span>${s.walk.note}</span>
+      ${s.id === 'kokonoha' ? '' : `<a href="${gdir('東京スカイツリー', s.links.mapq)}" ${ext}>スカイツリーからの徒歩ルートを地図で見る</a>`}</li>`).join('');
+}
+
+function renderSources() {
+  const items = STORES.map(s => `<li>${s.short}：${s.sources.map(([n, u]) => `<a href="${u}" ${ext}>${n}</a>`).join('、')}</li>`);
+  items.push(`<li>ハロウィンのライティング：<a href="https://www.tokyo-skytree.jp/event/autumn2026/" ${ext}>東京スカイツリー公式</a></li>`);
+  items.push(`<li>神田からの経路：<a href="https://ekitan.com/transit/route/sf-1923/st-1752" ${ext}>駅探</a></li>`);
+  document.getElementById('srcList').innerHTML = items.join('');
+}
+
+/* favorites UI */
+function syncFavs() {
+  document.querySelectorAll('[data-fav]').forEach(b => {
+    const on = favs.has(b.dataset.fav);
+    b.setAttribute('aria-pressed', on);
+    if (b.classList.contains('pill-fav')) b.querySelector('span').textContent = on ? '気になる中' : '気になる';
+  });
+  document.querySelectorAll('[data-store]').forEach(el => el.classList.toggle('is-fav', favs.has(el.dataset.store)));
+  document.querySelectorAll('[data-fav-nav]').forEach(a => a.classList.toggle('is-fav', favs.has(a.dataset.favNav)));
+  document.getElementById('favCount').textContent = favs.size;
+  const only = document.body.classList.contains('only-fav');
+  document.getElementById('emptyFav').hidden = !(only && favs.size === 0);
+  const list = STORES.filter(s => favs.has(s.id));
+  document.getElementById('shareList').innerHTML = list.length
+    ? list.map(s => `<li>${s.short}</li>`).join('')
+    : '<li class="empty">まだ選ばれていません（選ばないときは5軒すべてを送ります）</li>';
+  document.getElementById('lineBtn').href = 'https://line.me/R/share?text=' + encodeURIComponent(shareText());
+}
+
+function shareText() {
+  const list = STORES.filter(s => favs.has(s.id));
+  const pick = list.length ? list : STORES;
+  const head = list.length ? '【10/31 晩ごはん 気になるお店】' : '【10/31 晩ごはん 候補5軒】';
+  const body = pick.map(s => [
+    `♡ ${s.name}（1人 ${s.budget}）`,
+    `メニュー：${s.links.menu}`,
+    `地図：${s.links.map}`,
+    s.links.reserve ? `予約：${s.links.reserve.url}` : '予約：できない（当日直接）'
+  ].join('\n')).join('\n\n');
+  return head + '\n\n' + body + (GUIDE_URL ? `\n\nガイド：${GUIDE_URL}` : '');
+}
+
+document.addEventListener('click', e => {
+  const fb = e.target.closest('[data-fav]');
+  if (fb) {
+    const id = fb.dataset.fav;
+    favs.has(id) ? favs.delete(id) : favs.add(id);
+    saveFavs(); syncFavs();
+  }
+});
+
+document.getElementById('favFilter').addEventListener('click', e => {
+  const on = !document.body.classList.contains('only-fav');
+  document.body.classList.toggle('only-fav', on);
+  e.currentTarget.setAttribute('aria-pressed', on);
+  document.getElementById('favFilterLabel').textContent = on ? '気になるだけ表示中' : '気になる';
+  syncFavs();
+  if (on) document.getElementById('stores').scrollIntoView({ block: 'start' });
+});
+
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const text = shareText();
+  const done = () => { const c = document.getElementById('copied'); c.hidden = false; setTimeout(() => { c.hidden = true; }, 2400); };
+  const fallback = () => { const t = document.getElementById('copyFallback'); t.value = text; t.hidden = false; t.focus(); t.select(); };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  } catch (err) { fallback(); }
+});
+
+STORES.forEach(s => { s.links.map = gmap(s.links.mapq); });
+renderNav(); renderCards(); renderRuler(); renderSpreads(); renderWalk(); renderSources(); syncFavs();
+</script>
