@@ -108,6 +108,35 @@ button{font:inherit;color:inherit}
 .card{flex:0 0 min(80vw,300px);scroll-snap-align:start;background:var(--sheet);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;min-width:0}
 .cover{position:relative;aspect-ratio:4/3;background:var(--night);max-width:100%}
 .cover svg{display:block;width:100%;height:100%}
+.cover > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.cover.has-ph .illu{background:rgb(20 12 18 / .62);letter-spacing:.02em;font-family:var(--f-body);font-size:10.5px}
+button.cover-zoom{position:absolute;inset:0;border:0;padding:0;background:transparent;cursor:zoom-in}
+/* photo gallery */
+.gallery{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 18px 10px;margin-inline:-18px;scroll-padding-inline:18px}
+.gph{flex:0 0 min(78vw,320px);scroll-snap-align:start;border:0;padding:0;margin:0;background:var(--sheet);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);cursor:zoom-in;text-align:left;display:grid}
+.gph img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--sheet-2)}
+.gph span{display:block;padding:8px 12px 10px;font-size:12.5px;line-height:1.5;color:var(--ink)}
+.gph small{display:block;font-size:11px;color:var(--ink-3)}
+.gph.is-broken{display:none}
+.more-photos{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 0;font-size:12.5px;color:var(--ink-2)}
+.more-photos a{display:inline-flex;align-items:center;gap:4px;text-decoration:none;font-weight:700;color:var(--ink);padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--sheet)}
+.more-photos a .ic{font-size:12px;color:var(--pumpkin)}
+.dish-ph{display:block;border:0;padding:0;margin:-14px -14px 4px;width:calc(100% + 28px);background:var(--sheet-2);border-radius:15px 15px 0 0;overflow:hidden;cursor:zoom-in}
+.dish-ph img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.dish.wide .dish-ph img{aspect-ratio:16/9}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:100;background:rgb(12 8 10 / .94);display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:calc(env(safe-area-inset-top,0px) + 8px) 12px calc(env(safe-area-inset-bottom,0px) + 14px);color:#F8EDDF;touch-action:pan-y}
+.lb-top{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12.5px;color:#D3C0AE}
+.lb-x{width:44px;height:44px;border-radius:50%;border:1px solid rgb(248 237 223 / .3);background:rgb(255 255 255 / .06);color:#F8EDDF;font-size:22px;line-height:1;cursor:pointer}
+.lb-stage{position:relative;display:grid;place-items:center;min-height:0}
+.lb-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;user-select:none;-webkit-user-drag:none}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border:0;border-radius:12px;background:rgb(255 255 255 / .08);color:#F8EDDF;font-size:26px;cursor:pointer}
+.lb-prev{left:0}.lb-next{right:0}
+.lb-cap{display:grid;gap:4px;padding-top:10px;max-width:44em;margin-inline:auto;width:100%}
+.lb-cap b{font-size:14.5px;font-weight:700}
+.lb-cap a{color:#F3DFA9;font-size:12.5px;font-weight:700}
+@media (min-width:960px){.gallery{margin-inline:0;padding-inline:4px}}
+
 .illu{position:absolute;left:10px;bottom:8px;font-family:var(--f-latin);font-size:9.5px;letter-spacing:.14em;color:#F8EDDF;background:rgb(20 12 18 / .5);padding:1px 7px;border-radius:999px}
 .newb{position:absolute;left:10px;top:10px;font-size:11.5px;font-weight:700;color:#FFF8EF;background:#C9641F;padding:3px 10px;border-radius:999px;box-shadow:0 2px 6px rgb(0 0 0 / .2)}
 .newchip{display:inline-block;margin-right:8px;font-size:11px;font-weight:700;color:var(--on-pumpkin);background:var(--pumpkin-fill);padding:1px 8px;border-radius:999px;vertical-align:1px}
@@ -1380,6 +1409,26 @@ const STORES = [
 
 ];
 
+/* photos: filled from the research manifest. Shown for private, non-commercial use with the source credited. */
+const PHOTOS = {};
+const COVER_PICK = {};
+const storePhotos = id => PHOTOS[id] || [];
+function coverPhoto(s) {
+  const list = storePhotos(s.id);
+  if (!list.length) return null;
+  const pick = COVER_PICK[s.id];
+  return (pick != null && list[pick]) || list.find(p => p.kind === 'interior') || list.find(p => p.kind === 'food') || list[0];
+}
+function coverHTML(s, cls) {
+  const ph = coverPhoto(s);
+  const i = ph ? storePhotos(s.id).indexOf(ph) : -1;
+  return `<div class="cover${cls ? ' ' + cls : ''}${ph ? ' has-ph' : ''}">
+    <svg viewBox="0 0 400 300" role="img" aria-label="${s.short}のイメージイラスト"><use href="#cov-${s.id}"/></svg>
+    ${ph ? `<img src="${ph.src}" alt="${s.short}：${ph.caption}" loading="lazy" decoding="async" data-ph="cover">` : ''}
+    ${ph && cls ? `<button class="cover-zoom" type="button" data-lb="${s.id}" data-i="${i}" aria-label="写真を拡大"></button>` : ''}
+    <span class="illu">${ph ? '写真：' + ph.credit : 'ILLUSTRATION'}</span>`;
+}
+
 const ICON = id => `<svg class="ic" aria-hidden="true"><use href="#i-${id}"/></svg>`;
 const yen = n => n.toLocaleString('ja-JP');
 const pct = v => ((Math.min(Math.max(v, DOMAIN[0]), DOMAIN[1]) - DOMAIN[0]) / (DOMAIN[1] - DOMAIN[0]) * 100).toFixed(2) + '%';
@@ -1400,9 +1449,7 @@ function renderNav() {
 function renderCards() {
   document.getElementById('cards').innerHTML = STORES.map(s => `
     <article class="card" data-store="${s.id}">
-      <div class="cover">
-        <svg viewBox="0 0 400 300" role="img" aria-label="${s.short}のイメージイラスト"><use href="#cov-${s.id}"/></svg>
-        <span class="illu">ILLUSTRATION</span>${s.added ? '<span class="newb">追加の候補</span>' : ''}
+      ${coverHTML(s)}${s.added ? '<span class="newb">追加の候補</span>' : ''}
         <button class="heart" type="button" data-fav="${s.id}" aria-pressed="false" aria-label="${s.short}を気になるに入れる">${ICON('heart')}</button>
       </div>
       <div class="card-b">
@@ -1437,10 +1484,13 @@ function renderRuler() {
     `<span style="left:${pct(t)}"${t === CAP ? ' class="capl"' : ''}>${yen(t)}</span>`).join('');
 }
 
-function dishHTML(d, cls) {
+function dishHTML(d, cls, sid) {
+  const list = storePhotos(sid);
+  const pi = list.findIndex(p => p.dish && p.dish === d.name);
   const price = d.price == null ? `<span class="q">価格は公式メニューで</span>`
     : `<b>${yen(d.price)}</b><small>${d.suffix || '円'}</small>`;
   return `<li class="dish${cls ? ' ' + cls : ''}">
+    ${pi >= 0 && cls !== 'row' ? `<button class="dish-ph" type="button" data-lb="${sid}" data-i="${pi}" aria-label="${d.name}の写真を拡大"><img src="${list[pi].src}" alt="${d.name}" loading="lazy" decoding="async" data-ph="dish"></button>` : ''}
     <div class="dish-top"><span class="dish-ic">${ICON(d.ic)}</span><span class="dish-cat">${d.cat}</span></div>
     <p class="dish-name">${d.name}</p>
     ${d.desc ? `<p class="dish-desc">${d.desc}</p>` : ''}
@@ -1449,9 +1499,19 @@ function dishHTML(d, cls) {
   </li>`;
 }
 
-function dishList(list) {
+function dishList(list, sid) {
   const food = list.filter(d => d.cat !== 'DRINK'), drink = list.filter(d => d.cat === 'DRINK');
-  return food.map((d, i) => dishHTML(d, food.length % 2 && i === 0 ? 'wide' : '')).join('') + drink.map(d => dishHTML(d, 'row')).join('');
+  return food.map((d, i) => dishHTML(d, food.length % 2 && i === 0 ? 'wide' : '', sid)).join('') + drink.map(d => dishHTML(d, 'row', sid)).join('');
+}
+
+function galleryHTML(s) {
+  const list = storePhotos(s.id);
+  if (!list.length) return '';
+  return `<div class="gallery">${list.map((p, j) => `
+    <button class="gph" type="button" data-lb="${s.id}" data-i="${j}">
+      <img src="${p.src}" alt="${s.short}：${p.caption}" loading="lazy" decoding="async" data-ph="gallery">
+      <span>${p.caption}<small>写真：${p.credit}</small></span>
+    </button>`).join('')}</div>`;
 }
 
 function receiptHTML(p) {
@@ -1488,9 +1548,7 @@ function renderSpreads() {
   document.getElementById('spreads').innerHTML = STORES.map((s, i) => `
     <article class="spread" id="${s.id}" data-store="${s.id}">
       <div class="sp-top">
-        <div class="sp-cover cover">
-          <svg viewBox="0 0 400 300" role="img" aria-label="${s.short}のイメージイラスト"><use href="#cov-${s.id}"/></svg>
-          <span class="illu">ILLUSTRATION</span>
+        ${coverHTML(s, 'sp-cover')}
         </div>
         <header class="sp-head">
           <p class="sp-eyebrow">${s.added ? '<span class="newchip">追加の候補</span>' : ''}${s.area}・${s.genre}</p>
@@ -1507,13 +1565,16 @@ function renderSpreads() {
 
       <section class="blk">
         <h3>写真で見る</h3>
-        <div class="pockets">${s.pockets.map((p, j) => `
+        ${galleryHTML(s)}
+        <div class="pockets"${storePhotos(s.id).length ? ' hidden' : ''}>${s.pockets.map((p, j) => `
           <a class="pocket" href="${p.url}" ${ext} style="--tilt:${[-1.6, 1.2, -0.8, 1.6][j % 4]}deg">
             <span class="pocket-ph">${ICON('camera')}<span>${p.label}</span></span>
             <span class="pocket-cap"><span><b>${p.src}</b>で見る</span>${ICON('out')}</span>
           </a>`).join('')}
         </div>
-        <p class="blk-note">写真は掲載元のページで見られます（このページには転載していません）。</p>
+        ${storePhotos(s.id).length
+          ? `<p class="more-photos">ほかの写真：${s.pockets.map(p => `<a href="${p.url}" ${ext}>${p.src}${ICON('out')}</a>`).join('')}</p>`
+          : '<p class="blk-note">写真は掲載元のページで見られます。</p>'}
       </section>
 
       <section class="blk">
@@ -1523,7 +1584,7 @@ function renderSpreads() {
 
       <section class="blk">
         <h3>おすすめメニュー</h3>
-        <ul class="dishes">${dishList(s.dishes)}</ul>
+        <ul class="dishes">${dishList(s.dishes, s.id)}</ul>
         ${s.dishesNote ? `<p class="plans-note">${s.dishesNote}</p>` : ''}
         <div class="more-row"><a class="more-link" href="${s.links.menu}" ${ext}>メニューをすべて見る${ICON('out')}</a>${s.links.menu2 ? `<a class="more-link" href="${s.links.menu2.url}" ${ext}>${s.links.menu2.label}${ICON('out')}</a>` : ''}</div>
       </section>
@@ -1623,6 +1684,68 @@ document.getElementById('copyBtn').addEventListener('click', () => {
     else fallback();
   } catch (err) { fallback(); }
 });
+
+/* a photo that fails to load falls back to the illustration or disappears, never leaving a blank box */
+document.addEventListener('error', e => {
+  const img = e.target;
+  if (!(img instanceof HTMLImageElement) || !img.dataset.ph) return;
+  brokenSrc.add(img.getAttribute('src'));
+  if (img.dataset.ph === 'cover') { const c = img.closest('.cover'); if (c) { c.classList.remove('has-ph'); const z = c.querySelector('.cover-zoom'); if (z) z.remove(); const l = c.querySelector('.illu'); if (l) l.textContent = 'ILLUSTRATION'; } img.remove(); }
+  else if (img.dataset.ph === 'gallery') img.closest('.gph').classList.add('is-broken');
+  else if (img.dataset.ph === 'dish') img.closest('.dish-ph').remove();
+  else if (img.dataset.ph === 'area') { const f = img.closest('.aph'); if (f) f.remove(); }
+}, true);
+
+const brokenSrc = new Set();
+const lb = { el: null, list: [], i: 0 };
+function openLb(all, i) {
+  const list = all.filter(p => !brokenSrc.has(p.src));
+  if (!list.length) return;
+  lb.list = list; lb.i = Math.max(0, list.indexOf(all[i]));
+  if (!lb.el) {
+    lb.el = document.createElement('div');
+    lb.el.className = 'lb'; lb.el.setAttribute('role', 'dialog'); lb.el.setAttribute('aria-modal', 'true'); lb.el.setAttribute('aria-label', '写真');
+    lb.el.innerHTML = `<div class="lb-top"><span id="lbCount"></span><button class="lb-x" type="button" aria-label="閉じる">×</button></div>
+      <div class="lb-stage"><img id="lbImg" alt=""><button class="lb-nav lb-prev" type="button" aria-label="前の写真">‹</button><button class="lb-nav lb-next" type="button" aria-label="次の写真">›</button></div>
+      <div class="lb-cap"><b id="lbCap"></b><a id="lbSrc" ${ext}></a></div>`;
+    document.body.appendChild(lb.el);
+    lb.el.querySelector('.lb-x').addEventListener('click', closeLb);
+    lb.el.querySelector('.lb-prev').addEventListener('click', () => stepLb(-1));
+    lb.el.querySelector('.lb-next').addEventListener('click', () => stepLb(1));
+    let x0 = null;
+    lb.el.addEventListener('pointerdown', e => { x0 = e.clientX; });
+    lb.el.addEventListener('pointerup', e => { if (x0 != null && Math.abs(e.clientX - x0) > 45) stepLb(e.clientX < x0 ? 1 : -1); x0 = null; });
+    lb.el.addEventListener('click', e => { if (e.target === lb.el || e.target.classList.contains('lb-stage')) closeLb(); });
+  }
+  lb.el.hidden = false;
+  document.documentElement.style.overflow = 'hidden';
+  showLb();
+  lb.el.querySelector('.lb-x').focus();
+}
+function showLb() {
+  const p = lb.list[lb.i];
+  const img = lb.el.querySelector('#lbImg');
+  img.src = p.src; img.alt = p.caption;
+  lb.el.querySelector('#lbCap').textContent = p.caption;
+  const a = lb.el.querySelector('#lbSrc'); a.href = p.page; a.textContent = `写真：${p.credit}（出典ページを開く）`;
+  lb.el.querySelector('#lbCount').textContent = `${lb.i + 1} / ${lb.list.length}`;
+  lb.el.querySelectorAll('.lb-nav').forEach(b => { b.hidden = lb.list.length < 2; });
+}
+function stepLb(d) { lb.i = (lb.i + d + lb.list.length) % lb.list.length; showLb(); }
+function closeLb() { if (lb.el) lb.el.hidden = true; document.documentElement.style.overflow = ''; }
+document.addEventListener('keydown', e => {
+  if (!lb.el || lb.el.hidden) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowRight') stepLb(1);
+  if (e.key === 'ArrowLeft') stepLb(-1);
+});
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-lb]');
+  if (!t) return;
+  const list = t.dataset.lb === 'area' ? AREA_PHOTOS : storePhotos(t.dataset.lb);
+  openLb(list, +t.dataset.i || 0);
+});
+const AREA_PHOTOS = [];
 
 STORES.forEach(s => { s.links.map = gmap(s.links.mapq); });
 renderNav(); renderCards(); renderRuler(); renderSpreads(); renderWalk(); renderSources(); syncFavs();
