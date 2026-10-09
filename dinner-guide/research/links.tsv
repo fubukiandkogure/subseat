@@ -1,67 +1,60 @@
-url	status	final_url	opens	note	suggested_url
-https://claude.ai/artifact/5jX9zwQNdQhBv3xWcTn3Q5	200	https://claude.ai/artifact/5jX9zwQNdQhBv3xWcTn3Q5	yes	HTTP 200（ページの中身は未確認）	
-https://ekitan.com/transit/route/sf-1923/st-1752	200	https://ekitan.com/transit/route/sf-1923/st-1752	yes		
-https://fonts.googleapis.com	404	https://fonts.googleapis.com/	n/a	preconnect用のオリジン（ルートの404は正常。問題なし）	
-https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Young+Serif&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap	200	https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Young+Serif&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap	n/a	preconnect用のオリジン（ルートの404は正常。問題なし）	
-https://fonts.gstatic.com	404	https://fonts.gstatic.com/	n/a	preconnect用のオリジン（ルートの404は正常。問題なし）	
-https://foodplace.jp/sumida-cafe/	200	https://foodplace.jp/sumida-cafe/	yes		
-https://gjtt200.gorp.jp/	200	https://gjtt200.gorp.jp/	yes		
-https://hitosara.com/0006128736/	200	https://hitosara.com/0006128736/	yes		
-https://hitosara.com/0006128736/food.html	200	https://hitosara.com/0006128736/food.html	yes		
-https://hitosara.com/0031327590/	200	https://hitosara.com/0031327590/	yes		
-https://hitosara.com/0031327590/photo/	200	https://hitosara.com/0031327590/photo/	yes		
-https://lamp-oshiage.com/	200	https://lamp-oshiage.com/	yes		
-https://lamp-oshiage.com/drink/	200	https://lamp-oshiage.com/drink/	yes		
-https://lamp-oshiage.com/menu/	200	https://lamp-oshiage.com/menu/	yes		
-https://lamp-oshiage.com/space/	200	https://lamp-oshiage.com/space/	yes		
-https://land-a.jp/	200	https://land-a.jp/	yes		
-https://land-a.jp/menu/	200	https://land-a.jp/menu/	yes		
-https://palazzosangusto.jp/	200	https://palazzosangusto.jp/	yes		
-https://piccole-oshiage.com/menu/	200	https://piccole-oshiage.com/menu/	yes		
-https://piccole-oshiage.com/space/	200	https://piccole-oshiage.com/space/	yes		
-https://piccole-oshiage.com/top/	200	https://piccole-oshiage.com/top/	yes		
-https://piccolelampare.owst.jp/	200	https://piccolelampare.owst.jp/	yes		
-https://plazzosangusto.owst.jp/	200	https://plazzosangusto.owst.jp/	yes	つづりは誤っていそうだが実在し、サングストの公式予約サイト（owst）として開ける	
-https://prtimes.jp/main/html/rd/p/000000091.000023613.html	200	https://prtimes.jp/main/html/rd/p/000000091.000023613.html	yes	記事自体は開ける。ただし、くらすわソラマチ店は2026-02-28に閉店	https://www.clasuwa.jp/3148/
-https://prtimes.jp/main/html/rd/p/000000168.000025087.html	200	https://prtimes.jp/main/html/rd/p/000000168.000025087.html	yes		
-https://r.gnavi.co.jp/4d2yvzg80000/	200	https://r.gnavi.co.jp/4d2yvzg80000/	yes		
-https://r.gnavi.co.jp/b369901/	200	https://r.gnavi.co.jp/b369901/	yes		
-https://r.gnavi.co.jp/brj99bu20000/	200	https://r.gnavi.co.jp/brj99bu20000/	yes		
-https://r.gnavi.co.jp/je5ywfpu0000/	200	https://r.gnavi.co.jp/je5ywfpu0000/	yes		
-https://r.gnavi.co.jp/rwd68t5f0000/	200	https://r.gnavi.co.jp/rwd68t5f0000/	yes		
-https://restaurant.balnibarbi.com/shops/land_a/	200	https://brands.balnibarbi.com/brands/restaurants/land_a	yes	転送されるが、同じ店舗ページなので問題なし（最終URLへの書き換え推奨）	https://brands.balnibarbi.com/brands/restaurants/land_a
-https://restaurant.ikyu.com/103844	403	https://restaurant.ikyu.com/103844	blocked	一休は自動アクセスを403で拒否。中身は確認できず	
-https://restaurant.ikyu.com/154282	403	https://restaurant.ikyu.com/154282	blocked	一休は自動アクセスを403で拒否。中身は確認できず	
-https://retty.me/area/PRE13/ARE9/SUB904/100000508668/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000508668/	blocked	Rettyは自動アクセスを406で拒否。中身は確認できず	
-https://retty.me/area/PRE13/ARE9/SUB904/100000716108/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000716108/	blocked	Rettyは自動アクセスを406で拒否。中身は確認できず	
-https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/	blocked	Rettyは自動アクセスを406で拒否。中身は確認できず	
-https://sumida.goguynet.jp/2026/01/07/zinanbo-open/	200	https://sumida.goguynet.jp/2026/01/07/zinanbo-open/	yes		
-https://tabelog.com/tokyo/A1311/A131102/13247604/dtlmenu/	403	https://tabelog.com/tokyo/A1311/A131102/13247604/dtlmenu/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1311/A131102/13247604/dtlphotolst/	403	https://tabelog.com/tokyo/A1311/A131102/13247604/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13138974/	403	https://tabelog.com/tokyo/A1312/A131203/13138974/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13138974/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13138974/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13141258/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13141258/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13141265/	403	https://tabelog.com/tokyo/A1312/A131203/13141265/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13141265/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13141265/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13208347/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13208347/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13245792/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13245792/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13257342/	403	https://tabelog.com/tokyo/A1312/A131203/13257342/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13257342/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13257342/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13316754/	403	https://tabelog.com/tokyo/A1312/A131203/13316754/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13316754/dtlmenu/	403	https://tabelog.com/tokyo/A1312/A131203/13316754/dtlmenu/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://tabelog.com/tokyo/A1312/A131203/13316754/dtlphotolst/	403	https://tabelog.com/tokyo/A1312/A131203/13316754/dtlphotolst/	blocked	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。curl・WebFetchともに中身は確認できず。ブラウザでは開ける可能性が高い	
-https://www.clasuwa.jp/shops/solamachi/information/restaurant/	200	https://www.clasuwa.jp/shops/suwa/restaurant/	no	ソラマチ店ページは削除済み（くらすわのトップ／諏訪本店へ転送）。2026-02-28に閉店	https://www.clasuwa.jp/3148/ （閉店のお知らせ）
-https://www.clasuwa.jp/shops/solamachi/restaurant/	200	https://www.clasuwa.jp/	no	ソラマチ店ページは削除済み（くらすわのトップ／諏訪本店へ転送）。2026-02-28に閉店	https://www.clasuwa.jp/3148/ （閉店のお知らせ）
-https://www.hotpepper.jp/strJ001275491/	200	https://www.hotpepper.jp/strJ001275491/	yes		
-https://www.hotpepper.jp/strJ001275491/food/	200	https://www.hotpepper.jp/strJ001275491/food/	yes		
-https://www.hotpepper.jp/strJ001275491/photo/	200	https://www.hotpepper.jp/strJ001275491/photo/	yes		
-https://www.hotpepper.jp/strJ003694009/photo/	200	https://www.hotpepper.jp/strJ003694009/photo/	yes		
-https://www.hotpepper.jp/strJ004469864/	200	https://www.hotpepper.jp/strJ004469864/	yes		
-https://www.ozmall.co.jp/restaurant/1602/dinner/	403	https://www.ozmall.co.jp/restaurant/1602/dinner/	blocked	OZmallは自動アクセスを403で拒否。中身は確認できず	https://www.tablecheck.com/ja/palazzosangusto
-https://www.potomak.co.jp/shop/423/	200	https://www.potomak.co.jp/shop/423/	yes		
-https://www.tablecheck.com/en/land-a	200	https://www.tablecheck.com/en/land-a	yes		
-https://www.tablecheck.com/ja/shops/land-a/reserve	200	https://www.tablecheck.com/ja/shops/land-a/reserve	yes		
-https://www.tokyo-mizumachi.jp/	200	https://www.tokyo-mizumachi.jp/	yes		
-https://www.tokyo-skytree.jp/event/autumn2026/	200	https://www.tokyo-skytree.jp/event/autumn2026/	yes		
-https://www.tokyo-solamachi.jp/restaurant/1029/	200	https://www.tokyo-solamachi.jp/	no	ソラマチ公式はシステム障害中で、どのページもトップ（障害の告知）へ転送される（2026-10-09時点）。復旧すれば元のURLで開ける可能性あり	
-https://www.tokyo-solamachi.jp/shop/232/	200	https://www.tokyo-solamachi.jp/	no	ソラマチ公式はシステム障害中で、どのページもトップ（障害の告知）へ転送される（2026-10-09時点）。復旧すれば元のURLで開ける可能性あり	https://www.potomak.co.jp/shop/423/
+url	status	final_url	opens	page_title	note	suggested_url
+https://claude.ai/artifact/5jX9zwQNdQhBv3xWcTn3Q5	200	https://claude.ai/artifact/5jX9zwQNdQhBv3xWcTn3Q5	yes	Claude Artifact	HTTP 200（中身は未確認）	
+https://ekitan.com/transit/route/sf-1923/st-1752	200	https://ekitan.com/transit/route/sf-1923/st-1752	yes	「神田(東京)駅」から「押上駅」乗換案内 - 駅探		
+https://fonts.googleapis.com	404	https://fonts.googleapis.com/	n/a	Error 404 (Not Found)!!1	preconnect用のオリジン（ルートの404は正常。問題なし）	
+https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Young+Serif&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap	200	https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Young+Serif&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap	n/a		preconnect用のオリジン（ルートの404は正常。問題なし）	
+https://fonts.gstatic.com	404	https://fonts.gstatic.com/	n/a	Error 404 (Not Found)!!1	preconnect用のオリジン（ルートの404は正常。問題なし）	
+https://foodplace.jp/sumida-cafe/	200	https://foodplace.jp/sumida-cafe/	yes	すみだCafe｜		
+https://gjtt200.gorp.jp/	200	https://gjtt200.gorp.jp/	yes			
+https://lamp-oshiage.com/	200	https://lamp-oshiage.com/	yes	【公式】窯焼きバルカフェ らんぷ＋k		
+https://lamp-oshiage.com/drink/	200	https://lamp-oshiage.com/drink/	yes	【公式】窯焼きバルカフェ らんぷ＋k		
+https://lamp-oshiage.com/menu/	200	https://lamp-oshiage.com/menu/	yes	【公式】窯焼きバルカフェ らんぷ＋k		
+https://lamp-oshiage.com/space/	200	https://lamp-oshiage.com/space/	yes	【公式】窯焼きバルカフェ らんぷ＋k		
+https://land-a.jp/	200	https://land-a.jp/	yes	【公式】浅草・押上のカフェダイニングLAND_A（ランドエー）浅草と東京スカイツリーを結ぶ東京ミズマチにオープン		
+https://land-a.jp/menu/	200	https://land-a.jp/menu/	yes	【公式】カフェダイニングLAND_A（ランド エー）のメニュー ｜ 浅草と東京スカイツリーを結ぶ東京ミズマチ		
+https://land-a.jp/menu/alacarte.pdf	200	https://land-a.jp/menu/alacarte.pdf	yes			
+https://land-a.jp/menu/drink.pdf	200	https://land-a.jp/menu/drink.pdf	yes			
+https://miyoshi-grp.com/cardinal/restaurant/grillcardinal/	200	https://miyoshi-grp.com/cardinal/restaurant/grillcardinal/	yes	洋食屋 銀座グリル カーディナル - カーディナル		
+https://miyoshi-grp.com/cardinal/wp-content/uploads/sites/2/2024/10/gc_drink_menu_261001.pdf	200	https://miyoshi-grp.com/cardinal/wp-content/uploads/sites/2/2024/10/gc_drink_menu_261001.pdf	yes			
+https://monjadaruma.com/shop/soramachi.php	200	https://monjadaruma.com/shop/soramachi.php	yes	ソラマチ店｜月島名物もんじゃ　だるま		
+https://palazzosangusto.jp/	200	https://palazzosangusto.jp/	yes	パラッツォ サングスト		
+https://piccole-oshiage.com/drink/	200	https://piccole-oshiage.com/drink/	yes	【公式】piccole lampare & Sky bar		
+https://piccole-oshiage.com/menu/	200	https://piccole-oshiage.com/menu/	yes	【公式】piccole lampare & Sky bar		
+https://piccole-oshiage.com/space/	200	https://piccole-oshiage.com/space/	yes	【公式】piccole lampare & Sky bar		
+https://piccole-oshiage.com/top/	200	https://piccole-oshiage.com/top/	yes	【公式】piccole lampare & Sky bar		
+https://piccolelampare.owst.jp/	200	https://piccolelampare.owst.jp/	yes	piccole lampare & rooftop Sky Bar ピッコレランパーレ【公式】		
+https://r.gnavi.co.jp/e159706/	200	https://r.gnavi.co.jp/e159706/	yes	牛たん炭焼 利久 東京ソラマチ店（押上/牛タン） - 楽天ぐるなび		
+https://r.gnavi.co.jp/e159706/menu10/	200	https://r.gnavi.co.jp/e159706/menu10/	yes	牛たん炭焼 利久 東京ソラマチ店 メニュー：-定食- - 楽天ぐるなび		
+https://r.gnavi.co.jp/e474601/	200	https://r.gnavi.co.jp/e474601/	yes	月島もんじゃだるま 東京スカイツリータウン・ソラマチ店（押上/もんじゃ焼き） - 楽天ぐるなび		
+https://r.gnavi.co.jp/e474601/menu2/	200	https://r.gnavi.co.jp/e474601/menu2/	yes	月島もんじゃだるま 東京スカイツリータウン・ソラマチ店 メニュー：もんじゃ・お好焼 - 楽天ぐるなび		
+https://r.gnavi.co.jp/ja4zcstj0000/	200	https://r.gnavi.co.jp/ja4zcstj0000/	yes	タイ国料理 ペンタイ（地図/写真/押上/タイ料理） - 楽天ぐるなび		
+https://r.gnavi.co.jp/je5ywfpu0000/	200	https://r.gnavi.co.jp/je5ywfpu0000/	yes	窯焼きバルカフェ らんぷ＋k（押上/居酒屋） - 楽天ぐるなび		
+https://r.gnavi.co.jp/plan/rwd68t5f0000/plan-reserve/plan/plan_list	200	https://r.gnavi.co.jp/rwd68t5f0000/	no	Trattoria Zinanvo(トラットリアジナンボ)（押上/イタリアン（イタリア料理）） - 楽天ぐるなび	プラン一覧ではなく、ぐるなびの店舗トップに転送される	https://r.gnavi.co.jp/rwd68t5f0000/
+https://r.gnavi.co.jp/rwd68t5f0000/menu2/	200	https://r.gnavi.co.jp/rwd68t5f0000/menu2/	yes	Trattoria Zinanvo メニュー：料理 - 楽天ぐるなび		
+https://r.gnavi.co.jp/rwd68t5f0000/menu3/	200	https://r.gnavi.co.jp/rwd68t5f0000/menu3/	yes	Trattoria Zinanvo メニュー：ドリンク - 楽天ぐるなび		
+https://restaurant.balnibarbi.com/shops/land_a/	200	https://brands.balnibarbi.com/brands/restaurants/land_a	yes	LAND_A | レストラン・カフェ | 株式会社バルニバービ[ブランド＆サービス]	転送されるが、同じ店舗ページ（最終URLへの書き換え推奨）	https://brands.balnibarbi.com/brands/restaurants/land_a
+https://retty.me/area/PRE13/ARE9/SUB904/100000716108/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000716108/	blocked		Rettyは自動アクセスを406で拒否。中身は未確認	
+https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/	blocked		Rettyは自動アクセスを406で拒否。中身は未確認	
+https://retty.me/area/PRE13/ARE9/SUB904/100000921287/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000921287/	blocked		Rettyは自動アクセスを406で拒否。中身は未確認	
+https://retty.me/area/PRE13/ARE9/SUB904/100000921287/menu/	406	https://retty.me/area/PRE13/ARE9/SUB904/100000921287/menu/	blocked		Rettyは自動アクセスを406で拒否。中身は未確認	
+https://sumida.goguynet.jp/2026/01/07/zinanbo-open/	200	https://sumida.goguynet.jp/2026/01/07/zinanbo-open/	yes	【墨田区】押上のイタリアン「ラ・パデッラドーロ1」の跡地に「Zinanvo」がOPENしました。 | 号外NET 墨田区		
+https://tabelog.com/tokyo/A1312/A131203/13168034/	403	https://tabelog.com/tokyo/A1312/A131203/13168034/	blocked	現在アクセスが集中しています [食べログ]	食べログは自動アクセスを403で拒否（「現在アクセスが集中しています」）。中身は未確認。ブラウザでは開ける可能性が高い	
+https://www.facebook.com/penthai.jp/	400	https://www.facebook.com/login/?next=https%3A%2F%2Fwww.facebook.com%2Fpenthai.jp%2F	blocked	Error	ログインページに転送（400）。ログインしないと見られない	https://r.gnavi.co.jp/ja4zcstj0000/
+https://www.hotpepper.jp/strJ001009869/	200	https://www.hotpepper.jp/strJ001009869/	yes	Palazzo San Gusto パラッツォ サングスト(錦糸町/居酒屋)＜ネット予約可＞ | ホットペッパーグルメ	ホットペッパーでの表記は「錦糸町/居酒屋」だが、パラッツォ サングストの店舗ページ	
+https://www.hotpepper.jp/strJ001009869/drink/	200	https://www.hotpepper.jp/strJ001009869/drink/	yes	Palazzo San Gusto パラッツォ サングスト(居酒屋)のドリンク | ホットペッパーグルメ	ホットペッパーでの表記は「錦糸町/居酒屋」だが、パラッツォ サングストの店舗ページ	
+https://www.hotpepper.jp/strJ001009869/food/	200	https://www.hotpepper.jp/strJ001009869/food/	yes	Palazzo San Gusto パラッツォ サングスト(居酒屋)のメニュー | ホットペッパーグルメ	ホットペッパーでの表記は「錦糸町/居酒屋」だが、パラッツォ サングストの店舗ページ	
+https://www.hotpepper.jp/strJ001275491/	200	https://www.hotpepper.jp/strJ001275491/	yes	すみだCafe(本所吾妻橋/イタリアン・フレンチ)＜ネット予約可＞ | ホットペッパーグルメ		
+https://www.hotpepper.jp/strJ001275491/food/	200	https://www.hotpepper.jp/strJ001275491/food/	yes	すみだCafe(イタリアン・フレンチ)のメニュー | ホットペッパーグルメ		
+https://www.hotpepper.jp/strJ001275491/photo/	200	https://www.hotpepper.jp/strJ001275491/photo/	yes	すみだCafe(イタリアン・フレンチ)の写真 | ホットペッパーグルメ		
+https://www.hotpepper.jp/strJ003694009/	200	https://www.hotpepper.jp/strJ003694009/	yes	piccole lampare & rooftop Sky Bar ピッコレランパーレ(押上/イタリアン・フレンチ)＜ネ		
+https://www.hotpepper.jp/strJ003694009/yoyaku/hpds	200	https://www.hotpepper.jp/strJ003694009/yoyaku/hpds	yes	piccole lampare & rooftop Sky Bar ピッコレランパーレのネット予約・空席確認 | ホット		
+https://www.hotpepper.jp/strJ004005146/	200	https://www.hotpepper.jp/strJ004005146/	yes	らんぷK(押上/居酒屋)＜ネット予約可＞ | ホットペッパーグルメ		
+https://www.hotpepper.jp/strJ004005146/yoyaku/hpds	200	https://www.hotpepper.jp/strJ004005146/yoyaku/hpds	yes	らんぷKのネット予約・空席確認 | ホットペッパーグルメ		
+https://www.hotpepper.jp/strJ004469864/	200	https://www.hotpepper.jp/strJ004469864/	yes	洋食屋 銀座グリルカーディナル(押上/洋食)＜ネット予約可＞ | ホットペッパーグルメ		
+https://www.potomak.co.jp/_sys/wp-content/uploads/2018/10/solamachi-grandmenu.pdf	200	https://www.potomak.co.jp/_sys/wp-content/uploads/2018/10/solamachi-grandmenu.pdf	yes			
+https://www.potomak.co.jp/shop/423/	200	https://www.potomak.co.jp/shop/423/	yes	ココノハ 東京スカイツリータウン・ソラマチ店 – POTOMAK		
+https://www.tablecheck.com/ja/palazzosangusto	200	https://www.tablecheck.com/ja/palazzosangusto	yes	パラッツォサングスト - Restaurant Guide - TableCheck		
+https://www.tablecheck.com/ja/shops/land-a/reserve	200	https://www.tablecheck.com/ja/shops/land-a/reserve	yes	LAND_A - TableCheck (テーブルチェック)		
+https://www.tablecheck.com/ja/shops/palazzosangusto/reserve	200	https://www.tablecheck.com/ja/shops/palazzosangusto/reserve	yes	パラッツォサングスト - TableCheck (テーブルチェック)		
+https://www.tokyo-skytree.jp/event/autumn2026/	200	https://www.tokyo-skytree.jp/event/autumn2026/	yes	DISCOVER AUTUMN at TOKYO SKYTREE【公式】東京スカイツリー TOKYO SKYTREE		
+https://www.tokyo-solamachi.jp/restaurant/301/	200	https://www.tokyo-solamachi.jp/	no	東京ソラマチ - TOKYO SOLAMACHI	ソラマチ公式はシステム障害中で、どのページもトップ（障害の告知）に転送される（2026-10-09時点）。復旧すれば元のURLで開ける可能性あり	
