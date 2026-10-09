@@ -208,6 +208,14 @@ button{font:inherit;color:inherit}
 .map .shop circle{fill:#DE7A2F;stroke:var(--night);stroke-width:2}
 .map .shop text{font-weight:700;font-size:12.5px}
 .map .spotm circle{fill:var(--night);stroke:var(--moon);stroke-width:1.5}
+.aph{margin:4px 0 10px;display:grid;gap:4px}
+.aph button{display:block;border:0;padding:0;margin:0;background:transparent;cursor:zoom-in;border-radius:12px;overflow:hidden}
+.aph img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;object-position:50% 30%}
+.aph figcaption{font-size:11px;line-height:1.5;color:var(--on-night-2)}
+.aph figcaption a{color:var(--on-night-2)}
+.aph2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px;align-items:start}
+.aph2 .aph{margin:0}
+.aph2 .aph img{aspect-ratio:3/4}
 .map-note{margin:8px 0 0;font-size:12px;color:var(--on-night-2)}
 
 /* share + footer */
@@ -621,13 +629,15 @@ button{font:inherit;color:inherit}
               <b>スマイルパンプキン</b><span>ジャック・オー・ランタンがテーマ</span>
             </div>
           </div>
+          <figure class="aph" data-area="0"></figure>
           <p>17:45〜24:00、約2分半ごとに入れ替わります。食事の前でも後でも見られます。</p>
           <ul class="spots">
             <li><b>十間橋</b> <span>川面に映る「逆さツリー」。スカイツリーから徒歩10分ほど。</span> <a href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8D%81%E9%96%93%E6%A9%8B%20%E5%A2%A8%E7%94%B0%E5%8C%BA" target="_blank" rel="noopener">地図</a></li>
             <li><b>すみだリバーウォーク</b> <span>浅草から隅田川を歩いて渡れる橋（7:00〜22:00）。</span> <a href="https://www.google.com/maps/search/?api=1&amp;query=%E3%81%99%E3%81%BF%E3%81%A0%E3%83%AA%E3%83%90%E3%83%BC%E3%82%A6%E3%82%A9%E3%83%BC%E3%82%AF" target="_blank" rel="noopener">地図</a></li>
             <li><b>スカイツリーの足もと</b> <span>真下から見上げるライティングは迫力があります。</span></li>
           </ul>
-          <p><small>出典：<a href="https://www.tokyo-skytree.jp/event/autumn2026/" target="_blank" rel="noopener">東京スカイツリー公式</a>。点灯時間や内容は予告なく変わることがあります。上の絵は演出のテーマを表したイラストです。</small></p>
+          <div class="aph2"><figure class="aph" data-area="1"></figure><figure class="aph" data-area="2"></figure></div>
+          <p><small>出典：<a href="https://www.tokyo-skytree.jp/event/autumn2026/" target="_blank" rel="noopener">東京スカイツリー公式</a>。点灯時間や内容は予告なく変わることがあります。上の絵は演出のテーマを表したイラストで、写真はふだんのライティングです（当日の色とは違います）。</small></p>
         </div>
 
         <div class="nbox">
@@ -917,6 +927,35 @@ const STORES = [
 /* photos from the research manifest, shown for private non-commercial use with the source credited */
 const PHOTOS = {};
 const COVER_PICK = {};
+const AREA_PHOTOS = [
+ {
+  "src": "photos/area/skytree-night-asakusa-2025.jpg",
+  "caption": "浅草側から見た夜のスカイツリー（2025年6月・青のライティング）",
+  "author": "4300streetcar",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tokyo_Skytree_at_night_from_Asakusa_June_2025.jpg",
+  "credit": "4300streetcar / CC BY 4.0（Wikimedia Commons）"
+ },
+ {
+  "src": "photos/area/jikkenbashi-reflection-night-2015.jpg",
+  "caption": "十間橋から見た夜の逆さスカイツリー（2015年1月）",
+  "author": "くろふね",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:%E5%8D%81%E9%96%93%E6%A9%8B%E3%81%8B%E3%82%89%E3%81%AE%E6%9D%B1%E4%BA%AC%E3%82%B9%E3%82%AB%E3%82%A4%E3%83%84%E3%83%AA%E3%83%BC_02.jpg",
+  "credit": "くろふね / CC BY-SA 4.0（Wikimedia Commons）"
+ },
+ {
+  "src": "photos/area/sumida-riverwalk-night-2025.jpg",
+  "caption": "夜のすみだリバーウォーク付近と、遠くのスカイツリー（2025年12月）",
+  "author": "Justin Ormont",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Sumida_River_Walk_2025-12-07.jpg",
+  "credit": "Justin Ormont / CC BY-SA 4.0（Wikimedia Commons）"
+ }
+];
 
 const ICON = id => `<svg class="ic" aria-hidden="true"><use href="#i-${id}"/></svg>`;
 const yen = n => n.toLocaleString('ja-JP');
@@ -1015,6 +1054,7 @@ function renderStores() {
 function renderSources() {
   const items = STORES.map(s => `<li>${s.short}：${s.src.map(([n, u]) => `<a href="${u}" ${ext}>${n}</a>`).join('、')}</li>`);
   items.push(`<li>ライティング：<a href="https://www.tokyo-skytree.jp/event/autumn2026/" ${ext}>東京スカイツリー公式</a>／神田からの経路：<a href="https://ekitan.com/transit/route/sf-1923/st-1752" ${ext}>駅探</a></li>`);
+  items.push(`<li>街の写真：${AREA_PHOTOS.map(p => `<a href="${p.page}" ${ext}>${p.author}</a>（<a href="${p.license_url}" ${ext}>${p.license}</a>）`).join('、')}、いずれもWikimedia Commons</li>`);
   document.getElementById('srcList').innerHTML = items.join('');
   const inTown = STORES.filter(s => s.inTown).length;
   document.getElementById('mapLead').textContent = `スカイツリータウン（ソラマチ）の中に${inTown}軒、押上駅のまわりに${STORES.filter(s => !s.inTown && !['landa', 'sumida'].includes(s.id)).length}軒、隅田川寄りに2軒あります。`;
@@ -1076,7 +1116,8 @@ document.addEventListener('error', e => {
     }
   } else if (img.dataset.ph === 'dish') {
     const b = img.closest('.dish-ph'); const d = b.closest('.dish'); b.remove();
-  } else img.remove();
+  } else if (img.dataset.ph === 'area') { const f = img.closest('.aph'); if (f) f.remove(); }
+  else img.remove();
 }, true);
 
 const lb = { el: null, list: [], i: 0 };
@@ -1123,9 +1164,17 @@ document.addEventListener('keydown', e => {
 });
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-lb]');
-  if (t) openLb(storePhotos(t.dataset.lb), +t.dataset.i || 0);
+  if (t) openLb(t.dataset.lb === 'area' ? AREA_PHOTOS : storePhotos(t.dataset.lb), +t.dataset.i || 0);
 });
 
-renderList(); renderStores(); renderSources(); syncFavs();
+function renderArea() {
+  document.querySelectorAll('[data-area]').forEach(f => {
+    const i = +f.dataset.area, p = AREA_PHOTOS[i];
+    f.innerHTML = `<button type="button" data-lb="area" data-i="${i}" aria-label="写真を拡大"><img src="${p.src}" alt="${p.caption}" loading="lazy" decoding="async" data-ph="area"></button>
+      <figcaption>${p.caption}<br>写真：<a href="${p.page}" ${ext}>${p.author}</a> / <a href="${p.license_url}" ${ext}>${p.license}</a></figcaption>`;
+  });
+}
+
+renderList(); renderStores(); renderArea(); renderSources(); syncFavs();
 
 </script>
