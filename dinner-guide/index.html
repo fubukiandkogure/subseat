@@ -101,6 +101,10 @@ button{font:inherit;color:inherit}
 .gph span{position:absolute;left:0;right:0;bottom:0;padding:22px 12px 8px;font-size:12.5px;line-height:1.45;color:#FFF8EF;background:linear-gradient(transparent,rgb(15 10 8 / .72))}
 .gph small{display:block;font-size:10.5px;opacity:.85}
 .gph.is-broken{display:none}
+.photo-links{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.photo-links a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 10px;border-radius:12px;background:var(--sheet);border:1.5px solid var(--line);text-decoration:none;font-weight:700;font-size:13.5px;text-align:center;line-height:1.3}
+.photo-links a:first-child{border-color:var(--pumpkin);color:var(--pumpkin)}
+.photo-links .ic{font-size:17px;flex:none}
 .gallery-hint{margin:0;font-size:12px;color:var(--ink-3)}
 .st-head{display:grid;gap:6px}
 .st-kind{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12.5px;color:var(--ink-3)}
@@ -707,7 +711,7 @@ button{font:inherit;color:inherit}
 
   <footer class="wrap foot" id="about">
     <p id="checkedNote">価格・営業時間は、2026年10月9日に各店の公式サイトや予約サイトで確認できた内容です。変わることがあるので、予約のときにお店で確かめてください。</p>
-    <p id="photoNote">絵の部分は、お店の特徴をもとに描いたイラストです。</p>
+    <p id="photoNote">お店の絵は、特徴をもとに描いたイラストです。実際のお店や料理の写真は、各お店の「お店の写真を見る」から公式サイトなどで見られます（お店の写真の転載はしていません）。</p>
     <details><summary>出典</summary><ul id="srcList"></ul></details>
   </footer>
 </main>
@@ -740,7 +744,7 @@ const STORES = [
     budget: { main: '約2,400円', ex: 'ピッツァ・パスタ・アヒージョを2人で分けて、ソフトドリンク（580円）を1杯ずつで1人2,390円。', note: 'お通し・チャージ料の有無は確認できませんでした。' },
     care: ['テラス席は「春〜秋は利用可」との掲載（ぐるなび）。10月末の夜に使えるかは予約時に確認を。'],
     facts: [['住所', '墨田区業平1-22-5 102'], ['駅から', '押上駅A2出口から徒歩2分<small>ぐるなび掲載</small>'], ['土曜の夜', '〜24:00（公式）<small>ホットペッパーとヒトサラは23:00閉店・料理LO22:00</small>'], ['定休日', '火曜'], ['予約', '電話 03-5637-8308／ネット予約（ホットペッパー）']],
-    links: { menu: 'https://lamp-oshiage.com/menu/', site: 'https://lamp-oshiage.com/', more: [['店内とテラスの写真', 'https://lamp-oshiage.com/space/'], ['ドリンク', 'https://lamp-oshiage.com/drink/']], reserve: { url: 'https://www.hotpepper.jp/strJ004005146/yoyaku/hpds', via: 'ホットペッパー' }, mapq: '窯焼きバルカフェ らんぷ＋k 東京都墨田区業平1-22-5' },
+    links: { photo: 'https://lamp-oshiage.com/space/', menu: 'https://lamp-oshiage.com/menu/', site: 'https://lamp-oshiage.com/', more: [['ドリンク', 'https://lamp-oshiage.com/drink/']], reserve: { url: 'https://www.hotpepper.jp/strJ004005146/yoyaku/hpds', via: 'ホットペッパー' }, mapq: '窯焼きバルカフェ らんぷ＋k 東京都墨田区業平1-22-5' },
     src: [['公式サイト', 'https://lamp-oshiage.com/'], ['ホットペッパー', 'https://www.hotpepper.jp/strJ004005146/'], ['ぐるなび', 'https://r.gnavi.co.jp/je5ywfpu0000/']]
   },
   {
@@ -758,7 +762,7 @@ const STORES = [
     budget: { main: '約2,550〜2,950円', ex: 'ハンバーグとウーロン茶（580円）に、チャージ料330円で1人2,550円。2人で3皿を分けると1人約2,940円。', note: 'デザートまで頼むと1人約3,330円になります。' },
     care: ['土日祝の17時以降は、単品注文だとチャージ料が1人330円かかります。', '5階の窓際と6階のテラスは別の席。希望は予約時に伝えて確認を。夜のテラスは冷えます。'],
     facts: [['住所', '墨田区業平2-19-3 JTCビル5F・6F'], ['駅から', '押上駅A2出口から徒歩1分<small>ぐるなび掲載</small>'], ['土曜の夜', '16:30〜23:00<small>料理LO22:00・ドリンクLO22:30</small>'], ['定休日', '火曜<small>祝日の場合は営業</small>'], ['予約', '電話 03-3625-7171／ネット予約（公式サイトからホットペッパー、または公式予約ページ）']],
-    links: { menu: 'https://piccole-oshiage.com/menu/', site: 'https://piccole-oshiage.com/top/', more: [['席と眺めの写真', 'https://piccole-oshiage.com/space/'], ['ドリンク', 'https://piccole-oshiage.com/drink/']], reserve: { url: 'https://www.hotpepper.jp/strJ003694009/yoyaku/hpds', via: 'ホットペッパー' }, mapq: 'piccole lampare 東京都墨田区業平2-19-3' },
+    links: { photo: 'https://piccole-oshiage.com/space/', menu: 'https://piccole-oshiage.com/menu/', site: 'https://piccole-oshiage.com/top/', more: [['ドリンク', 'https://piccole-oshiage.com/drink/']], reserve: { url: 'https://www.hotpepper.jp/strJ003694009/yoyaku/hpds', via: 'ホットペッパー' }, mapq: 'piccole lampare 東京都墨田区業平2-19-3' },
     src: [['公式サイト', 'https://piccole-oshiage.com/top/'], ['公式予約ページ', 'https://piccolelampare.owst.jp/'], ['ホットペッパー', 'https://www.hotpepper.jp/strJ003694009/']]
   },
   {
@@ -776,7 +780,7 @@ const STORES = [
     budget: { main: '約2,330円', ex: 'ピッツァかパスタ（1,680円）とソフトドリンク（650円）を1人ずつ。16時以降、メインを単品で頼むときは1人1ドリンク＋1フードの注文が必要です。', note: 'チャージ料の有無は確認できませんでした。' },
     care: ['土曜は21:00閉店、料理のラストオーダーは20:00。19時入店だと約1時間です。', 'テラス席の予約は電話のみ。混雑時は90分制になる場合があります。'],
     facts: [['住所', '墨田区向島1-2-4 東京ミズマチ WEST ZONE'], ['駅から', '本所吾妻橋駅A3出口から徒歩4分<small>浅草駅から、すみだリバーウォーク経由で徒歩7分（紹介記事）</small>'], ['土曜の夜', '〜21:00<small>料理LO20:00・ドリンクLO20:30（公式・TableCheck）</small>'], ['予約', '電話 03-5637-0107／TableCheck']],
-    links: { menu: 'https://land-a.jp/menu/', site: 'https://land-a.jp/', more: [['ドリンク（PDF）', 'https://land-a.jp/menu/drink.pdf'], ['店内の写真', 'https://restaurant.balnibarbi.com/shops/land_a/']], reserve: { url: 'https://www.tablecheck.com/ja/shops/land-a/reserve', via: 'TableCheck' }, mapq: 'LAND_A 東京ミズマチ 東京都墨田区向島1-2-4' },
+    links: { photo: 'https://restaurant.balnibarbi.com/shops/land_a/', menu: 'https://land-a.jp/menu/', site: 'https://land-a.jp/', more: [['ドリンク（PDF）', 'https://land-a.jp/menu/drink.pdf']], reserve: { url: 'https://www.tablecheck.com/ja/shops/land-a/reserve', via: 'TableCheck' }, mapq: 'LAND_A 東京ミズマチ 東京都墨田区向島1-2-4' },
     src: [['公式サイト', 'https://land-a.jp/'], ['単品メニュー（PDF）', 'https://land-a.jp/menu/alacarte.pdf'], ['TableCheck', 'https://www.tablecheck.com/ja/shops/land-a/reserve']]
   },
   {
@@ -794,7 +798,7 @@ const STORES = [
     budget: { main: '約2,240円＋ドリンク代', ex: 'パスタ2皿と大山鶏のローストを2人で分けて1人2,240円。ここにドリンク代。', note: 'ドリンクの価格は確認できませんでした。特別なテーブルチャージはかからないと掲載（ホットペッパー）。' },
     care: ['席が少ないので予約がおすすめ。不定期でフラのショーをしている日があります（ホットペッパー）。'],
     facts: [['住所', '墨田区吾妻橋2-1-4'], ['駅から', '本所吾妻橋駅から徒歩3分'], ['土曜の夜', '〜22:00<small>料理LO21:00・ドリンクLO21:30（公式）</small>'], ['定休日', '月曜'], ['予約', '電話 03-5637-8681／ホットペッパー（前日17時まで）']],
-    links: { menu: 'https://www.hotpepper.jp/strJ001275491/food/', site: 'https://foodplace.jp/sumida-cafe/', more: [['写真', 'https://www.hotpepper.jp/strJ001275491/photo/']], reserve: { url: 'https://www.hotpepper.jp/strJ001275491/', via: 'ホットペッパー' }, mapq: 'すみだCafe 東京都墨田区吾妻橋2-1-4' },
+    links: { photo: 'https://www.hotpepper.jp/strJ001275491/photo/', menu: 'https://www.hotpepper.jp/strJ001275491/food/', site: 'https://foodplace.jp/sumida-cafe/', more: [], reserve: { url: 'https://www.hotpepper.jp/strJ001275491/', via: 'ホットペッパー' }, mapq: 'すみだCafe 東京都墨田区吾妻橋2-1-4' },
     src: [['店舗サイト', 'https://foodplace.jp/sumida-cafe/'], ['ホットペッパー', 'https://www.hotpepper.jp/strJ001275491/']]
   },
   {
@@ -812,7 +816,7 @@ const STORES = [
     budget: { main: '約2,200円', ex: 'パスタ2皿とカポナータ（700円）を2人で分けて、ソフトドリンク（450円）を1杯ずつで1人2,200円。', note: '価格が税込かどうかの表記はありません。チャージ料の有無は確認できませんでした。' },
     care: ['新しい店なので、口コミはまだ少なめです。'],
     facts: [['住所', '墨田区押上1-22-1 スカイグランデ押上1F'], ['駅から', '半蔵門線 押上駅から徒歩2分（公式）'], ['土曜の夜', '18:00〜23:00（公式）'], ['定休日', '月曜'], ['予約', '電話 050-5486-6203（公式）／ぐるなびでネット予約']],
-    links: { menu: 'https://r.gnavi.co.jp/rwd68t5f0000/menu2/', site: 'https://gjtt200.gorp.jp/', siteLabel: 'お店の公式ページ', more: [['ドリンク', 'https://r.gnavi.co.jp/rwd68t5f0000/menu3/']], reserve: { url: 'https://r.gnavi.co.jp/plan/rwd68t5f0000/plan-reserve/plan/plan_list', via: 'ぐるなび' }, mapq: 'Trattoria Zinanvo 東京都墨田区押上1-22-1' },
+    links: { photo: 'https://gjtt200.gorp.jp/', menu: 'https://r.gnavi.co.jp/rwd68t5f0000/menu2/', site: 'https://gjtt200.gorp.jp/', siteLabel: 'お店の公式ページ', more: [['ドリンク', 'https://r.gnavi.co.jp/rwd68t5f0000/menu3/']], reserve: { url: 'https://r.gnavi.co.jp/plan/rwd68t5f0000/plan-reserve/plan/plan_list', via: 'ぐるなび' }, mapq: 'Trattoria Zinanvo 東京都墨田区押上1-22-1' },
     src: [['公式ページ（ぐるなび）', 'https://gjtt200.gorp.jp/'], ['ぐるなびのメニュー', 'https://r.gnavi.co.jp/rwd68t5f0000/menu2/'], ['開店のニュース', 'https://sumida.goguynet.jp/2026/01/07/zinanbo-open/']]
   },
   {
@@ -830,7 +834,7 @@ const STORES = [
     budget: { main: '約2,350円', ex: 'マルゲリータとミートソースのタリアテッレを2人で分けて、コーラかジンジャーエール（486円と掲載）を1杯ずつで1人約2,360円。', note: 'チャージなし（ホットペッパー）。' },
     care: ['コース（5,500円〜）は予算を超えるので、単品で頼みましょう。テラス席はありません。'],
     facts: [['住所', '墨田区業平1-21-7'], ['駅から', '押上駅から徒歩2〜3分'], ['土曜の夜', '17:00〜23:00（LO22:00）<small>公式</small>'], ['定休日', 'なし（ホットペッパー）'], ['予約', '電話 03-6658-4111／TableCheck・ホットペッパー']],
-    links: { menu: 'https://www.hotpepper.jp/strJ001009869/food/', site: 'https://palazzosangusto.jp/', more: [['ドリンク', 'https://www.hotpepper.jp/strJ001009869/drink/']], reserve: { url: 'https://www.tablecheck.com/ja/shops/palazzosangusto/reserve', via: 'TableCheck' }, mapq: 'Palazzo SAN GUSTO 東京都墨田区業平1-21-7' },
+    links: { photo: 'https://palazzosangusto.jp/', menu: 'https://www.hotpepper.jp/strJ001009869/food/', site: 'https://palazzosangusto.jp/', more: [['ドリンク', 'https://www.hotpepper.jp/strJ001009869/drink/']], reserve: { url: 'https://www.tablecheck.com/ja/shops/palazzosangusto/reserve', via: 'TableCheck' }, mapq: 'Palazzo SAN GUSTO 東京都墨田区業平1-21-7' },
     src: [['公式サイト', 'https://palazzosangusto.jp/'], ['ホットペッパー', 'https://www.hotpepper.jp/strJ001009869/'], ['TableCheck', 'https://www.tablecheck.com/ja/palazzosangusto']]
   },
   {
@@ -849,7 +853,7 @@ const STORES = [
     budget: { main: '約2,000円', ex: 'ハンバーグ（1,490円）とソフトドリンク（500円・公式）で1人1,990円。', note: 'デザートは600〜650円（公式）。チャージ料の有無は確認できませんでした。' },
     care: [],
     facts: [['場所', '東京ソラマチ7F'], ['駅から', '押上駅B3出口から徒歩約4分'], ['営業時間', '11:00〜23:00（料理LO22:00）<small>公式・毎日</small>'], ['予約', '電話 03-5610-2872']],
-    links: { menu: 'https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/', site: 'https://miyoshi-grp.com/cardinal/restaurant/grillcardinal/', more: [['ドリンク（PDF）', 'https://miyoshi-grp.com/cardinal/wp-content/uploads/sites/2/2024/10/gc_drink_menu_261001.pdf'], ['ホットペッパー', 'https://www.hotpepper.jp/strJ004469864/']], reserve: { tel: '03-5610-2872' }, mapq: '洋食屋 銀座グリルカーディナル 東京ソラマチ' },
+    links: { photo: 'https://miyoshi-grp.com/cardinal/restaurant/grillcardinal/', menu: 'https://retty.me/area/PRE13/ARE9/SUB904/100000716108/menu/', site: 'https://miyoshi-grp.com/cardinal/restaurant/grillcardinal/', more: [['ドリンク（PDF）', 'https://miyoshi-grp.com/cardinal/wp-content/uploads/sites/2/2024/10/gc_drink_menu_261001.pdf'], ['ホットペッパー', 'https://www.hotpepper.jp/strJ004469864/']], reserve: { tel: '03-5610-2872' }, mapq: '洋食屋 銀座グリルカーディナル 東京ソラマチ' },
     src: [['公式（運営会社）', 'https://miyoshi-grp.com/cardinal/restaurant/grillcardinal/'], ['Retty', 'https://retty.me/area/PRE13/ARE9/SUB904/100000716108/']]
   },
   {
@@ -868,7 +872,7 @@ const STORES = [
     budget: { main: '約2,150〜2,430円', ex: 'パスタのプレート（1,730円）にドリンクセット（+420円）で2,150円。デザートとドリンクのセット（+700円）なら2,430円。', note: '公式のグランドメニュー（税込）で計算。' },
     care: ['予約できるかは確認できませんでした。土曜の夜は待つかもしれません。'],
     facts: [['場所', '東京ソラマチ4F'], ['駅から', '押上駅・とうきょうスカイツリー駅からすぐ'], ['営業時間', '9:00〜22:00（運営会社）<small>ぐるなびは8:00〜23:00（LO22:00）</small>'], ['電話', '03-5809-7162（運営会社）']],
-    links: { menu: 'https://www.potomak.co.jp/_sys/wp-content/uploads/2018/10/solamachi-grandmenu.pdf', site: 'https://www.potomak.co.jp/shop/423/', more: [], reserve: null, mapq: 'ココノハ 東京スカイツリータウン・ソラマチ店' },
+    links: { photo: 'https://www.potomak.co.jp/shop/423/', menu: 'https://www.potomak.co.jp/_sys/wp-content/uploads/2018/10/solamachi-grandmenu.pdf', site: 'https://www.potomak.co.jp/shop/423/', more: [], reserve: null, mapq: 'ココノハ 東京スカイツリータウン・ソラマチ店' },
     src: [['運営会社の店舗ページ', 'https://www.potomak.co.jp/shop/423/'], ['グランドメニュー（PDF）', 'https://www.potomak.co.jp/_sys/wp-content/uploads/2018/10/solamachi-grandmenu.pdf']]
   },
   {
@@ -876,17 +880,18 @@ const STORES = [
     kind: 'もんじゃ・お好み焼き', area: '東京ソラマチ7F',
     catch: '東京の下町らしく、もんじゃを焼きながら',
     lead: '月島のもんじゃ店「だるま」のソラマチ店。もんじゃやお好み焼きを、テーブルの鉄板で焼きながら食べます。',
-    points: ['東京らしい「もんじゃ」を2人で焼く楽しさ', 'もんじゃは1,400〜2,100円ほど。予算を抑えやすい', '23時まで営業（料理LO21:45）'],
+    points: ['東京らしい「もんじゃ」を2人で焼く楽しさ', 'もんじゃは1,180〜1,680円。予算を抑えやすい', '23時まで営業（料理LO22:00・公式）'],
     dishes: [
-      { ic: 'pan', name: '4種のチーズのプレミアムもち明太子もんじゃ', price: 2100, note: '公式の看板メニュー' },
-      { ic: 'pan', name: 'もち明太チーズもんじゃ', price: 1848, chk: '口コミでの価格' },
-      { ic: 'pan', name: 'だるまスペシャル', price: 1848, chk: '口コミでの価格' },
-      { ic: 'pan', name: 'じゃこ梅もんじゃ', price: 1408, chk: '口コミでの価格' }
+      { ic: 'pan', name: 'もち明太子チーズもんじゃ', price: 1680 },
+      { ic: 'pan', name: '五目もんじゃ', price: 1380 },
+      { ic: 'pan', name: '肉ベビースターもんじゃ', price: 1180 },
+      { ic: 'pizza', name: 'だるま天（お好み焼き）', price: 1480 }
     ],
-    budget: { main: '約2,000円＋ドリンク代', ex: 'もんじゃ2枚を2人で分けて1人約2,000円。', note: 'ソフトドリンクの価格は確認中です。' },
-    care: ['予約は受けていないとの掲載が多いです（電話で確認を）。', '鉄板の煙や匂いが服につくことがあります。'],
-    facts: [['場所', '東京ソラマチ7F'], ['駅から', '押上駅・とうきょうスカイツリー駅からすぐ'], ['営業時間', '10:30〜23:00<small>料理LO21:45・ドリンクLO22:15（公式）</small>'], ['予約', '不可との掲載が多い<small>電話 03-5809-7408</small>']],
-    links: { menu: 'https://r.gnavi.co.jp/e474601/menu2/', site: 'https://monjadaruma.com/shop/soramachi.php', more: [], reserve: { tel: '03-5809-7408', note: '予約不可の掲載あり' }, mapq: '月島もんじゃ だるま 東京スカイツリータウン・ソラマチ店' },
+    dishNote: 'ぐるなびのメニュー掲載の価格です。税込か税抜かの表記がなく、税抜なら1割ほど上がります。',
+    budget: { main: '約2,000円', ex: 'もんじゃ2枚（1,680円＋1,380円）を2人で分けて1人1,530円。ここにドリンク代（ソフトドリンクは420〜600円の掲載）。', note: 'チャージ料の有無は確認できませんでした。' },
+    care: ['予約は受け付けていません（ぐるなび）。土曜の夜は並ぶかもしれません。', '鉄板の煙や匂いが服につくことがあります。'],
+    facts: [['場所', '東京ソラマチ7F（プラネタリウムの出口すぐ）'], ['駅から', '押上駅・とうきょうスカイツリー駅からすぐ'], ['営業時間', '10:30〜23:00<small>料理LO22:00・ドリンクLO22:30（公式）</small>'], ['予約', 'できない（ぐるなび）<small>電話 03-5809-7408</small>']],
+    links: { menu: 'https://r.gnavi.co.jp/e474601/menu2/', site: 'https://monjadaruma.com/shop/soramachi.php', photo: 'https://monjadaruma.com/shop/soramachi.php', more: [], reserve: null, noReserve: '予約なし（並んで入店）', mapq: '月島もんじゃ だるま 東京スカイツリータウン・ソラマチ店' },
     src: [['公式サイト', 'https://monjadaruma.com/shop/soramachi.php'], ['ぐるなび', 'https://r.gnavi.co.jp/e474601/']]
   },
   {
@@ -894,33 +899,33 @@ const STORES = [
     kind: '牛たん・和食', area: '東京ソラマチ6F',
     catch: '炭火で焼いた牛たんを、麦飯とテールスープで',
     lead: '仙台の牛たん専門店「利久」のソラマチ店。炭火で焼いた牛たんに、麦飯とテールスープが付く定食が看板です。',
-    points: ['牛たん定食は麦飯・テールスープ・小鉢付き', 'パスタやピッツァとは違う、和の晩ごはん', '23時まで営業（LO22:30・掲載）'],
+    points: ['牛たん定食は、麦飯とテールスープ付き', 'パスタやピッツァとは違う、和の晩ごはん', '23時まで営業（LO22:30）。76席の広い店'],
     dishes: [
-      { ic: 'meat', name: '牛たん定食 3枚6切', price: 2695, note: '麦飯・テールスープ・小鉢・和菓子付き（ぐるなび）' },
-      { ic: 'meat', name: '牛たん定食 4枚8切', price: 3399 }
+      { ic: 'meat', name: '牛たん定食 3枚6切', price: null, note: 'ソラマチ店の価格は未確認。ほかの店舗では約2,700円' },
+      { ic: 'meat', name: '牛たん定食 4枚8切', price: null, note: 'ほかの店舗では約3,400円' }
     ],
-    budget: { main: '約2,700円', ex: '牛たん定食（3枚6切）を1人1つずつ。定食にスープとご飯が付くので、ドリンクなしでも食事になります。', note: '価格は確認中です。' },
-    care: ['夜は行列ができることがあると口コミにあります。予約できるかは掲載で食い違っています。'],
-    facts: [['場所', '東京ソラマチ6F'], ['駅から', 'とうきょうスカイツリー駅・押上駅からすぐ'], ['営業時間', '11:00〜23:00（LO22:30）<small>掲載</small>'], ['予約', '電話 03-5610-2855']],
-    links: { menu: 'https://r.gnavi.co.jp/e159706/menu10/', site: 'https://www.tokyo-solamachi.jp/restaurant/301/', siteLabel: 'ソラマチのお店ページ', more: [], reserve: { tel: '03-5610-2855' }, mapq: '牛たん炭焼 利久 東京ソラマチ店' },
-    src: [['ぐるなび', 'https://r.gnavi.co.jp/e159706/'], ['東京ソラマチ', 'https://www.tokyo-solamachi.jp/restaurant/301/']]
+    budget: { main: '約2,700円〜', ex: '牛たん定食（3枚6切）を1人1つずつ。定食にスープとご飯が付きます。', note: 'ソラマチ店の価格は確認できず、ほかの店舗の価格から見積もっています。ドリンクを頼むと3,000円を超えそうです。' },
+    care: ['ソラマチ店の定食の価格は、予約や来店のときに確認を。'],
+    facts: [['場所', '東京ソラマチ6F'], ['駅から', 'とうきょうスカイツリー駅・押上駅からすぐ'], ['営業時間', '11:00〜23:00（LO22:30）<small>ぐるなび</small>'], ['予約', 'ぐるなびでネット予約<small>電話 03-5610-2855</small>']],
+    links: { menu: 'https://r.gnavi.co.jp/e159706/menu10/', site: 'https://r.gnavi.co.jp/e159706/', siteLabel: 'ぐるなびのお店ページ', photo: 'https://r.gnavi.co.jp/e159706/', more: [], reserve: { url: 'https://r.gnavi.co.jp/e159706/', via: 'ぐるなび' }, mapq: '牛たん炭焼 利久 東京ソラマチ店' },
+    src: [['ぐるなび', 'https://r.gnavi.co.jp/e159706/']]
   },
   {
     id: 'penthai', group: 'asian', added: true, name: 'タイ国料理 ペンタイ', short: 'ペンタイ',
     kind: 'タイ料理', area: '押上・業平',
     catch: 'スカイツリーのそばの、気取らないタイ料理',
-    lead: '押上駅から歩いて数分のタイ料理店。グリーンカレーやパッタイ、トムヤムクンが口コミで好評です。',
-    points: ['イタリアンや洋食とは、がらっと違う選択肢', 'まろやかなグリーンカレーやパッタイが口コミで人気', '夜の予算は2,000円台（食べログ）'],
+    lead: '押上駅から歩いて2分ほどのタイ料理店。グリーンカレーやパッタイ、トムヤムクンが口コミで好評です。',
+    points: ['イタリアンや洋食とは、がらっと違う選択肢', 'まろやかなグリーンカレーやパッタイが口コミで人気', '夜の予算は2,000円台（ヒトサラ・ぐるなび）'],
     dishes: [
-      { ic: 'bowl', name: '鶏肉のグリーンカレー', price: 1000, chk: '古い掲載の価格' },
-      { ic: 'bowl', name: '鶏肉のマサマンカレーライス', price: 1210, chk: '口コミでの価格' },
-      { ic: 'pasta', name: 'パッタイ', price: null, note: '口コミでおすすめ' }
+      { ic: 'bowl', name: 'グリーンカレー', price: null, note: '口コミで人気' },
+      { ic: 'pasta', name: 'パッタイ', price: null, note: '口コミでおすすめ' },
+      { ic: 'plate', name: 'コース（食べログからの予約）', price: 2200, suffix: '円〜', note: '3,850円・4,950円のコースもあり（税込）' }
     ],
-    budget: { main: '約2,000〜3,000円', ex: '料理を2〜3品、2人で分けるくらい（食べログの夜の予算）。', note: '最新の価格は確認中です。' },
-    care: ['地図サービスで営業状況の表示が食い違っていました。行く前に営業しているか確認を。'],
-    facts: [['住所', '墨田区業平4-6-9'], ['駅から', '押上駅から徒歩2〜5分'], ['土曜の夜', '〜23:00（LO22:30）<small>掲載により異なる</small>'], ['定休日', '火曜'], ['予約', '電話 03-6658-5890']],
-    links: { menu: 'https://retty.me/area/PRE13/ARE9/SUB904/100000921287/menu/', site: 'https://www.facebook.com/penthai.jp/', siteLabel: 'お店のFacebook', more: [['食べログ', 'https://tabelog.com/tokyo/A1312/A131203/13168034/']], reserve: { tel: '03-6658-5890' }, mapq: 'タイ国料理 ペンタイ 東京都墨田区業平4-6-9' },
-    src: [['食べログ', 'https://tabelog.com/tokyo/A1312/A131203/13168034/'], ['ぐるなび', 'https://r.gnavi.co.jp/ja4zcstj0000/'], ['Retty', 'https://retty.me/area/PRE13/ARE9/SUB904/100000921287/']]
+    budget: { main: '約2,000〜3,000円', ex: '料理を2〜3品、2人で分けるくらい（ヒトサラ・ぐるなびの夜の目安）。', note: '単品の価格は確認できませんでした。' },
+    care: ['閉店の告知は見つかりませんでしたが、営業しているかを確定できませんでした。行くなら電話（03-6658-5890）で確認を。'],
+    facts: [['住所', '墨田区業平4-6-9'], ['駅から', '半蔵門線 押上駅B1出口から徒歩2分（ぐるなび）'], ['土曜の夜', '17:00〜22:00（LO21:30）<small>ヒトサラ</small>'], ['定休日', '火曜'], ['予約', '電話 03-6658-5890／食べログ']],
+    links: { menu: 'https://hitosara.com/0031247672/', site: 'https://r.gnavi.co.jp/ja4zcstj0000/', siteLabel: 'ぐるなびのお店ページ', photo: 'https://hitosara.com/0031247672/', more: [], reserve: { tel: '03-6658-5890' }, mapq: 'タイ国料理 ペンタイ 東京都墨田区業平4-6-9' },
+    src: [['ヒトサラ', 'https://hitosara.com/0031247672/'], ['ぐるなび', 'https://r.gnavi.co.jp/ja4zcstj0000/']]
   }
 ];
 
@@ -993,7 +998,8 @@ function renderList() {
 
 function mediaHTML(s) {
   const list = storePhotos(s.id);
-  if (!list.length) return `<div class="cover"><svg viewBox="0 0 400 300" role="img" aria-label="${s.short}のイメージイラスト"><use href="#cov-${s.id}"/></svg><span class="tag-il">ILLUSTRATION</span></div>`;
+  if (!list.length) return `<div class="cover"><svg viewBox="0 0 400 300" role="img" aria-label="${s.short}のイメージイラスト"><use href="#cov-${s.id}"/></svg><span class="tag-il">ILLUSTRATION</span></div>
+    <p class="photo-links"><a href="${s.links.photo}" ${ext}>${ICON('camera')}お店の写真を見る</a><a href="${gmap(s.links.mapq)}" ${ext}>${ICON('pin')}マップの写真</a></p>`;
   return `<div class="gallery">${list.map((p, j) => `
     <button class="gph" type="button" data-lb="${s.id}" data-i="${j}">
       <img src="${p.src}" alt="${s.short}：${p.caption}" ${j ? 'loading="lazy"' : ''} decoding="async" data-ph="gallery">
@@ -1022,7 +1028,7 @@ function linksHTML(s) {
   const sub = [`<a href="${gmap(L.mapq)}" ${ext}>${ICON('pin')}地図</a>`];
   if (L.reserve && L.reserve.tel) sub.push(`<span>${ICON('phone')}予約は電話 ${L.reserve.tel}${L.reserve.note ? `（${L.reserve.note}）` : ''}</span>`);
   else if (L.reserve) sub.push(`<a href="${L.reserve.url}" ${ext}>${ICON('cal')}予約（${L.reserve.via}）</a>`);
-  else sub.push(`<span>${ICON('cal')}予約なし（当日直接）</span>`);
+  else sub.push(`<span>${ICON('cal')}${L.noReserve || '予約なし（当日直接）'}</span>`);
   L.more.forEach(([label, url]) => sub.push(`<a href="${url}" ${ext}>${ICON(label.includes('写真') ? 'camera' : 'out')}${label}</a>`));
   return `<div class="btns">
       <a class="btn-main" href="${L.menu}" ${ext}>${ICON('menu')}メニューを見る</a>
@@ -1058,7 +1064,6 @@ function renderSources() {
   document.getElementById('srcList').innerHTML = items.join('');
   const inTown = STORES.filter(s => s.inTown).length;
   document.getElementById('mapLead').textContent = `スカイツリータウン（ソラマチ）の中に${inTown}軒、押上駅のまわりに${STORES.filter(s => !s.inTown && !['landa', 'sumida'].includes(s.id)).length}軒、隅田川寄りに2軒あります。`;
-  if (Object.keys(PHOTOS).length) document.getElementById('photoNote').textContent = 'お店の写真は、各店の公式サイトや予約サイトに載っている写真を、二人で下見するために出典つきで表示しています。著作権は各店・撮影者にあります。写真がないお店は、特徴をもとに描いたイラストです。';
 }
 
 function syncFavs() {
