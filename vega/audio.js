@@ -306,6 +306,76 @@ const Sound = {
     c.g.gain.setTargetAtTime(0.0001, t, 0.03);
     setTimeout(() => [c.o1, c.o2, c.lfo].forEach((o) => o.stop()), 300);
   },
+
+  // ── くだらない機能用 ──
+  beep(f = 880) { tone({ type: 'square', f, dur: 0.12, vol: 0.05, lp: 3000, wet: 0.2 }); },
+  news() { [76, 72, 79].forEach((n, i) => tone({ type: 'triangle', f: mtof(n), t: i * 0.16, dur: 0.5, vol: 0.06, wet: 0.4 })); },
+  buzzer() { tone({ type: 'sawtooth', f: 110, dur: 0.5, a: 0.01, vol: 0.07, lp: 900, wet: 0.1 }); tone({ type: 'square', f: 116, dur: 0.5, a: 0.01, vol: 0.03, lp: 900, wet: 0.1 }); },
+  whoosh() { hiss({ f: 400, f2: 4500, dur: 0.5, a: 0.15, vol: 0.2, q: 0.8, wet: 0.3 }); },
+  cutin() {
+    Sound.whoosh();
+    play('clank_2', { vol: 0.6, rate: 1.4, wet: 0.4 });
+    tone({ type: 'sawtooth', f: 1200, f2: 2600, dur: 0.25, vol: 0.05, lp: 5000, wet: 0.4 });
+  },
+  kyuin(n = 3) {
+    for (let i = 0; i < n; i++) {
+      tone({ f: 900, f2: 2700, t: i * 0.3, dur: 0.28, a: 0.01, vol: 0.07, wet: 0.4 });
+      tone({ type: 'square', f: 1350, f2: 4000, t: i * 0.3, dur: 0.22, a: 0.01, vol: 0.015, lp: 6000, wet: 0.3 });
+    }
+  },
+  heartbeat(beats = 4, gap = 0.7) {
+    for (let i = 0; i < beats; i++) {
+      tone({ f: 72, f2: 40, t: i * gap, dur: 0.2, vol: 0.5, wet: 0.05 });
+      tone({ f: 62, f2: 38, t: i * gap + 0.2, dur: 0.18, vol: 0.35, wet: 0.05 });
+    }
+  },
+  reelTick() { tone({ type: 'square', f: 2200, dur: 0.012, vol: 0.014, wet: 0, lp: 5000 }); },
+  reelStop() { play('clank_1', { vol: 0.45, rate: 1.8, wet: 0.1 }); tone({ f: 640, f2: 300, dur: 0.07, vol: 0.06, wet: 0.1 }); },
+  hold(level) { tone({ f: 880 + level * 220, dur: 0.12, vol: 0.06, wet: 0.3 }); tone({ f: 1320 + level * 330, t: 0.08, dur: 0.18, vol: 0.05, wet: 0.35 }); },
+  coin() { const f = rand(1800, 2600); tone({ f, dur: 0.12, vol: 0.035, wet: 0.3 }); tone({ f: f * 1.5, t: 0.05, dur: 0.18, vol: 0.025, wet: 0.3 }); },
+  fanfare() {
+    [[67, 0], [72, 0.12], [76, 0.24], [79, 0.36], [84, 0.5]].forEach(([n, t]) => {
+      tone({ type: 'square', f: mtof(n), t, dur: 0.22, vol: 0.045, lp: 4000, wet: 0.3 });
+      tone({ type: 'triangle', f: mtof(n), t, dur: 0.3, vol: 0.06, wet: 0.3 });
+    });
+    [60, 64, 67, 72, 76].forEach((n) => {
+      tone({ type: 'sawtooth', f: mtof(n), t: 0.62, dur: 1.9, a: 0.02, vol: 0.032, lp: 3000, wet: 0.5 });
+      tone({ type: 'square', f: mtof(n + 12), t: 0.62, dur: 1.4, a: 0.02, vol: 0.013, lp: 5000, wet: 0.5 });
+    });
+    hiss({ type: 'highpass', f: 5000, t: 0.62, dur: 1.6, a: 0.01, vol: 0.16, wet: 0.5 });
+  },
+  pikin() {
+    tone({ f: 3520, dur: 2.6, a: 0.002, vol: 0.11, wet: 0.9 });
+    tone({ f: 5274, dur: 1.9, a: 0.002, vol: 0.05, wet: 0.9 });
+    tone({ type: 'triangle', f: 1760, dur: 1.3, vol: 0.05, wet: 0.8 });
+  },
+  silence(sec) {
+    if (!ac) return;
+    const t = ac.currentTime, g = master.gain;
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(g.value, t);
+    g.linearRampToValueAtTime(0, t + 0.04);
+    g.setValueAtTime(0, t + sec);
+    g.linearRampToValueAtTime(on ? 1 : 0, t + sec + 0.05);
+  },
+  pop() {
+    hiss({ type: 'bandpass', f: rand(900, 1700), q: 2, dur: 0.06, a: 0.002, vol: 0.32, wet: 0.15 });
+    tone({ f: rand(300, 520), f2: 120, dur: 0.05, vol: 0.07, wet: 0.05 });
+  },
+  hic() { tone({ f: 480, f2: 980, dur: 0.09, vol: 0.08, wet: 0.2 }); tone({ type: 'triangle', f: 240, f2: 420, dur: 0.08, vol: 0.06, wet: 0.1 }); },
+  firework() {
+    play('boom_mid', { vol: 0.22, rate: rand(1.2, 1.6), wet: 0.6 });
+    hiss({ type: 'highpass', f: 3000, t: 0.12, dur: 0.9, a: 0.05, vol: 0.06, wet: 0.4 });
+  },
+  slowmo(down = true) {
+    tone({ type: 'sawtooth', f: down ? 420 : 70, f2: down ? 55 : 420, dur: 0.9, a: 0.05, vol: 0.06, lp: 1400, wet: 0.5 });
+    hiss({ f: down ? 3000 : 200, f2: down ? 150 : 3000, dur: 0.9, a: 0.2, vol: 0.12, wet: 0.4 });
+  },
+  sting() {
+    [36, 43, 48, 55].forEach((n) => tone({ type: 'sawtooth', f: mtof(n), dur: 1.8, a: 0.01, vol: 0.05, lp: 1800, lp2: 300, wet: 0.6 }));
+    play('boom_big', { vol: 0.5, rate: 0.8, wet: 0.5 });
+  },
+  matrix(x) { loop('loop_data', x ? 0.32 : 0, 1.5, 0.1); },
 };
 
 /* ── 音楽：オーバードライブと迎撃戦で流れる 128BPM のループ（Am-F-C-G） ── */

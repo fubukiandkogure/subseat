@@ -78,7 +78,7 @@ const BOOT = [
 
 /* ── DOM ─────────────────────────── */
 const stageEl = $('#stage'), ui = $('#ui2d'), ux = ui.getContext('2d');
-const hudEl = $('#hud'), topEl = $('.top'), deckEl = $('.deck');
+const hudEl = $('#hud'), topEl = $('.topwrap'), deckEl = $('.deck');
 const sayEl = $('#say'), voiceBar = $('#voiceBar'), bannerEl = $('#banner'), bootEl = $('#bootlog');
 const wakeBtn = $('#wake'), statusText = $('#statusText'), missionEl = $('#mission');
 
@@ -131,7 +131,8 @@ const S = {
   shake: 0, kick: 0, flash: 0, aberr: 0, glitch: 0, freeze: 0, collapse: 0, bloomBoost: 0, bolts: 0,
   shock: { x: 0.5, y: 0.5, r: 0, amp: 0 },
   shield: 1, shieldFlash: 0,
-  scan: null, touched: false, ringTime: 0,
+  scan: null, touched: false, ringTime: 0, lastInput: 0,
+  rainbow: 0, timeScale: 1, slowGoal: 1, dim: 0, dimGoal: 0, zoomFx: 0, zoomGoal: 0, swarmT: 0, swarmDir: 1,
   lineAt: { spin: 0, blast: 0 },
 };
 let T = 0;
@@ -172,7 +173,10 @@ scene.fog = new THREE.Fog(0x01060b, 20, 60);
 const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 300);
 
 /* ── 色：通常はシアン、全出力はアンバー、警戒は赤 ── */
-const PAL = { cyan: new THREE.Color('#5cecff'), amber: new THREE.Color('#ffa63c'), red: new THREE.Color('#ff3349') };
+const PAL = {
+  cyan: new THREE.Color('#5cecff'), amber: new THREE.Color('#ffa63c'), red: new THREE.Color('#ff3349'),
+  gold: new THREE.Color('#ffd34d'), green: new THREE.Color('#4dff9a'),
+};
 const ENEMY = new THREE.Color('#ff2f4f');
 const WHITE = new THREE.Color(1, 1, 1);
 const accent = PAL.cyan.clone();
@@ -180,13 +184,25 @@ let accentGoal = PAL.cyan;
 const tintList = [];
 function tinted(mat, k = 1) { tintList.push([mat, k]); mat.color.copy(accent).multiplyScalar(k); return mat; }
 let accRGB = '92,236,255';
-function updateTint(dt) {
-  const d = Math.abs(accent.r - accentGoal.r) + Math.abs(accent.g - accentGoal.g) + Math.abs(accent.b - accentGoal.b);
-  if (d === 0) return;
-  if (d < 0.004) accent.copy(accentGoal); else accent.lerp(accentGoal, Math.min(1, dt * 4));
+function modeColor() { return S.mode === 'overdrive' ? PAL.amber : S.mode === 'alert' ? PAL.red : PAL.cyan; }
+function applyTint() {
   for (const [m, k] of tintList) m.color.copy(accent).multiplyScalar(k);
   accRGB = `${Math.round(accent.r * 255)},${Math.round(accent.g * 255)},${Math.round(accent.b * 255)}`;
   root.style.setProperty('--acc', accRGB.replace(/,/g, ' '));
+}
+function updateTint(dt, real) {
+  // 大当たり中は虹色に回す
+  if (S.rainbow > 0) {
+    S.rainbow -= real;
+    accent.setHSL((performance.now() / 1000 * 0.45) % 1, 1, 0.6);
+    applyTint();
+    if (S.rainbow <= 0) accentGoal = modeColor();
+    return;
+  }
+  const d = Math.abs(accent.r - accentGoal.r) + Math.abs(accent.g - accentGoal.g) + Math.abs(accent.b - accentGoal.b);
+  if (d === 0) return;
+  if (d < 0.004) accent.copy(accentGoal); else accent.lerp(accentGoal, Math.min(1, real * 4));
+  applyTint();
 }
 const ACC = (a) => `rgba(${accRGB},${a})`;
 const INK = (a) => `rgba(223,252,255,${a})`;
@@ -991,6 +1007,7 @@ function stepParticles(dt) {
       const k = Math.exp(-P.drag[i] * dt);
       P.vel[i3] *= k; P.vel[i3 + 1] *= k; P.vel[i3 + 2] *= k;
       if (P.kind[i] === 2) P.vel[i3 + 1] += 0.9 * dt;
+      else if (P.kind[i] === 3) P.vel[i3 + 1] -= 5.5 * dt;
     }
     P.pos[i3] += P.vel[i3] * dt; P.pos[i3 + 1] += P.vel[i3 + 1] * dt; P.pos[i3 + 2] += P.vel[i3 + 2] * dt;
     const f = P.life[i] / P.max[i];
@@ -1127,10 +1144,11 @@ const finalPass = new THREE.ShaderPass({
     tDiffuse: { value: null }, uTime: { value: 0 }, uAberr: { value: 0 }, uAspect: { value: 1 }, uFlash: { value: 0 },
     uGlitch: { value: 0 }, uCollapse: { value: 0 }, uShockR: { value: 0 }, uShockAmp: { value: 0 },
     uShockC: { value: new THREE.Vector2(0.5, 0.5) }, uTint: { value: accent },
+    uDim: { value: 0 }, uSpot: { value: new THREE.Vector2(0.5, 0.5) },
   },
   vertexShader: VS_UV,
-  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime, uAberr, uAspect, uFlash, uGlitch, uCollapse, uShockR, uShockAmp;
-    uniform vec2 uShockC; uniform vec3 uTint; varying vec2 vUv;
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime, uAberr, uAspect, uFlash, uGlitch, uCollapse, uShockR, uShockAmp, uDim;
+    uniform vec2 uShockC, uSpot; uniform vec3 uTint; varying vec2 vUv;
     float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
     void main(){
       vec2 uv = vUv;
@@ -1164,6 +1182,7 @@ const finalPass = new THREE.ShaderPass({
       col *= 0.94 + 0.06 * sin(gl_FragCoord.y * 1.7);
       float v = length((vUv - 0.5) * 2.0);
       col *= mix(1.0, 0.3, smoothstep(0.55, 1.45, v));
+      col *= 1.0 - uDim * 0.85 * smoothstep(0.12, 0.5, length((vUv - uSpot) * vec2(uAspect, 1.0)));
       col += (hash(vUv * 731.0 + fract(uTime) * 91.0) - 0.5) * 0.035;
       col = mix(col, vec3(1.0), clamp(uFlash, 0.0, 1.0) * 0.85);
       gl_FragColor = vec4(col, 1.0);
@@ -1244,6 +1263,7 @@ function layout() {
     panels.forEach((p) => { p.enabled = false; });
     L.sideEarth = false;
   }
+  root.style.setProperty('--top', L.top + 'px');
   root.style.setProperty('--cx', W / 2 + 'px');
   root.style.setProperty('--cy', L.cy + 'px');
   root.style.setProperty('--cr', L.Rpx + 'px');
@@ -1274,7 +1294,7 @@ const ORIGIN = new THREE.Vector3();
 let coreS = { x: 0, y: 0 };
 
 /* ── 操作 ─────────────────────────── */
-function markTouched() { S.touched = true; body.classList.add('touched'); }
+function markTouched() { S.touched = true; S.lastInput = performance.now(); body.classList.add('touched'); }
 const rot = { yaw: 0, pitch: 0, vy: 0, vp: 0 };
 const pointers = new Map();
 const drag = { id: null, x: 0, y: 0, x0: 0, y0: 0, t0: 0, lastT: 0, onCore: false, moved: false, hold: 0 };
@@ -1620,7 +1640,9 @@ for (const b of cmdBtns) b.addEventListener('click', () => {
   Sound.init(); Sound.click(); buzz(12);
   markTouched();
   b.classList.remove('fire'); void b.offsetWidth; b.classList.add('fire');
-  CMD[b.dataset.cmd]();
+  const c = b.dataset.cmd;
+  if (CMD[c]) CMD[c]();
+  else if (window.VEGA_FUN && window.VEGA_FUN[c]) window.VEGA_FUN[c]();
 });
 
 const tSound = $('#tSound'), tVoice = $('#tVoice'), tPower = $('#tPower');
@@ -1643,7 +1665,7 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault(); Sound.init(); markTouched(); startCharge();
     return;
   }
-  const map = { s: 'scan', o: 'overdrive', d: 'defense', t: 'transform', g: 'globe', r: 'report' };
+  const map = { s: 'scan', o: 'overdrive', d: 'defense', t: 'transform', g: 'globe', r: 'report', l: 'lucky', j: 'joke' };
   if (map[k]) { const b = document.querySelector(`[data-cmd="${map[k]}"]`); if (b) b.click(); }
 });
 window.addEventListener('keyup', (e) => { if (e.key === ' ' && S.charging) release(); });
@@ -1687,6 +1709,9 @@ function sleep() {
   endMode(true);
   release();
   S.formGoal = 0; S.globeGoal = 0; S.scan = null;
+  S.slowGoal = 1; S.dimGoal = 0; S.zoomGoal = 0; S.rainbow = 0; S.swarmT = 0;
+  accentGoal = PAL.cyan;
+  window.dispatchEvent(new Event('vega-sleep'));
   setButtons();
   say(LINES.sleep);
   later(() => {
@@ -1722,8 +1747,8 @@ const clockEl = $('#clock'), mKills = $('#mKills'), mShield = $('#mShield'), mTi
 let talkingShown = false;
 S.collapseGoal = 0;
 
-function update(dt) {
-  updateTint(dt);
+function update(dt, real) {
+  updateTint(dt, real);
   // 起動・停止の進み具合
   S.standby = S.phase === 'standby' || S.phase === 'loading' ? Math.min(1, S.standby + dt / 0.6) : Math.max(0, S.standby - dt / 0.35);
   const tableGoal = S.phase === 'booting' || S.phase === 'awake' ? 1 : 0;
@@ -1779,6 +1804,16 @@ function update(dt) {
       S.glitch = 0.3;
     }
   } else if (S.charge > 0) S.charge = Math.max(0, S.charge - dt * 3);
+
+  // 群：粒の大群が画面を横切る
+  if (S.swarmT > 0) {
+    S.swarmT -= dt;
+    const hw = W / 2 * L.u * 1.25, hh = (L.bot - L.top) / 2 * L.u;
+    const n = Math.floor((reduced ? 80 : 420) * dt + Math.random());
+    for (let i = 0; i < n; i++) {
+      emit(-hw * S.swarmDir, rand(-hh, hh), rand(-1.5, 2.5), S.swarmDir * rand(10, 16), rand(-0.6, 0.6), 0, 2.2, rand(0.05, 0.11), Math.random() < 0.35 ? WHITE : accent, 0, 0.05);
+    }
+  }
 
   const od = S.mode === 'overdrive';
   if (od && !reduced) {
@@ -1991,7 +2026,7 @@ function pose(dt) {
   dustMat.opacity = 0.35 + 0.25 * tv;
 
   // カメラ
-  const dist = camDist * zoom * (1 / S.dolly) * (1 - S.kick * 0.06) * (1 - S.charge * 0.08);
+  const dist = camDist * zoom * (1 / S.dolly) * (1 - S.kick * 0.06) * (1 - S.charge * 0.08) * (1 - S.zoomFx * 0.22);
   const sh = S.shake * (reduced ? 0.2 : 1);
   camera.position.set(Math.sin(T * 0.11) * 0.35 + mouse.x * 0.5 + rand(-sh, sh), Math.sin(T * 0.14) * 0.22 - mouse.y * 0.3 + rand(-sh, sh), dist);
   camera.lookAt(0, 0, 0);
@@ -2006,6 +2041,8 @@ function pose(dt) {
   FU.uCollapse.value = S.collapse > 0.002 ? S.collapse : 0;
   FU.uShockR.value = S.shock.r;
   FU.uShockAmp.value = S.shock.amp;
+  FU.uDim.value = S.dim;
+  FU.uSpot.value.set(coreS.x / W, 1 - coreS.y / H);
 }
 
 /* ── 2D の重ね描き（照準、スキャン、数値） ── */
@@ -2166,8 +2203,12 @@ function frame(now) {
   last = now;
   let dt = real;
   if (S.freeze > 0) { S.freeze -= real; dt = 0; }
+  S.timeScale += (S.slowGoal - S.timeScale) * Math.min(1, real * 4);
+  dt *= S.timeScale;
+  S.dim += (S.dimGoal - S.dim) * Math.min(1, real * 3);
+  S.zoomFx += (S.zoomGoal - S.zoomFx) * Math.min(1, real * 2);
   T += dt;
-  update(dt);
+  update(dt, real);
   pose(dt);
   composer.render(real);
   drawUI(dt);
@@ -2181,9 +2222,71 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 
+/* ── くだらない機能（fun.js）から演出を呼ぶ窓口 ── */
+function visibleBox() { return { hw: W / 2 * L.u, top: (L.cy - L.top) * L.u }; }
+const fx = {
+  flash(v) { S.flash = Math.max(S.flash, v); },
+  kick(v) { S.kick = Math.max(S.kick, v); },
+  shake(v) { S.shake = Math.max(S.shake, v); },
+  glitch(v) { S.glitch = Math.max(S.glitch, v); },
+  aberr(v) { S.aberr = Math.max(S.aberr, v); },
+  bloom(v) { S.bloomBoost = Math.max(S.bloomBoost, v); },
+  spin(v) { rot.vy += v; },
+  zoom(v) { S.zoomGoal = v; },
+  dim(v) { S.dimGoal = v; },
+  slow(k) { S.slowGoal = k; },
+  freeze(sec) { S.freeze = Math.max(S.freeze, sec); },
+  rainbow(sec) { S.rainbow = Math.max(S.rainbow, sec); },
+  collapse(on) { S.collapseGoal = on ? 1 : 0; },
+  setAccent(name) { if (PAL[name]) accentGoal = PAL[name]; },
+  restoreAccent() { accentGoal = modeColor(); },
+  shock(amp) { shockScreen(amp); },
+  ring(v, life, r0) { ringWave(v, life, r0); },
+  sphere(v, life) { sphereWave(v, life); },
+  burst(n, speed, white = 0.35) { burst(ORIGIN, n, speed, 1.4, 0.1, accent, white); },
+  swarm(dir = Math.random() < 0.5 ? 1 : -1, sec = 1.3) { S.swarmT = sec; S.swarmDir = dir; },
+  ringBoost(v) { rings.forEach((r) => { r.mat.uniforms.uBoost.value = Math.max(r.mat.uniforms.uBoost.value, v); }); },
+  coins(n) {
+    const b = visibleBox();
+    for (let i = 0; i < n; i++) {
+      emit(rand(-b.hw, b.hw), b.top + rand(0, 3), rand(-1, 2), rand(-0.6, 0.6), rand(-2, 0), 0, rand(2.4, 3.6), rand(0.09, 0.16), Math.random() < 0.75 ? PAL.gold : WHITE, 3, 0.25);
+    }
+  },
+  fireworks(n) {
+    const b = visibleBox();
+    for (let k = 0; k < n; k++) later(() => {
+      const c = new THREE.Color().setHSL(Math.random(), 1, 0.6);
+      const x = rand(-b.hw * 0.8, b.hw * 0.8), y = rand(b.top * 0.1, b.top * 0.85), z = rand(-2, 1);
+      for (let i = 0; i < (reduced ? 30 : 110); i++) {
+        randDir(tmpA);
+        const s = rand(2.5, 5);
+        emit(x, y, z, tmpA.x * s, tmpA.y * s, tmpA.z * s, rand(1, 1.6), rand(0.05, 0.09), Math.random() < 0.25 ? WHITE : c, 3, 1.3);
+      }
+      flashAt(tmpB.set(x, y, z), 2, c, 0.35);
+      Sound.firework();
+    }, k * rand(180, 320));
+  },
+  popcorn(n) {
+    for (let i = 0; i < n; i++) later(() => {
+      randDir(tmpA);
+      const px = tmpA.x * 0.7, py = tmpA.y * 0.7, pz = tmpA.z * 0.7;
+      for (let j = 0; j < 8; j++) emit(px, py, pz, tmpA.x * 2 + rand(-1, 1), Math.abs(tmpA.y) * 2 + rand(2, 4), tmpA.z * 2, rand(1.2, 1.8), rand(0.1, 0.18), WHITE, 3, 0.8);
+      Sound.pop();
+    }, i * rand(60, 140));
+  },
+};
+window.VEGA = {
+  S, say, banner, Sound, Music, Voice, fx,
+  talking: () => performance.now() < talkUntil,
+  isIdle: () => S.phase === 'awake' && S.mode === 'normal' && !S.charging && !S.scan
+    && performance.now() > talkUntil && performance.now() - S.lastInput > 5000,
+  core: () => coreS,
+};
+
 layout();
 S.phase = 'standby';
 body.classList.add('ready');
+window.dispatchEvent(new Event('vega-ready'));
 requestAnimationFrame(frame);
 }
 })();
