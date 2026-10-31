@@ -150,7 +150,7 @@ function hiss(o) {
   src.start(t0, Math.random()); src.stop(t0 + dur + 0.05);
 }
 
-let hum = null, charge = null, alarmBus = null;
+let hum = null, charge = null, alarmBus = null, drone = null;
 
 const Sound = {
   init,
@@ -376,6 +376,79 @@ const Sound = {
     play('boom_big', { vol: 0.5, rate: 0.8, wet: 0.5 });
   },
   matrix(x) { loop('loop_data', x ? 0.32 : 0, 1.5, 0.1); },
+
+  // ── 起動演出用 ──
+  crtOn() {
+    hiss({ type: 'highpass', f: 6000, dur: 0.25, a: 0.002, vol: 0.16, wet: 0.1 });
+    tone({ f: 62, f2: 38, dur: 0.32, a: 0.003, vol: 0.4, wet: 0.1 });
+    tone({ type: 'square', f: 7800, dur: 0.5, a: 0.01, vol: 0.005, wet: 0 });
+  },
+  key() {
+    hiss({ type: 'bandpass', f: rand(2500, 4500), q: 3, dur: 0.025, a: 0.001, vol: rand(0.05, 0.09), wet: 0.02 });
+    tone({ type: 'square', f: rand(140, 220), dur: 0.02, vol: 0.018, lp: 1200, wet: 0 });
+  },
+  enter() { hiss({ type: 'bandpass', f: 1800, q: 2, dur: 0.05, a: 0.001, vol: 0.12, wet: 0.05 }); tone({ f: 120, f2: 70, dur: 0.06, vol: 0.08, wet: 0 }); },
+  disk() { for (let i = 0; i < 5; i++) hiss({ type: 'lowpass', f: 1400, t: i * rand(0.03, 0.07), dur: 0.02, a: 0.001, vol: 0.08, wet: 0 }); },
+  go(i = 0) { tone({ type: 'square', f: 660 + i * 70, dur: 0.06, vol: 0.032, lp: 4000, wet: 0.2 }); },
+  scanSweep(sec) {
+    tone({ f: 400, f2: 1600, dur: sec, a: 0.1, vol: 0.035, wet: 0.3 });
+    tone({ type: 'triangle', f: 800, f2: 3200, dur: sec, a: 0.1, vol: 0.013, wet: 0.3 });
+  },
+  granted() {
+    [72, 76, 79, 84].forEach((n, i) => tone({ type: 'triangle', f: mtof(n), t: i * 0.07, dur: 0.7, vol: 0.06, wet: 0.5 }));
+    tone({ type: 'square', f: mtof(96), t: 0.28, dur: 0.5, vol: 0.013, lp: 6000, wet: 0.5 });
+  },
+  drum(v = 1) {
+    tone({ f: 110, f2: 36, dur: 0.7, a: 0.003, vol: 0.6 * v, wet: 0.4 });
+    hiss({ type: 'lowpass', f: 900, f2: 110, dur: 0.45, a: 0.002, vol: 0.24 * v, wet: 0.45 });
+  },
+  riser(sec) {
+    tone({ type: 'sawtooth', f: 55, f2: 880, dur: sec, a: sec * 0.95, vol: 0.08, lp: 300, lp2: 6000, wet: 0.4 });
+    hiss({ f: 300, f2: 9000, dur: sec, a: sec * 0.95, vol: 0.15, q: 1.2, wet: 0.4 });
+  },
+  braam() {
+    [24, 36, 43, 48, 55].forEach((n) => tone({ type: 'sawtooth', f: mtof(n), dur: 3.4, a: 0.04, vol: 0.06, lp: 2600, lp2: 140, wet: 0.65 }));
+    play('boom_big', { vol: 1, rate: 0.7, wet: 0.6 });
+    hiss({ type: 'lowpass', f: 600, dur: 2.2, a: 0.01, vol: 0.18, wet: 0.5 });
+  },
+  doors() {
+    play('servo_1', { vol: 0.85, rate: 0.5, wet: 0.5 });
+    play('servo_2', { vol: 0.6, rate: 0.45, t: 0.25, wet: 0.5 });
+    hiss({ type: 'highpass', f: 2500, f2: 500, dur: 1.5, a: 0.04, vol: 0.18, wet: 0.4 });
+  },
+  slam() {
+    play('boom_mid', { vol: 0.75, rate: rand(0.9, 1.05), wet: 0.5 });
+    play('clank_2', { vol: 0.5, rate: 0.7, wet: 0.4 });
+    tone({ f: 80, f2: 38, dur: 0.45, vol: 0.4, wet: 0.2 });
+  },
+  droneStart() {
+    if (!ac || drone) return;
+    const g = gain(0.0001, sfx);
+    g.connect(gain(0.4, verb));
+    const lf = ac.createBiquadFilter();
+    lf.type = 'lowpass'; lf.frequency.value = 200; lf.Q.value = 2; lf.connect(g);
+    const oscs = [55, 55.3, 82.4, 110.2].map((f, i) => {
+      const o = ac.createOscillator();
+      o.type = i < 2 ? 'sawtooth' : 'triangle'; o.frequency.value = f;
+      o.connect(lf); o.start();
+      return o;
+    });
+    g.gain.setTargetAtTime(0.045, ac.currentTime, 0.5);
+    drone = { g, lf, oscs };
+  },
+  droneSet(x) {
+    if (!drone) return;
+    const t = ac.currentTime;
+    drone.g.gain.setTargetAtTime(0.045 + x * 0.08, t, 0.3);
+    drone.lf.frequency.setTargetAtTime(200 + x * 2200, t, 0.3);
+    drone.oscs.forEach((o, i) => o.detune.setTargetAtTime(x * 30 * (i % 2 ? 1 : -1), t, 0.3));
+  },
+  droneStop(fade = 0.12) {
+    if (!drone) return;
+    const d = drone; drone = null;
+    d.g.gain.setTargetAtTime(0.0001, ac.currentTime, fade);
+    setTimeout(() => d.oscs.forEach((o) => o.stop()), fade * 8000 + 100);
+  },
 };
 
 /* ── 音楽：オーバードライブと迎撃戦で流れる 128BPM のループ（Am-F-C-G） ── */

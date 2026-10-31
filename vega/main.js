@@ -133,6 +133,7 @@ const S = {
   shield: 1, shieldFlash: 0,
   scan: null, touched: false, ringTime: 0, lastInput: 0,
   rainbow: 0, timeScale: 1, slowGoal: 1, dim: 0, dimGoal: 0, zoomFx: 0, zoomGoal: 0, swarmT: 0, swarmDir: 1,
+  tableOn: false, assembling: false, asmStart: 0,
   lineAt: { spin: 0, blast: 0 },
 };
 let T = 0;
@@ -1679,6 +1680,7 @@ function wake() {
   Sound.init(); Voice.unlock();
   S.phase = 'booting'; S.touched = false; body.classList.remove('touched');
   body.classList.add('booting');
+  S.tableOn = true; S.assembling = false;
   rings.forEach((r) => { r.shown = false; });
   Sound.powerUp(); buzz(30);
   bootEl.textContent = '';
@@ -1690,16 +1692,21 @@ function wake() {
   later(() => say(greeting()), 2500);
   later(() => { if (S.phase === 'awake' && !S.touched) say(LINES.hint); }, 9000);
 }
-function ignite() {
+function ignite(cinematic = false) {
   S.phase = 'awake';
+  S.assembling = false; S.tableOn = true;
+  S.reveal = Math.max(S.reveal, cinematic ? 1 : 0); S.revealGoal = 1;
   body.classList.remove('booting'); body.classList.add('awake');
-  Sound.boom(0.8); Sound.chord(220, 0.05); Sound.humStart();
-  S.freeze = 0.07; S.flash = 1; S.kick = 1; S.energy = 1; S.bloomBoost = 1.6; S.aberr = 0.02; S.glitch = 0.6;
-  shockScreen(1.1);
-  ringWave(14, 1.2, 0.6); ringWave(8, 1.5, 0.5, WHITE); sphereWave(9, 1.4);
-  burst(ORIGIN, reduced ? 60 : 600, 14, 1.4, 0.1);
-  panels.forEach((p, i) => later(() => { p.revGoal = 1; Sound.glitch(); }, 150 + i * 140));
-  banner('VEGA ONLINE', 'ALL SYSTEMS GO');
+  Sound.boom(cinematic ? 1 : 0.8); Sound.chord(220, 0.05); Sound.humStart();
+  S.freeze = cinematic ? 0.13 : 0.07; S.flash = 1; S.kick = 1; S.energy = 1;
+  S.bloomBoost = cinematic ? 2.2 : 1.6; S.aberr = cinematic ? 0.03 : 0.02; S.glitch = 0.7;
+  shockScreen(cinematic ? 1.5 : 1.1);
+  ringWave(cinematic ? 20 : 14, 1.2, 0.6); ringWave(8, 1.5, 0.5, WHITE); sphereWave(cinematic ? 12 : 9, 1.4);
+  if (cinematic) ringWave(30, 0.9, 1, WHITE);
+  burst(ORIGIN, reduced ? 60 : cinematic ? 1100 : 600, cinematic ? 20 : 14, 1.5, 0.1);
+  rot.vy += cinematic ? 4 : 0;
+  panels.forEach((p, i) => later(() => { p.revGoal = 1; Sound.glitch(); }, (cinematic ? 900 : 150) + i * 140));
+  if (!cinematic) banner('VEGA ONLINE', 'ALL SYSTEMS GO');
   buzz([40, 30, 80]);
   setButtons();
 }
@@ -1727,7 +1734,10 @@ function sleep() {
     locks.length = 0;
   }, 3700);
 }
-wakeBtn.addEventListener('click', wake);
+wakeBtn.addEventListener('click', () => {
+  if (window.VEGA_BOOT) window.VEGA_BOOT.run();
+  else wake();
+});
 
 /* ── 毎フレームの更新 ──────────────── */
 let hexAcc = 0, teleAcc = 0, barAcc = 0, boltAcc = 0;
@@ -1751,10 +1761,11 @@ function update(dt, real) {
   updateTint(dt, real);
   // 起動・停止の進み具合
   S.standby = S.phase === 'standby' || S.phase === 'loading' ? Math.min(1, S.standby + dt / 0.6) : Math.max(0, S.standby - dt / 0.35);
-  const tableGoal = S.phase === 'booting' || S.phase === 'awake' ? 1 : 0;
+  const tableGoal = S.phase === 'awake' || (S.phase === 'booting' && S.tableOn) ? 1 : 0;
   S.table += (tableGoal - S.table) * Math.min(1, dt * (tableGoal ? 1.6 : 3));
   S.reveal = S.revealGoal > S.reveal ? Math.min(1, S.reveal + dt / 1.3) : Math.max(0, S.reveal - dt / 0.8);
-  const dollyGoal = S.phase === 'awake' || S.phase === 'sleeping' ? 1 : S.phase === 'booting' ? 0.96 : 0.82;
+  // 起動演出の間はカメラを遠くに置き、組み立てが始まったら寄っていく
+  const dollyGoal = S.phase === 'awake' || S.phase === 'sleeping' ? 1 : S.phase === 'booting' ? (S.tableOn ? 0.94 : 0.42) : 0.82;
   S.dolly += (dollyGoal - S.dolly) * Math.min(1, dt * (S.phase === 'awake' ? 1.2 : 0.8));
   S.collapse += ((S.collapseGoal || 0) - S.collapse) * Math.min(1, dt * 7);
   S.form += Math.sign(S.formGoal - S.form) * Math.min(Math.abs(S.formGoal - S.form), dt / 1.5);
@@ -1922,9 +1933,22 @@ function pose(dt) {
   S.ringTime += dt * spinMul;
   const heat = clamp(0.25 + S.energy * 0.5 + S.charge * 0.7 + S.talk * 0.2 + (od ? 0.4 : 0));
 
+  const asmNow = (performance.now() - S.asmStart) / 1000;
   rings.forEach((r, i) => {
-    const rv = clamp((S.reveal * 1.5 - i * 0.07) / 0.5);
-    if (S.phase === 'booting' && rv > 0 && !r.shown) { r.shown = true; Sound.glitch(); }
+    // 組み立て：外側のリングから順に、カメラの手前から飛んできてはまる
+    let asmK = 0, asmO = 1, rv = clamp((S.reveal * 1.5 - i * 0.07) / 0.5);
+    if (S.assembling) {
+      const a = clamp((asmNow - i * 0.22) / 0.65);
+      rv = a > 0 ? 1 : 0;
+      asmK = 1 - easeBack(a);
+      asmO = Math.min(1, a * 4);
+      if (a >= 1 && !r.landed) {
+        r.landed = true;
+        Sound.clank(0, rand(-0.3, 0.3));
+        S.kick = Math.max(S.kick, 0.25); S.flash = Math.max(S.flash, 0.06); S.glitch = Math.max(S.glitch, 0.15);
+        ringWave(4, 0.5, r.r * 0.98);
+      }
+    } else if (S.phase === 'booting' && rv > 0 && !r.shown) { r.shown = true; Sound.glitch(); }
     r.mat.uniforms.uReveal.value = rv;
     r.mesh.visible = rv > 0;
     r.angle += r.spin * dt * spinMul;
@@ -1932,7 +1956,7 @@ function pose(dt) {
     r.mat.uniforms.uSweep.value += dt * (0.8 + i * 0.15) * (od ? 2.5 : 1);
     const ub = r.mat.uniforms.uBoost;
     ub.value = Math.max(S.charge * 0.8 + S.energy * 0.3 + (od ? 0.4 : 0), ub.value - dt * 1.5);
-    r.mat.uniforms.uOpacity.value = r.op * (1 - globe * 0.55);
+    r.mat.uniforms.uOpacity.value = r.op * (1 - globe * 0.55) * asmO;
     // 変形：順番にずれて、少し行き過ぎてから止まる
     const raw = clamp(form * 1.8 - i * 0.12);
     const f = easeBack(raw);
@@ -1943,8 +1967,9 @@ function pose(dt) {
     }
     r.pivot.quaternion.slerpQuaternions(Q0, r.qBattle, clamp(f, 0, 1.1));
     if (form > 0.001) r.pivot.rotateOnAxis(r.axis, S.ringTime * 0.25 * f);
-    r.pivot.position.z = lerp(r.z, 0, clamp(f));
-    r.pivot.scale.setScalar(1 + f * 0.1 + globe * 0.35);
+    r.pivot.position.z = lerp(r.z, 0, clamp(f)) + asmK * 9;
+    r.pivot.scale.setScalar((1 + f * 0.1 + globe * 0.35) * (1 + asmK * 1.6));
+    if (asmK) r.mesh.rotation.z += asmK * 4 * (i % 2 ? 1 : -1);
   });
 
   const orbScale = easeOut(clamp(S.reveal * 1.6 - 0.35)) * (1 - globe);
@@ -2010,7 +2035,7 @@ function pose(dt) {
     sbArcMat.opacity = 0.9 * S.standby;
     sbGhostMat.opacity = 0.07 * S.standby;
     sbArcs.rotation.z = -T * 0.5;
-    standby.scale.setScalar(0.7 + 0.3 * easeOut(S.standby));
+    standby.scale.setScalar(S.phase === 'booting' ? Math.max(0.001, S.standby) : 0.7 + 0.3 * easeOut(S.standby));
   }
 
   const tv = easeOut(S.table);
@@ -2275,8 +2300,28 @@ const fx = {
     }, i * rand(60, 140));
   },
 };
+// 起動演出（boot.js）から呼ぶ段取り
+const bootApi = {
+  begin() {
+    Sound.init(); Voice.unlock();
+    S.phase = 'booting'; S.touched = false;
+    body.classList.remove('touched'); body.classList.add('booting');
+    S.tableOn = false; S.assembling = false; S.revealGoal = 0; S.reveal = 0; S.dolly = 0.42;
+    rot.yaw = 0; rot.vy = 0;
+    rings.forEach((r) => { r.shown = false; r.landed = false; });
+  },
+  assemble() {
+    S.tableOn = true; S.assembling = true; S.asmStart = performance.now();
+    rings.forEach((r) => { r.landed = false; });
+  },
+  ignite() { ignite(true); },
+  greet() {
+    say(greeting());
+    later(() => { if (S.phase === 'awake' && !S.touched) say(LINES.hint); }, 9000);
+  },
+};
 window.VEGA = {
-  S, say, banner, Sound, Music, Voice, fx,
+  S, say, banner, Sound, Music, Voice, fx, boot: bootApi,
   talking: () => performance.now() < talkUntil,
   isIdle: () => S.phase === 'awake' && S.mode === 'normal' && !S.charging && !S.scan
     && performance.now() > talkUntil && performance.now() - S.lastInput > 5000,
