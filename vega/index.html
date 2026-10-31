@@ -4,156 +4,113 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>VEGA System</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="さわって楽しむだけの、ホログラム風 AI アシスタント画面。">
+<meta name="description" content="さわって楽しむだけの、3D ホログラム AI アシスタント画面。">
 <meta name="theme-color" content="#01060b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;500;700&family=M+PLUS+1+Code:wght@300;500&family=Share+Tech+Mono&display=swap">
 <style>
-/* Layout: ひとつのホログラム画面。中央にコア、左右に手前へ傾いた翼パネル、下に音声ログと司令デッキ */
+/* Layout: 全面に 3D ホログラム（WebGL）。上に細いステータスバー、下に音声ログと司令デッキ。HUD は透明で、操作はすべて 3D の上で */
 :root {
   color-scheme: dark;
   --void: #01060b;
   --ink: #dffcff;
-  --dim: #6e98a3;
+  --dim: #78a0ac;
   --white: 255 255 255;
   --shade: 0 0 0;
   --cyan: 92 236 255;
-  --amber: 255 178 62;
-  --red: 255 60 76;
+  --amber: 255 166 60;
+  --red: 255 51 73;
   --acc: var(--cyan);
   --f-display: "Chakra Petch", "M PLUS 1 Code", "Hiragino Sans", system-ui, sans-serif;
   --f-data: "Share Tech Mono", "M PLUS 1 Code", ui-monospace, Menlo, monospace;
   --f-voice: "M PLUS 1 Code", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
-  --tilt: 14deg;
 }
 html { height: 100%; box-sizing: border-box; background: var(--void); }
 *, *::before, *::after { box-sizing: inherit; }
+[hidden] { display: none !important; }
 body {
-  height: 100%; margin: 0; overflow: hidden; color: var(--ink); font-family: var(--f-display);
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 45%, rgb(var(--acc) / .07), transparent 70%),
-    radial-gradient(circle at 1px 1px, rgb(var(--acc) / .09) 1px, transparent 1.6px) 0 0 / 28px 28px,
-    var(--void);
+  height: 100%; margin: 0; overflow: hidden; color: var(--ink); font-family: var(--f-display); background: var(--void);
   -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
 }
 button { font: inherit; color: inherit; }
 
 #stage { position: fixed; inset: 0; }
-#fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: crosshair; }
+#gl, #ui2d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#ui2d { z-index: 1; touch-action: none; cursor: crosshair; }
 
 /* ── HUD ───────────────────────────── */
 #hud {
-  position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  display: grid;
-  grid-template-columns: minmax(200px, 270px) minmax(0, 1fr) minmax(200px, 270px);
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  grid-template-areas: "top top top" "left core right" "deck deck deck";
-  gap: 14px 22px;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 #hud button { pointer-events: auto; }
 #hud.jolt { animation: jolt .42s steps(3); }
 @keyframes jolt {
-  0% { transform: translate(7px, -5px) skewX(-2deg); }
-  35% { transform: translate(-9px, 4px) skewX(2deg); }
+  0% { transform: translate(8px, -5px) skewX(-2deg); }
+  35% { transform: translate(-10px, 4px) skewX(2deg); }
   70% { transform: translate(3px, 2px); }
   100% { transform: none; }
 }
-
-.boot-in { opacity: 0; transition: opacity .6s; }
+.boot-in { opacity: 0; transition: opacity .5s; }
 body.awake .boot-in { opacity: 1; animation: flickIn .9s both; animation-delay: var(--d, 0s); }
 @keyframes flickIn {
   0% { opacity: 0; transform: scaleY(.02); }
   12% { opacity: 1; transform: scaleY(.02); }
   26% { opacity: .35; transform: scaleY(1); }
-  32% { opacity: 1; }
-  40% { opacity: .15; }
-  48% { opacity: 1; }
-  62% { opacity: .7; }
+  32% { opacity: 1; } 40% { opacity: .15; } 48% { opacity: 1; } 62% { opacity: .7; }
   100% { opacity: 1; transform: none; }
 }
 
-/* top bar */
-.top { grid-area: top; display: flex; align-items: center; gap: 16px; min-width: 0; }
+.top {
+  display: flex; align-items: center; gap: 16px; min-width: 0; padding-bottom: 10px;
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, rgb(var(--acc) / .5), rgb(var(--acc) / .08) 40%, rgb(var(--acc) / .08) 60%, rgb(var(--acc) / .5)) 1;
+}
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.mark { width: 30px; height: 30px; flex: none; color: rgb(var(--acc)); filter: drop-shadow(0 0 6px rgb(var(--acc) / .8)); }
-.logo { font: 700 22px/1 var(--f-display); letter-spacing: .42em; color: var(--ink); text-shadow: 0 0 14px rgb(var(--acc) / .85); }
+.mark { width: 30px; height: 30px; flex: none; color: rgb(var(--acc)); filter: drop-shadow(0 0 6px rgb(var(--acc) / .9)); }
+.logo { font: 700 21px/1 var(--f-display); letter-spacing: .42em; color: var(--ink); text-shadow: 0 0 14px rgb(var(--acc) / .9); }
 .sub { margin-top: 5px; font: 500 9px/1.2 var(--f-display); letter-spacing: .26em; color: var(--dim); white-space: nowrap; }
-.status { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid rgb(var(--acc) / .35); font: 12px/1 var(--f-data); letter-spacing: .2em; color: rgb(var(--acc)); }
+.status { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid rgb(var(--acc) / .35); font: 11px/1 var(--f-data); letter-spacing: .22em; color: rgb(var(--acc)); white-space: nowrap; }
 .status .dot { width: 7px; height: 7px; border-radius: 50%; background: rgb(var(--acc)); box-shadow: 0 0 8px rgb(var(--acc)); animation: blink 1.4s infinite; }
-.clock { margin-left: auto; text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; }
-#clock { font-size: 22px; letter-spacing: .08em; color: var(--ink); text-shadow: 0 0 10px rgb(var(--acc) / .6); }
-#date { margin-top: 2px; font-size: 10px; letter-spacing: .25em; color: var(--dim); }
+.clock { margin-left: auto; font: 20px/1 var(--f-data); letter-spacing: .08em; color: var(--ink); text-shadow: 0 0 10px rgb(var(--acc) / .7); font-variant-numeric: tabular-nums; }
 .toggles { display: flex; gap: 6px; }
 .toggles button {
-  appearance: none; min-height: 32px; padding: 0 10px; cursor: pointer;
-  background: rgb(var(--acc) / .04); border: 1px solid rgb(var(--acc) / .4); color: rgb(var(--acc));
+  appearance: none; min-height: 32px; min-width: 32px; padding: 0 10px; cursor: pointer; display: grid; place-items: center;
+  background: rgb(var(--acc) / .05); border: 1px solid rgb(var(--acc) / .4); color: rgb(var(--acc));
   font: 500 10px/1 var(--f-display); letter-spacing: .18em;
 }
+.toggles button svg { width: 15px; height: 15px; }
 .toggles button[aria-pressed="false"] { color: var(--dim); border-color: rgb(var(--acc) / .14); text-decoration: line-through; }
 .toggles button:focus-visible, .cmds button:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgb(var(--acc)); }
 
-/* wings */
-.wing { display: flex; flex-direction: column; gap: 14px; min-height: 0; min-width: 0; transition: transform .3s ease-out; }
-.wing.left { grid-area: left; transform-origin: 0% 50%; transform: perspective(1100px) rotateY(calc(var(--tilt) + var(--tx, 0) * 5deg)) rotateX(calc(var(--ty, 0) * -4deg)); }
-.wing.right { grid-area: right; transform-origin: 100% 50%; transform: perspective(1100px) rotateY(calc(var(--tilt) * -1 + var(--tx, 0) * 5deg)) rotateX(calc(var(--ty, 0) * -4deg)); }
-
-.panel {
-  position: relative; flex: none; min-height: 0; overflow: hidden; padding: 10px 12px 12px;
-  background: linear-gradient(180deg, rgb(var(--acc) / .075), rgb(var(--acc) / .02));
-  border: 1px solid rgb(var(--acc) / .22);
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+.mission {
+  position: absolute; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 66px); transform: translateX(-50%);
+  display: flex; align-items: center; gap: 14px; padding: 8px 14px; white-space: nowrap;
+  border: 1px solid rgb(var(--acc) / .45); background: rgb(var(--shade) / .55);
+  font: 11px/1 var(--f-data); letter-spacing: .14em; color: var(--dim);
 }
-.panel::before, .panel::after { content: ""; position: absolute; width: 10px; height: 10px; border: 0 solid rgb(var(--acc)); }
-.panel::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
-.panel::after { right: 0; bottom: 0; border-width: 0 2px 2px 0; }
-.panel.grow { flex: 1 1 auto; }
-.panel.ping { animation: ping .7s ease-out; }
-@keyframes ping { 0% { background-color: rgb(var(--acc) / .4); } 100% { background-color: transparent; } }
-.panel h2 {
-  margin: 0 0 9px; display: flex; align-items: baseline; gap: 8px; white-space: nowrap; overflow: hidden;
-  font: 700 11px/1 var(--f-display); letter-spacing: .22em; color: rgb(var(--acc));
+.mission b { font: 700 12px/1 var(--f-display); letter-spacing: .3em; color: rgb(var(--red)); animation: blink 1s infinite; }
+.mission em { font-style: normal; font-size: 16px; color: var(--ink); }
+.mission i { width: 80px; height: 4px; background: rgb(var(--acc) / .15); }
+.mission s { display: block; height: 100%; width: 100%; background: rgb(var(--acc)); box-shadow: 0 0 8px rgb(var(--acc)); }
+
+.core-hint {
+  position: absolute; left: 0; right: 0; top: var(--hy, 70%); text-align: center;
+  font: 300 10.5px/1 var(--f-voice); letter-spacing: .16em; color: var(--dim); white-space: nowrap;
 }
-.panel h2 em { font: 300 10px/1 var(--f-voice); font-style: normal; letter-spacing: .08em; color: var(--dim); }
-.panel h2 i { margin-left: auto; font: 10px/1 var(--f-data); font-style: normal; letter-spacing: .06em; color: var(--dim); }
-.panel canvas { display: block; }
-.foot { margin-top: 6px; font: 10px/1.3 var(--f-data); letter-spacing: .12em; color: var(--dim); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.foot b { color: var(--ink); font-weight: 400; }
-
-#radar, #globe { width: min(100%, 30vh); aspect-ratio: 1 / 1; height: auto; margin-inline: auto; }
-#tele { width: 100%; height: 72px; }
-
-.bars { display: grid; gap: 9px; }
-.bar { display: grid; grid-template-columns: 58px minmax(0, 1fr) 56px; align-items: center; gap: 8px; font: 11px/1 var(--f-data); }
-.bar span { color: var(--dim); letter-spacing: .1em; }
-.bar i { position: relative; height: 7px; background: rgb(var(--acc) / .1); }
-.bar s { position: absolute; inset: 0 auto 0 0; width: 50%; background: repeating-linear-gradient(90deg, rgb(var(--acc)) 0 3px, transparent 3px 5px); transition: width .5s ease-out; }
-.bar b { text-align: right; font-weight: 400; color: var(--ink); font-variant-numeric: tabular-nums; }
-
-#log { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font: 11px/1.55 var(--f-voice); color: var(--dim); }
-#log li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#log li time { margin-right: 8px; font-family: var(--f-data); color: rgb(var(--acc) / .75); }
-#log li.hot { color: var(--ink); }
-#log li:first-child { animation: logIn .35s ease-out; }
-@keyframes logIn { from { opacity: 0; transform: translateX(-8px); } }
-#hex { margin: 0; font: 10.5px/1.55 var(--f-data); color: var(--dim); white-space: pre; letter-spacing: .04em; }
-#hex::first-line { color: rgb(var(--acc)); }
-
-/* core slot: コア本体は canvas に描く。ここは位置決めとヒント */
-.core-slot { grid-area: core; position: relative; min-height: 0; min-width: 0; display: grid; align-items: end; justify-items: center; }
-.core-hint { font: 300 10.5px/1 var(--f-voice); letter-spacing: .18em; color: var(--dim); white-space: nowrap; }
 .core-hint b { color: rgb(var(--acc)); font-weight: 500; }
+body.mode-def .core-hint, body.awake.touched .core-hint { opacity: 0; transition: opacity 1s; animation: none; }
 
-/* deck */
-.deck { grid-area: deck; display: grid; justify-items: center; gap: 10px; min-width: 0; }
+.deck { display: grid; justify-items: center; gap: 10px; min-width: 0; }
 .voice {
-  width: min(780px, 100%); height: 62px; display: flex; align-items: center; gap: 14px; padding: 0 16px;
+  width: min(820px, 100%); height: 60px; display: flex; align-items: center; gap: 14px; padding: 0 16px;
   border-block: 1px solid rgb(var(--acc) / .25);
-  background: linear-gradient(90deg, transparent, rgb(var(--acc) / .09) 20%, rgb(var(--acc) / .09) 80%, transparent);
+  background: linear-gradient(90deg, transparent, rgb(var(--shade) / .55) 15%, rgb(var(--shade) / .55) 85%, transparent);
 }
 .voice .who { flex: none; font: 700 12px/1 var(--f-display); letter-spacing: .3em; color: rgb(var(--acc)); }
 .wave { flex: none; display: flex; align-items: center; gap: 2px; height: 18px; }
@@ -166,30 +123,32 @@ body.awake .boot-in { opacity: 1; animation: flickIn .9s both; animation-delay: 
   flex: 1; min-width: 0; margin: 0; font: 400 15px/1.5 var(--f-voice); color: var(--ink); text-shadow: 0 0 12px rgb(var(--acc) / .55);
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
 }
-.cmds { width: min(780px, 100%); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.cmds { width: min(820px, 100%); display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
 .cmds button {
-  appearance: none; position: relative; cursor: pointer; display: grid; justify-items: center; gap: 5px; padding: 11px 4px 10px;
-  background: rgb(var(--acc) / .06); border: 1px solid rgb(var(--acc) / .45); color: var(--ink);
+  appearance: none; position: relative; cursor: pointer; display: grid; justify-items: center; gap: 4px; padding: 9px 4px 8px;
+  background: linear-gradient(180deg, rgb(var(--acc) / .1), rgb(var(--acc) / .03)); border: 1px solid rgb(var(--acc) / .45); color: var(--ink);
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-  font: 700 clamp(9px, 2.6vw, 13px)/1 var(--f-display); letter-spacing: .14em; white-space: nowrap;
+  font: 700 clamp(9px, 2.5vw, 12.5px)/1 var(--f-display); letter-spacing: .12em; white-space: nowrap;
   transition: background .15s, transform .1s;
 }
-.cmds button small { font: 300 clamp(9px, 2.5vw, 11px)/1 var(--f-voice); letter-spacing: .06em; color: var(--dim); }
-.cmds button:hover { background: rgb(var(--acc) / .16); }
+.cmds button svg { width: 20px; height: 20px; color: rgb(var(--acc)); filter: drop-shadow(0 0 4px rgb(var(--acc) / .8)); }
+.cmds button small { font: 300 clamp(9px, 2.4vw, 10.5px)/1 var(--f-voice); letter-spacing: .06em; color: var(--dim); }
+.cmds button:hover { background: rgb(var(--acc) / .18); }
 .cmds button:active { transform: scale(.95); }
 .cmds button.fire { animation: fire .5s ease-out; }
-.cmds button.active { background: rgb(var(--acc) / .28); box-shadow: inset 0 0 18px rgb(var(--acc) / .6); }
-@keyframes fire { 0% { background: rgb(var(--acc) / .95); color: var(--void); } 100% { background: rgb(var(--acc) / .06); } }
+.cmds button.active { background: rgb(var(--acc) / .3); box-shadow: inset 0 0 18px rgb(var(--acc) / .7); }
+.cmds button.active small { color: var(--ink); }
+@keyframes fire { 0% { background: rgb(var(--acc) / .95); color: var(--void); } 100% { background: rgb(var(--acc) / .05); } }
 
-/* ── overlays ──────────────────────── */
+/* ── 重ね表示 ──────────────────────── */
 #banner {
-  position: absolute; z-index: 2; left: var(--cx, 50%); top: var(--cy, 50%); transform: translate(-50%, -50%);
+  position: absolute; z-index: 3; left: var(--cx, 50%); top: var(--cy, 50%); transform: translate(-50%, -50%);
   display: grid; justify-items: center; gap: 8px; pointer-events: none; opacity: 0; text-align: center; white-space: nowrap;
 }
-#banner::before { content: ""; position: absolute; inset: -14px -60px; z-index: -1; background: linear-gradient(90deg, transparent, rgb(var(--shade) / .62) 22%, rgb(var(--shade) / .62) 78%, transparent); }
-#banner b { font: 700 clamp(26px, 7.4vw, 74px)/1 var(--f-display); letter-spacing: .16em; padding-left: .16em; color: var(--ink); text-shadow: 0 0 16px rgb(var(--acc)), 0 0 44px rgb(var(--acc) / .7); }
+#banner::before { content: ""; position: absolute; inset: -16px -70px; z-index: -1; background: linear-gradient(90deg, transparent, rgb(var(--shade) / .6) 22%, rgb(var(--shade) / .6) 78%, transparent); }
+#banner b { font: 700 clamp(26px, 7.4vw, 76px)/1 var(--f-display); letter-spacing: .16em; padding-left: .16em; color: var(--ink); text-shadow: 0 0 16px rgb(var(--acc)), 0 0 44px rgb(var(--acc) / .75); }
 #banner small { font: 500 clamp(11px, 2.8vw, 15px)/1 var(--f-voice); letter-spacing: .3em; color: rgb(var(--acc)); }
-#banner.on { animation: bannerShow 2.3s ease-out both; }
+#banner.on { animation: bannerShow 2.4s ease-out both; }
 #banner.on b { animation: glitch .45s steps(2) 2; }
 @keyframes bannerShow {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(1.7); filter: blur(8px); }
@@ -206,28 +165,17 @@ body.awake .boot-in { opacity: 1; animation: flickIn .9s both; animation-delay: 
 }
 
 .hazard {
-  position: fixed; left: 0; right: 0; z-index: 4; height: 16px; pointer-events: none; opacity: 0; transition: opacity .3s;
+  position: fixed; left: 0; right: 0; z-index: 4; height: 14px; pointer-events: none; opacity: 0; transition: opacity .3s;
   background: repeating-linear-gradient(-45deg, rgb(var(--red) / .85) 0 12px, transparent 12px 24px);
 }
 .hazard.top { top: env(safe-area-inset-top, 0px); }
 .hazard.bottom { bottom: env(safe-area-inset-bottom, 0px); }
 body.mode-alert .hazard { opacity: 1; animation: hazard .6s linear infinite; }
 @keyframes hazard { to { background-position: 33.94px 0; } }
-
-.crt {
-  position: fixed; inset: 0; z-index: 5; pointer-events: none; transition: box-shadow .6s;
-  background:
-    repeating-linear-gradient(0deg, rgb(var(--white) / .022) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse 85% 80% at 50% 50%, transparent 55%, rgb(var(--shade) / .72) 100%);
-}
-body.mode-alert .crt { animation: alarmGlow 1s ease-in-out infinite; }
-body.mode-od .crt { box-shadow: inset 0 0 160px rgb(var(--amber) / .35); }
-@keyframes alarmGlow { 0%, 100% { box-shadow: inset 0 0 60px rgb(var(--red) / .2); } 50% { box-shadow: inset 0 0 180px rgb(var(--red) / .6); } }
-
-#flash {
-  position: fixed; inset: 0; z-index: 6; pointer-events: none; opacity: 0;
-  background: radial-gradient(circle at var(--fx, 50%) var(--fy, 50%), rgb(var(--white)) 0, rgb(var(--acc) / .7) 30%, rgb(var(--acc) / 0) 72%);
-}
+.edge { position: fixed; inset: 0; z-index: 4; pointer-events: none; transition: box-shadow .6s; }
+body.mode-alert .edge { animation: alarmGlow 1s ease-in-out infinite; }
+body.mode-od .edge { box-shadow: inset 0 0 170px rgb(var(--amber) / .35); }
+@keyframes alarmGlow { 0%, 100% { box-shadow: inset 0 0 60px rgb(var(--red) / .2); } 50% { box-shadow: inset 0 0 190px rgb(var(--red) / .6); } }
 
 #bootlog {
   position: fixed; z-index: 7; margin: 0; pointer-events: none; opacity: 0; transition: opacity .6s;
@@ -236,70 +184,63 @@ body.mode-od .crt { box-shadow: inset 0 0 160px rgb(var(--amber) / .35); }
 }
 #bootlog.on { opacity: 1; }
 
-/* sleep / wake */
 #wake {
   position: fixed; inset: 0; z-index: 8; appearance: none; margin: 0; padding: 0; border: 0;
   background: transparent; cursor: pointer; transition: opacity .5s;
 }
 body.booting #wake, body.awake #wake { opacity: 0; pointer-events: none; }
+body:not(.ready) #wake { cursor: default; }
 .w-logo {
   position: absolute; left: var(--cx, 50%); top: var(--cy, 50%); transform: translate(-50%, -50%);
-  font: 300 clamp(30px, 8vw, 66px)/1 var(--f-display); letter-spacing: .5em; padding-left: .5em; color: var(--ink);
-  text-shadow: 0 0 24px rgb(var(--acc) / .9);
+  font: 300 clamp(28px, 7vw, 60px)/1 var(--f-display); letter-spacing: .5em; padding-left: .5em; color: var(--ink);
+  text-shadow: 0 0 24px rgb(var(--acc) / .95);
 }
-.w-cta { position: absolute; left: var(--cx, 50%); top: calc(var(--cy, 50%) + var(--cr, 140px)); transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; }
+.w-cta { position: absolute; left: var(--cx, 50%); top: calc(var(--cy, 50%) + var(--cr, 140px) * .62 + 24px); transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; }
 .w-cta b { font: 500 13px/1 var(--f-display); letter-spacing: .5em; padding-left: .5em; color: rgb(var(--acc)); animation: breathe 2.2s ease-in-out infinite; white-space: nowrap; }
 .w-cta small { font: 300 12px/1 var(--f-voice); letter-spacing: .3em; color: var(--dim); white-space: nowrap; }
-.w-top {
-  position: absolute; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + 20px); text-align: center;
-  font: 11px/1 var(--f-data); letter-spacing: .3em; color: var(--dim);
+body:not(.ready) .w-go, body.ready .w-load, body:not(.ready) .w-cta small { display: none; }
+.w-top, .w-credit {
+  position: absolute; left: 0; right: 0; text-align: center; letter-spacing: .3em; color: var(--dim);
 }
+.w-top { top: calc(env(safe-area-inset-top, 0px) + 20px); font: 11px/1 var(--f-data); }
+.w-credit { bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); font: 9px/1 var(--f-data); letter-spacing: .2em; opacity: .7; }
+.w-nogl { display: none; position: absolute; left: 50%; top: 62%; transform: translateX(-50%); width: min(320px, calc(100% - 32px)); font: 13px/1.7 var(--f-voice); color: var(--ink); }
+body.no-gl .w-nogl { display: block; }
+body.no-gl .w-cta { display: none; }
 #wake:focus-visible .w-cta b { text-decoration: underline; text-underline-offset: 6px; }
 @keyframes breathe { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 
 /* ── 画面サイズ ───────────────────── */
-@media (max-height: 680px) and (min-width: 761px) {
-  #pLog, #pHex { display: none; }
-}
-@media (max-height: 520px) and (min-width: 761px) {
-  #pRadar, #pGlobe { display: none; }
-  .voice { height: 46px; } #say { -webkit-line-clamp: 1; line-clamp: 1; }
-  .cmds button { padding-block: 7px; }
-}
-@media (max-width: 760px) {
-  :root { --tilt: 9deg; }
-  #hud {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr) auto;
-    grid-template-areas: "top top" "left right" "core core" "deck deck";
-    gap: 10px;
-  }
-  #pSys, #pLog, #pTele, #pHex { display: none; }
-  .panel { padding: 8px 10px 9px; }
-  .panel h2 { margin-bottom: 6px; font-size: 10px; letter-spacing: .16em; }
-  .panel h2 i, .foot .opt { display: none; }
-  #radar, #globe { width: min(100%, 14vh, 124px); }
-  .sub, .status, #date, #tFull { display: none; }
+@media (max-width: 640px) {
+  .sub, .status { display: none; }
   .logo { font-size: 18px; letter-spacing: .36em; }
   .mark { width: 24px; height: 24px; }
-  #clock { font-size: 16px; }
+  .clock { font-size: 15px; }
   .top { gap: 10px; }
   .toggles button { padding: 0 8px; }
-  .voice { height: 70px; gap: 10px; padding: 0 10px; }
+  .voice { height: 66px; gap: 10px; padding: 0 10px; }
   .voice .who { letter-spacing: .2em; }
   #say { font-size: 13.5px; -webkit-line-clamp: 3; line-clamp: 3; }
-  .cmds { gap: 6px; }
-  .cmds button { letter-spacing: .06em; padding: 10px 2px 9px; }
+  .cmds { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .cmds button { letter-spacing: .08em; padding: 7px 2px 6px; }
+  .cmds button svg { width: 18px; height: 18px; }
+  .mission { gap: 10px; padding: 7px 10px; }
+  .mission i { width: 50px; }
+}
+@media (max-height: 520px) and (min-width: 641px) {
+  .voice { height: 42px; } #say { -webkit-line-clamp: 1; line-clamp: 1; }
+  .cmds button { padding-block: 5px; gap: 2px; } .cmds button svg { width: 15px; height: 15px; }
+  .core-hint { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   body.awake .boot-in { animation: none; }
-  #hud.jolt, .panel.ping, #banner.on b { animation: none; }
+  #hud.jolt, #banner.on b { animation: none; }
 }
 </style>
 
 <div id="stage">
-  <canvas id="fx" aria-label="VEGA のコア。長押しでチャージ、なぞると回転、タップで会話"></canvas>
+  <canvas id="ui2d" aria-label="VEGA のホログラム。コアを長押しでチャージ、ドラッグで回転、タップで射撃"></canvas>
 
   <div id="hud">
     <header class="top boot-in" style="--d:.05s">
@@ -315,67 +256,56 @@ body.booting #wake, body.awake #wake { opacity: 0; pointer-events: none; }
         </div>
       </div>
       <div class="status"><span class="dot"></span><span id="statusText">ONLINE</span></div>
-      <div class="clock"><div id="clock">00:00:00</div><div id="date">----.--.-- ---</div></div>
+      <div class="clock" id="clock">00:00:00</div>
       <div class="toggles">
         <button id="tSound" type="button" aria-pressed="true">SOUND</button>
         <button id="tVoice" type="button" aria-pressed="true">VOICE</button>
-        <button id="tFull" type="button">FULL</button>
+        <button id="tPower" type="button" aria-label="スリープ">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+        </button>
       </div>
     </header>
 
-    <aside class="wing left">
-      <section class="panel boot-in" id="pSys" style="--d:.15s">
-        <h2>SYSTEM<em>システム</em><i id="sysCode">0x3FA</i></h2>
-        <div class="bars">
-          <div class="bar" data-k="pow"><span>POWER</span><i><s></s></i><b>--</b></div>
-          <div class="bar" data-k="shd"><span>SHIELD</span><i><s></s></i><b>--</b></div>
-          <div class="bar" data-k="neu"><span>NEURAL</span><i><s></s></i><b>--</b></div>
-          <div class="bar" data-k="tmp"><span>THERMAL</span><i><s></s></i><b>--</b></div>
-        </div>
-      </section>
-      <section class="panel boot-in" id="pRadar" style="--d:.3s">
-        <h2>RADAR<em>周辺探知</em><i>2.0 KM</i></h2>
-        <canvas id="radar"></canvas>
-        <div class="foot">CONTACTS <b id="contacts">05</b><span class="opt"> · SWEEP <b id="sweep">1.4</b>Hz</span></div>
-      </section>
-      <section class="panel grow boot-in" id="pLog" style="--d:.45s">
-        <h2>EVENT LOG<em>イベント</em><i>LIVE</i></h2>
-        <ol id="log"></ol>
-      </section>
-    </aside>
-
-    <div class="core-slot" id="coreSlot">
-      <div class="core-hint boot-in" style="--d:.9s"><b>長押し</b> チャージ　<b>なぞる</b> 回転　<b>タップ</b> 会話</div>
+    <div class="mission" id="mission" hidden>
+      <b>DEFENSE</b>
+      <span>撃墜 <em id="mKills">00</em></span>
+      <span>SHIELD <em id="mShield">100</em>%</span>
+      <i><s id="mTime"></s></i>
     </div>
 
-    <aside class="wing right">
-      <section class="panel boot-in" id="pGlobe" style="--d:.2s">
-        <h2>ORBITAL<em>衛星リンク</em><i>SAT 12/12</i></h2>
-        <canvas id="globe"></canvas>
-        <div class="foot">TOKYO <b>35.68N 139.76E</b></div>
-      </section>
-      <section class="panel boot-in" id="pTele" style="--d:.35s">
-        <h2>TELEMETRY<em>テレメトリ</em><i id="teleVal">Δ 0.00</i></h2>
-        <canvas id="tele"></canvas>
-      </section>
-      <section class="panel grow boot-in" id="pHex" style="--d:.5s">
-        <h2>DATA STREAM<em>受信データ</em><i>RX</i></h2>
-        <pre id="hex"></pre>
-      </section>
-    </aside>
+    <div class="core-hint boot-in" style="--d:1s"><b>長押し</b> チャージ　<b>ドラッグ</b> 回転　<b>タップ</b> 射撃</div>
 
-    <footer class="deck boot-in" style="--d:.6s">
+    <footer class="deck boot-in" style="--d:.5s">
       <div class="voice" id="voiceBar">
         <span class="who">VEGA</span>
         <span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
         <p id="say" aria-live="polite"></p>
       </div>
       <nav class="cmds" aria-label="コマンド">
-        <button type="button" data-cmd="scan"><span>SCAN</span><small>スキャン</small></button>
-        <button type="button" data-cmd="overdrive"><span>OVERDRIVE</span><small>全出力</small></button>
-        <button type="button" data-cmd="alert"><span>ALERT</span><small>警戒態勢</small></button>
-        <button type="button" data-cmd="report"><span>REPORT</span><small>状況報告</small></button>
-        <button type="button" data-cmd="sleep"><span>SLEEP</span><small>スリープ</small></button>
+        <button type="button" data-cmd="scan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12 19 6"/></svg>
+          <span>SCAN</span><small>スキャン</small>
+        </button>
+        <button type="button" data-cmd="overdrive">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 5 13h6l-1 9 8-11h-6z"/></svg>
+          <span>OVERDRIVE</span><small>全出力</small>
+        </button>
+        <button type="button" data-cmd="defense">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 1v5M12 18v5M1 12h5M18 12h5"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>
+          <span>DEFENSE</span><small>迎撃戦</small>
+        </button>
+        <button type="button" data-cmd="transform">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M12 7v10M7.7 9.5l8.6 5M16.3 9.5l-8.6 5"/></svg>
+          <span>TRANSFORM</span><small>変形</small>
+        </button>
+        <button type="button" data-cmd="globe">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 7h14M5 17h14"/></svg>
+          <span>GLOBE</span><small>地球</small>
+        </button>
+        <button type="button" data-cmd="report">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 20V11M10 20V5M15 20v-7M20 20V8"/></svg>
+          <span>REPORT</span><small>状況報告</small>
+        </button>
       </nav>
     </footer>
   </div>
@@ -385,1508 +315,25 @@ body.booting #wake, body.awake #wake { opacity: 0; pointer-events: none; }
 
 <div class="hazard top"></div>
 <div class="hazard bottom"></div>
-<div class="crt"></div>
-<div id="flash"></div>
+<div class="edge"></div>
 <pre id="bootlog"></pre>
 
 <button id="wake" type="button" aria-label="VEGA を起動する">
   <span class="w-top">VEGA LABS // SYSTEM STANDBY</span>
   <span class="w-logo">VEGA</span>
-  <span class="w-cta"><b>TOUCH TO WAKE</b><small>タップして起動</small></span>
+  <span class="w-cta"><b class="w-go">TOUCH TO WAKE</b><b class="w-load">INITIALIZING</b><small>タップして起動</small></span>
+  <span class="w-nogl">この端末では 3D 表示（WebGL）が使えないため、VEGA を起動できません。</span>
+  <span class="w-credit">SFX: KENNEY (CC0) · MAP: NATURAL EARTH</span>
 </button>
 
-<script>
-(() => {
-'use strict';
-
-const $ = (s) => document.querySelector(s);
-const TAU = Math.PI * 2, DEG = Math.PI / 180;
-const rand = (a, b) => a + Math.random() * (b - a);
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
-const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-const hex = (len) => Array.from({ length: len }, () => '0123456789ABCDEF'[Math.random() * 16 | 0]).join('');
-const pad = (n) => String(n).padStart(2, '0');
-const root = document.documentElement, body = document.body;
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const buzz = (p) => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (_) { /* 振動できない端末 */ } };
-
-/* ── せりふ ─────────────────────────── */
-const LINES = {
-  hint: 'コアを長押しでエネルギーをチャージ。画面をなぞれば、リングが回ります。',
-  talk: [
-    'お呼びですか、ボス。',
-    '全システム正常。いつでもいけます。',
-    'コア出力、安定しています。今日も絶好調です。',
-    '周辺に異常なし。…少し退屈ですね。',
-    '計算完了。成功確率は97.3パーセントです。',
-    '衛星リンク確立。世界中のデータが、ボスの指先にあります。',
-    'ボスの心拍数が上がっています。わくわくしていますね？',
-    '出撃準備はできています。行き先だけ教えてください。',
-    'コアを長押ししてみてください。きっと気に入りますよ。',
-    '演算速度、毎秒4京回。ボスの宿題なら一瞬です。…冗談です。',
-    '私はいつでもここにいます、ボス。',
-    '了解しました。次の指示をどうぞ。',
-  ],
-  rapid: 'ボス、そんなに連打しなくても聞こえています。',
-  spin: ['回転数、限界に接近中！ …楽しそうですね、ボス。', 'ボス、私まで目が回りそうです。'],
-  blast: [
-    '出力全開。…派手にいきましたね、ボス。',
-    '衝撃波、半径2キロに到達。ご近所には私から謝っておきます。',
-    '臨界突破。今のは最高の一撃でした。',
-    'エネルギー放出完了。もう一発いきますか？',
-  ],
-  lock: ['ターゲット、ロックしました。', '対象を捕捉。…ただのホコリでした。', 'ロックオン完了。いつでもどうぞ。'],
-  scanStart: '周辺スキャンを開始します。',
-  odStart: 'リミッター解除。出力、300パーセント！',
-  odEnd: 'オーバードライブ終了。冷却を開始します。…熱かったですね。',
-  alertStart: '警告。高エネルギー反応が、急速接近中！',
-  alertEnd: '…確認しました。ただの鳥です。警戒を解除します。',
-  sleep: 'スリープモードに移行します。おやすみなさい、ボス。',
-};
-function greeting() {
-  const h = new Date().getHours();
-  if (h >= 5 && h < 11) return 'おはようございます、ボス。VEGA、全システム起動しました。';
-  if (h >= 11 && h < 17) return 'おかえりなさい、ボス。VEGA、全システム起動しました。';
-  if (h >= 17 && h < 23) return 'こんばんは、ボス。VEGA、全システム起動しました。';
-  return 'こんな時間までお疲れさまです、ボス。VEGA、起動しました。';
-}
-const BOOT = [
-  'VEGA BIOS v7.31 ─ VEGA LABS',
-  'CPU    QUANTUM CORE x128 ......... OK',
-  'MEM    1.21 PB ................... OK',
-  'NEURAL MATRIX .................... SYNC',
-  'SAT LINK   12/12 ................. LOCK',
-  'DEFENSE GRID ..................... ONLINE',
-  'VOICE  ja-JP ..................... OK',
-  'CORE TEMP  36.5C ................. NOMINAL',
-  'ENERGY CORE IGNITION ............. ████████',
-  '>>> ALL SYSTEMS GO',
-];
-const AMBIENT_LOG = [
-  '衛星リンク 再同期 … OK', '外部ネットワーク 監視中', 'コア温度 安定', 'ニューラル演算 負荷 12%',
-  '防衛グリッド 正常', '気象データ 受信', '未確認信号 解析 → ノイズ', 'バックアップ 完了',
-  '暗号鍵 ローテーション', '軌道データ 更新', '電力網 バランス調整', '音声認識 待機中',
-];
-
-/* ── 色：通常はシアン、全出力はアンバー、警戒は赤 ── */
-const PALETTE = { cyan: [92, 236, 255], amber: [255, 178, 62], red: [255, 60, 76] };
-const INK = '223,252,255';
-const accNow = PALETTE.cyan.slice();
-let accGoal = PALETTE.cyan;
-const acc = (a) => `rgba(${accNow[0] | 0},${accNow[1] | 0},${accNow[2] | 0},${a})`;
-const ink = (a) => `rgba(${INK},${a})`;
-function tint(dt) {
-  let moved = false;
-  for (let i = 0; i < 3; i++) {
-    const d = accGoal[i] - accNow[i];
-    if (d === 0) continue;
-    accNow[i] = Math.abs(d) < 1 ? accGoal[i] : accNow[i] + d * Math.min(1, dt * 5);
-    moved = true;
-  }
-  if (moved) root.style.setProperty('--acc', accNow.map(Math.round).join(' '));
-}
-
-/* ── 音：すべて Web Audio で合成 ───────── */
-const Sound = (() => {
-  let ac = null, master = null, verb = null, noiseBuf = null, on = true;
-  let hum = null, spin = null, charge = null, alarmBus = null;
-
-  function init() {
-    if (ac) { if (ac.state !== 'running') ac.resume().catch(() => {}); return; }
-    const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return;
-    try { ac = new AC(); } catch (_) { return; }
-    const comp = ac.createDynamicsCompressor();
-    comp.threshold.value = -16; comp.knee.value = 12; comp.ratio.value = 5; comp.attack.value = 0.004; comp.release.value = 0.25;
-    master = ac.createGain(); master.gain.value = on ? 0.85 : 0;
-    master.connect(comp); comp.connect(ac.destination);
-    // 残響：減衰するノイズをインパルス応答に
-    const len = Math.floor(ac.sampleRate * 2.4);
-    const ir = ac.createBuffer(2, len, ac.sampleRate);
-    for (let ch = 0; ch < 2; ch++) {
-      const d = ir.getChannelData(ch);
-      for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2);
-    }
-    const conv = ac.createConvolver(); conv.buffer = ir;
-    verb = ac.createGain(); verb.gain.value = 0.5;
-    verb.connect(conv); conv.connect(master);
-    noiseBuf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
-    const nd = noiseBuf.getChannelData(0);
-    for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
-    // リングを回したときの風切り音（速さで音量と高さが変わる）
-    spin = { src: ac.createBufferSource(), f: ac.createBiquadFilter(), g: ac.createGain() };
-    spin.src.buffer = noiseBuf; spin.src.loop = true;
-    spin.f.type = 'bandpass'; spin.f.Q.value = 3; spin.g.gain.value = 0;
-    spin.src.connect(spin.f); spin.f.connect(spin.g); spin.g.connect(master); spin.src.start();
-  }
-  const ok = () => !!ac && on;
-  function bus(level, wet) {
-    const g = ac.createGain(); g.gain.value = level; g.connect(master);
-    if (wet) { const s = ac.createGain(); s.gain.value = wet; g.connect(s); s.connect(verb); }
-    return g;
-  }
-  function tone(o) {
-    if (!ok()) return;
-    const { type = 'sine', f = 440, f2 = 0, t = 0, dur = 0.2, a = 0.005, vol = 0.2, wet = 0.15, lp = 0, lp2 = 0, detune = 0, out = null } = o;
-    const t0 = ac.currentTime + t;
-    const osc = ac.createOscillator(); osc.type = type; osc.detune.value = detune;
-    osc.frequency.setValueAtTime(f, t0);
-    if (f2) osc.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
-    const g = ac.createGain();
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(vol, t0 + a);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    let node = osc;
-    if (lp) {
-      const fl = ac.createBiquadFilter(); fl.type = 'lowpass';
-      fl.frequency.setValueAtTime(lp, t0);
-      if (lp2) fl.frequency.exponentialRampToValueAtTime(lp2, t0 + dur);
-      osc.connect(fl); node = fl;
-    }
-    node.connect(g); g.connect(out || bus(1, wet));
-    osc.start(t0); osc.stop(t0 + dur + 0.05);
-  }
-  function hiss(o) {
-    if (!ok()) return;
-    const { t = 0, dur = 0.5, a = 0.01, vol = 0.3, type = 'bandpass', f = 1000, f2 = 0, q = 1, wet = 0.2 } = o;
-    const t0 = ac.currentTime + t;
-    const src = ac.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
-    const fl = ac.createBiquadFilter(); fl.type = type; fl.Q.value = q;
-    fl.frequency.setValueAtTime(f, t0);
-    if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
-    const g = ac.createGain();
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(vol, t0 + a);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    src.connect(fl); fl.connect(g); g.connect(bus(1, wet));
-    src.start(t0, Math.random()); src.stop(t0 + dur + 0.05);
-  }
-
-  const api = {
-    init,
-    get on() { return on; },
-    set(v) {
-      on = v;
-      if (master) master.gain.setTargetAtTime(v ? 0.85 : 0, ac.currentTime, 0.05);
-    },
-    suspend() { if (ac) ac.suspend().catch(() => {}); },
-    resume() { if (ac) ac.resume().catch(() => {}); },
-    click() {
-      tone({ type: 'square', f: 2400, f2: 1600, dur: 0.045, vol: 0.035, wet: 0.05, lp: 5000 });
-      tone({ f: 1250, dur: 0.09, vol: 0.06, wet: 0.2 });
-    },
-    tick() { tone({ type: 'square', f: 3800, dur: 0.018, vol: 0.012, wet: 0, lp: 6000 }); },
-    blip(f = 1320, t = 0) {
-      tone({ f, t, dur: 0.14, vol: 0.08, wet: 0.35 });
-      tone({ f: f * 2, t, dur: 0.06, vol: 0.02, wet: 0.2 });
-    },
-    lock() {
-      for (let i = 0; i < 3; i++) tone({ type: 'square', f: 3000, t: i * 0.05, dur: 0.02, vol: 0.03, wet: 0, lp: 6000 });
-      tone({ f: 1320, t: 0.17, dur: 0.12, vol: 0.08, wet: 0.3 });
-      tone({ f: 1980, t: 0.24, dur: 0.22, vol: 0.07, wet: 0.4 });
-    },
-    boom(p = 1) {
-      hiss({ type: 'lowpass', f: 2600, f2: 60, dur: 1.8, a: 0.006, vol: 0.55 * p + 0.15, q: 0.7, wet: 0.6 });
-      tone({ f: 150, f2: 26, dur: 1.5, a: 0.005, vol: 0.7 * p + 0.2, wet: 0.2 });
-      tone({ type: 'triangle', f: 90, f2: 30, dur: 0.9, a: 0.005, vol: 0.4 * p + 0.05, wet: 0.1 });
-      hiss({ type: 'highpass', f: 4000, dur: 0.18, a: 0.002, vol: 0.25 * p + 0.05, wet: 0.3 });
-    },
-    chord(base = 220, t = 0) {
-      [1, 1.25, 1.5, 2, 2.5, 3].forEach((m, i) => {
-        tone({ type: 'triangle', f: base * m, t: t + i * 0.045, dur: 2.8, a: 0.25, vol: 0.035, wet: 0.7, detune: rand(-6, 6) });
-        tone({ f: base * m * 2, t: t + i * 0.045, dur: 2.2, a: 0.4, vol: 0.012, wet: 0.8 });
-      });
-    },
-    powerUp() {
-      tone({ type: 'sawtooth', f: 45, f2: 520, dur: 1.55, a: 1.4, vol: 0.12, lp: 300, lp2: 4200, wet: 0.3 });
-      tone({ f: 90, f2: 1040, dur: 1.55, a: 1.4, vol: 0.06, wet: 0.3 });
-      hiss({ f: 200, f2: 7000, dur: 1.55, a: 1.45, vol: 0.2, q: 1.2, wet: 0.4 });
-    },
-    powerDown() {
-      tone({ type: 'sawtooth', f: 420, f2: 40, dur: 1.4, a: 0.02, vol: 0.09, lp: 3000, lp2: 200, wet: 0.4 });
-      hiss({ f: 5000, f2: 150, dur: 1.2, a: 0.05, vol: 0.12, wet: 0.4 });
-    },
-    scan() {
-      tone({ f: 220, f2: 880, dur: 2.0, a: 0.2, vol: 0.05, wet: 0.4 });
-      hiss({ f: 600, f2: 5000, dur: 2.0, a: 0.3, vol: 0.06, q: 8, wet: 0.3 });
-    },
-    detect() {
-      tone({ f: 1760, dur: 0.08, vol: 0.06, wet: 0.3 });
-      tone({ f: 2640, t: 0.07, dur: 0.12, vol: 0.05, wet: 0.4 });
-    },
-    alarm(sec) {
-      if (!ok()) return;
-      api.alarmStop();
-      alarmBus = bus(1, 0.25);
-      const n = Math.floor(sec / 0.42);
-      for (let i = 0; i < n; i++) tone({ type: 'sawtooth', f: i % 2 ? 960 : 700, t: i * 0.42, dur: 0.4, a: 0.02, vol: 0.06, lp: 2200, out: alarmBus });
-    },
-    alarmStop() {
-      if (!alarmBus) return;
-      alarmBus.gain.setTargetAtTime(0, ac.currentTime, 0.05);
-      alarmBus = null;
-    },
-    overdrive() {
-      tone({ type: 'sawtooth', f: 70, f2: 700, dur: 1.1, a: 1.0, vol: 0.14, lp: 400, lp2: 5000, wet: 0.3 });
-      hiss({ f: 300, f2: 8000, dur: 1.1, a: 1.0, vol: 0.18, wet: 0.4 });
-    },
-    cool() {
-      hiss({ type: 'highpass', f: 6000, f2: 1500, dur: 1.6, a: 0.05, vol: 0.14, wet: 0.4 });
-      tone({ f: 660, f2: 220, dur: 1.2, vol: 0.05, wet: 0.5 });
-    },
-    humStart() {
-      if (!ac || hum) return;
-      const g = ac.createGain(); g.gain.value = 0.0001; g.connect(master);
-      const lf = ac.createBiquadFilter(); lf.type = 'lowpass'; lf.frequency.value = 400; lf.connect(g);
-      const oscs = [55, 55.4, 110.3, 164.8].map((f, i) => {
-        const o = ac.createOscillator(); o.type = i === 3 ? 'triangle' : 'sine'; o.frequency.value = f;
-        const og = ac.createGain(); og.gain.value = [0.5, 0.5, 0.25, 0.06][i];
-        o.connect(og); og.connect(lf); o.start();
-        return o;
-      });
-      g.gain.setTargetAtTime(0.06, ac.currentTime, 0.8);
-      hum = { g, lf, oscs };
-    },
-    humStop() {
-      if (!hum) return;
-      const h = hum; hum = null;
-      h.g.gain.setTargetAtTime(0.0001, ac.currentTime, 0.3);
-      setTimeout(() => h.oscs.forEach((o) => o.stop()), 1600);
-    },
-    humBoost(x) {
-      if (!hum) return;
-      hum.g.gain.setTargetAtTime(0.06 + x * 0.08, ac.currentTime, 0.2);
-      hum.lf.frequency.setTargetAtTime(400 + x * 1500, ac.currentTime, 0.2);
-    },
-    chargeStart() {
-      if (!ac || charge) return;
-      const g = ac.createGain(); g.gain.value = 0.0001;
-      const fl = ac.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = 300; fl.Q.value = 6;
-      const o1 = ac.createOscillator(); o1.type = 'sawtooth'; o1.frequency.value = 60;
-      const o2 = ac.createOscillator(); o2.type = 'sine'; o2.frequency.value = 120;
-      const lfo = ac.createOscillator(); lfo.frequency.value = 6;
-      const lg = ac.createGain(); lg.gain.value = 0;
-      lfo.connect(lg); lg.connect(g.gain);
-      o1.connect(fl); o2.connect(fl); fl.connect(g); g.connect(bus(1, 0.35));
-      o1.start(); o2.start(); lfo.start();
-      g.gain.setTargetAtTime(0.12, ac.currentTime, 0.08);
-      charge = { g, fl, o1, o2, lfo, lg };
-    },
-    chargeSet(x) {
-      if (!charge) return;
-      const t = ac.currentTime;
-      charge.o1.frequency.setTargetAtTime(60 + x * 340, t, 0.05);
-      charge.o2.frequency.setTargetAtTime(120 + x * 900, t, 0.05);
-      charge.fl.frequency.setTargetAtTime(300 + x * 4200, t, 0.05);
-      charge.lfo.frequency.setTargetAtTime(6 + x * 22, t, 0.05);
-      charge.lg.gain.setTargetAtTime(x * 0.05, t, 0.05);
-    },
-    chargeStop() {
-      if (!charge) return;
-      const c = charge; charge = null;
-      const t = ac.currentTime;
-      c.g.gain.cancelScheduledValues(t);
-      c.g.gain.setTargetAtTime(0.0001, t, 0.03);
-      setTimeout(() => [c.o1, c.o2, c.lfo].forEach((o) => o.stop()), 300);
-    },
-    spinSet(v) {
-      if (!spin) return;
-      const s = Math.min(1, Math.abs(v) / 30);
-      spin.g.gain.setTargetAtTime(s * 0.22, ac.currentTime, 0.05);
-      spin.f.frequency.setTargetAtTime(250 + s * 2600, ac.currentTime, 0.05);
-    },
-  };
-  return api;
-})();
-
-/* ── 声：端末の読み上げ（日本語の声がある時だけ） ── */
-const Voice = (() => {
-  const syn = window.speechSynthesis;
-  let on = true, voice = null, known = false;
-  function choose() {
-    if (!syn) return;
-    const vs = syn.getVoices();
-    if (!vs.length) return;
-    known = true;
-    const ja = vs.filter((v) => /^ja/i.test(v.lang));
-    voice = ja.find((v) => /otoya|ichiro|keita|male/i.test(v.name)) || ja.find((v) => /google/i.test(v.name)) || ja[0] || null;
-  }
-  if (syn) {
-    choose();
-    if (syn.addEventListener) syn.addEventListener('voiceschanged', choose);
-    else syn.onvoiceschanged = choose;
-  }
-  return {
-    get on() { return on; },
-    set(v) { on = v; if (!v) this.stop(); },
-    unlock() {
-      if (!syn) return;
-      try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; syn.speak(u); } catch (_) { /* 読み上げなし */ }
-    },
-    stop() { try { if (syn) syn.cancel(); } catch (_) { /* 読み上げなし */ } },
-    speak(text, onStart, onEnd) {
-      if (!syn || !on || (known && !voice)) return false;
-      try {
-        syn.cancel();
-        const u = new SpeechSynthesisUtterance(text.replace(/VEGA/g, 'ヴェガ'));
-        u.lang = 'ja-JP';
-        if (voice) u.voice = voice;
-        u.rate = 1.05; u.pitch = 0.85; u.volume = 1;
-        u.onstart = onStart; u.onend = onEnd; u.onerror = onEnd;
-        syn.speak(u);
-        return true;
-      } catch (_) { return false; }
-    },
-  };
-})();
-
-/* ── 状態 ─────────────────────────── */
-const S = {
-  awake: false, booting: false, sleeping: false, touched: false,
-  reveal: 0, revealGoal: 0,
-  spin: 0, spinVel: 0, spinFx: 0,
-  charge: 0, charging: false,
-  energy: 0, talk: 0, power: 0.97,
-  mode: 'normal', modeEnd: 0,
-  shake: 0, flash: 0,
-  scan: null,
-  lineAt: { spin: 0, blast: 0, lock: 0 },
-};
-let T = 0;
-
-const cv = $('#fx'), ctx = cv.getContext('2d');
-const stage = $('#stage'), hud = $('#hud'), slot = $('#coreSlot');
-const sayEl = $('#say'), voiceBar = $('#voiceBar'), bannerEl = $('#banner'), flashEl = $('#flash'), bootEl = $('#bootlog');
-let W = 0, H = 0, DPR = 1;
-const core = { x: 0, y: 0, R: 100, left: 0, right: 0 };
-
-function mini(sel) { const el = $(sel); return { el, c: el.getContext('2d'), w: 0, h: 0 }; }
-const radar = mini('#radar'), globe = mini('#globe'), tele = mini('#tele');
-
-function resize() {
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
-  W = window.innerWidth; H = window.innerHeight;
-  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  const r = slot.getBoundingClientRect();
-  core.x = r.left + r.width / 2;
-  core.y = r.top + r.height / 2 - 6;
-  core.R = Math.max(56, Math.min(r.width * 0.42, r.height * 0.37));
-  core.left = r.left; core.right = r.right;
-  root.style.setProperty('--cx', core.x + 'px');
-  root.style.setProperty('--cy', core.y + 'px');
-  root.style.setProperty('--cr', (core.R * 1.02 + 18) + 'px');
-  for (const m of [radar, globe, tele]) {
-    m.w = m.el.clientWidth; m.h = m.el.clientHeight;
-    m.el.width = Math.max(1, Math.round(m.w * DPR)); m.el.height = Math.max(1, Math.round(m.h * DPR));
-    m.c.setTransform(DPR, 0, 0, DPR, 0, 0);
-  }
-}
-let resizeQueued = false;
-function queueResize() {
-  if (resizeQueued) return;
-  resizeQueued = true;
-  requestAnimationFrame(() => { resizeQueued = false; resize(); });
-}
-
-/* ── タイマー ─────────────────────── */
-const later = (fn, ms) => setTimeout(fn, ms);
-
-/* ── しゃべる ─────────────────────── */
-let typeTimer = 0, talkUntil = 0;
-function say(text, withVoice = true) {
-  clearInterval(typeTimer);
-  const chars = Array.from(text);
-  let i = 0;
-  sayEl.textContent = '';
-  typeTimer = setInterval(() => {
-    sayEl.textContent += chars[i++];
-    if (i % 2 === 0) Sound.tick();
-    if (i >= chars.length) clearInterval(typeTimer);
-  }, 36);
-  const now = performance.now();
-  talkUntil = now + chars.length * 95 + 400;
-  if (withVoice) {
-    Voice.speak(text,
-      () => { talkUntil = performance.now() + 60000; },
-      () => { talkUntil = performance.now() + 120; });
-  }
-}
-
-let bannerTimer = 0;
-function banner(main, sub) {
-  bannerEl.querySelector('b').textContent = main;
-  bannerEl.querySelector('small').textContent = sub || '';
-  bannerEl.className = '';
-  void bannerEl.offsetWidth;
-  bannerEl.className = 'on';
-  clearTimeout(bannerTimer);
-  bannerTimer = setTimeout(() => { bannerEl.className = ''; }, 2400);
-}
-
-function flashAt(x, y, v) {
-  flashEl.style.setProperty('--fx', x + 'px');
-  flashEl.style.setProperty('--fy', y + 'px');
-  S.flash = Math.max(S.flash, v);
-}
-
-const logEl = $('#log');
-function log(text, hot = false) {
-  const d = new Date();
-  const li = document.createElement('li');
-  if (hot) li.className = 'hot';
-  const tm = document.createElement('time');
-  tm.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  li.append(tm, text);
-  logEl.prepend(li);
-  while (logEl.children.length > 14) logEl.lastChild.remove();
-}
-
-/* ── 粒子・衝撃波・ロックオン ─────── */
-const parts = [];
-const PMAX = reduced ? 160 : 760;
-function spark(x, y, vx, vy, life, size, kind = 0, white = false, drag = 0.08) {
-  if (parts.length >= PMAX) return;
-  parts.push({ x, y, vx, vy, life, max: life, size, kind, white, drag });
-}
-function burst(x, y, n, speed, life = 0.9, size = 2.2) {
-  for (let i = 0; i < n; i++) {
-    const a = rand(0, TAU), s = speed * rand(0.2, 1);
-    spark(x, y, Math.cos(a) * s, Math.sin(a) * s, life * rand(0.5, 1), size * rand(0.5, 1.2), 0, Math.random() < 0.3);
-  }
-}
-const waves = [];
-function wave(x, y, v, life, w = 2, r0 = 0) { waves.push({ x, y, r: r0, v, life, max: life, w }); }
-const locks = [];
-const orbiters = Array.from({ length: 28 }, () => ({
-  r: rand(0.55, 1.16), a: rand(0, TAU), v: rand(0.08, 0.45) * (Math.random() < 0.5 ? -1 : 1), s: rand(0.8, 2.1),
-}));
-
-/* ── 操作 ─────────────────────────── */
-const drag = { id: null, x: 0, y: 0, x0: 0, y0: 0, t0: 0, lastT: 0, ang: 0, onCore: false, moved: false, hold: 0 };
-let tapTimes = [], lastLine = '';
-
-function talk() {
-  const now = performance.now();
-  tapTimes = tapTimes.filter((t) => now - t < 2500);
-  tapTimes.push(now);
-  if (tapTimes.length >= 5) {
-    tapTimes = [];
-    say(LINES.rapid);
-    banner('!?', '連打を検知');
-    burst(core.x, core.y, 60, 700, 0.9, 2.4);
-  } else {
-    let line;
-    do { line = pick(LINES.talk); } while (line === lastLine);
-    lastLine = line;
-    say(line);
-  }
-  S.energy = Math.max(S.energy, 0.6);
-  wave(core.x, core.y, 520, 0.8, 2, core.R * 0.3);
-  Sound.blip(1046);
-  buzz(10);
-}
-
-function lockOn(x, y) {
-  locks.push({ x, y, t: 0, id: 'T-' + hex(4), dist: rand(8, 950).toFixed(1) });
-  if (locks.length > 8) locks.shift();
-  Sound.lock(); buzz(8);
-  burst(x, y, 14, 240, 0.5, 1.6);
-  wave(x, y, 260, 0.5, 1.2, 4);
-  if (Math.random() < 0.2 && T > S.lineAt.lock) { S.lineAt.lock = T + 12; say(pick(LINES.lock)); }
-}
-
-function startCharge() {
-  if (S.charging || !S.awake || S.sleeping) return;
-  S.charging = true;
-  Sound.chargeStart(); buzz(20);
-  log('エネルギー チャージ開始');
-}
-
-function release() {
-  if (!S.charging) return;
-  S.charging = false;
-  Sound.chargeStop();
-  const p = S.charge;
-  // 吸い込んだ粒子を外へ吹き飛ばす
-  for (const q of parts) {
-    if (q.kind !== 1) continue;
-    const dx = q.x - core.x, dy = q.y - core.y, d = Math.hypot(dx, dy) || 1, s = rand(500, 1700) * Math.max(p, 0.3);
-    q.kind = 0; q.vx = dx / d * s; q.vy = dy / d * s; q.life = q.max = rand(0.6, 1.3);
-  }
-  if (p > 0.18) blast(p);
-  else { wave(core.x, core.y, 400, 0.6, 1.5, core.R * 0.3); Sound.blip(660); }
-  S.charge = 0;
-}
-
-function blast(p) {
-  const big = p > 0.85;
-  Sound.boom(p);
-  buzz(big ? [60, 40, 120] : 40);
-  flashAt(core.x, core.y, 0.35 + 0.65 * p);
-  S.shake = Math.max(S.shake, 6 + 22 * p);
-  S.energy = 1;
-  wave(core.x, core.y, 900 + 1400 * p, 1.2, 3 + 3 * p, core.R * 0.5);
-  wave(core.x, core.y, 600 + 900 * p, 1.4, 2, core.R * 0.4);
-  if (big) wave(core.x, core.y, 2400, 0.9, 8, core.R * 0.6);
-  burst(core.x, core.y, Math.round((reduced ? 20 : 60) + (reduced ? 40 : 260) * p), 300 + 1600 * p, 1.4, 2.8);
-  hud.classList.remove('jolt'); void hud.offsetWidth; hud.classList.add('jolt');
-  S.spinVel += (Math.random() < 0.5 ? -1 : 1) * 22 * p;
-  log(`衝撃波 放出 ─ 出力 ${Math.round(p * 100)}%`, true);
-  if (big) {
-    banner('FULL BURST', `出力 ${Math.round(100 + p * 200)}%`);
-    if (T > S.lineAt.blast) { S.lineAt.blast = T + 8; later(() => say(pick(LINES.blast)), 700); }
-  }
-}
-
-cv.addEventListener('pointerdown', (e) => {
-  if (!S.awake || S.sleeping) return;
-  Sound.init();
-  S.touched = true;
-  if (drag.id !== null) { lockOn(e.clientX, e.clientY); return; }
-  try { cv.setPointerCapture(e.pointerId); } catch (_) { /* そのまま */ }
-  const now = performance.now();
-  Object.assign(drag, { id: e.pointerId, x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, t0: now, lastT: now, moved: false });
-  drag.onCore = Math.hypot(e.clientX - core.x, e.clientY - core.y) < core.R * 0.62;
-  drag.ang = Math.atan2(e.clientY - core.y, e.clientX - core.x);
-  S.spinVel *= 0.2;
-  if (drag.onCore) drag.hold = setTimeout(startCharge, 230);
-  Sound.tick();
-});
-cv.addEventListener('pointermove', (e) => {
-  if (e.pointerId !== drag.id) return;
-  const x = e.clientX, y = e.clientY, now = performance.now();
-  if (!drag.moved && Math.hypot(x - drag.x0, y - drag.y0) > 9) {
-    drag.moved = true;
-    if (!S.charging) clearTimeout(drag.hold);
-  }
-  if (drag.moved && !S.charging) {
-    const a = Math.atan2(y - core.y, x - core.x);
-    let da = a - drag.ang;
-    if (da > Math.PI) da -= TAU;
-    if (da < -Math.PI) da += TAU;
-    da *= clamp(Math.hypot(x - core.x, y - core.y) / (core.R * 0.6), 0.2, 1);
-    S.spin += da;
-    S.spinVel = S.spinVel * 0.6 + (da / Math.max(0.008, (now - drag.lastT) / 1000)) * 0.4;
-    drag.ang = a;
-    const n = Math.min(4, 1 + Math.hypot(x - drag.x, y - drag.y) / 12);
-    for (let i = 0; i < n; i++) spark(x + rand(-4, 4), y + rand(-4, 4), rand(-50, 50), rand(-50, 50), 0.7, rand(1.2, 2.4), 0, Math.random() < 0.25);
-  }
-  drag.x = x; drag.y = y; drag.lastT = now;
-});
-function endPointer(e, cancelled) {
-  if (e.pointerId !== drag.id) return;
-  clearTimeout(drag.hold);
-  if (S.charging) release();
-  else if (!cancelled && !drag.moved) {
-    if (drag.onCore) { if (performance.now() - drag.t0 < 400) talk(); }
-    else lockOn(drag.x, drag.y);
-  }
-  drag.id = null;
-}
-cv.addEventListener('pointerup', (e) => endPointer(e, false));
-cv.addEventListener('pointercancel', (e) => endPointer(e, true));
-cv.addEventListener('contextmenu', (e) => e.preventDefault());
-
-// マウスの位置で左右の翼パネルが少し傾く
-let parallaxQueued = false, px = 0, py = 0;
-window.addEventListener('pointermove', (e) => {
-  if (e.pointerType !== 'mouse') return;
-  px = (e.clientX / W) * 2 - 1; py = (e.clientY / H) * 2 - 1;
-  if (parallaxQueued) return;
-  parallaxQueued = true;
-  requestAnimationFrame(() => {
-    parallaxQueued = false;
-    hud.style.setProperty('--tx', px.toFixed(3));
-    hud.style.setProperty('--ty', py.toFixed(3));
-  });
-}, { passive: true });
-
-/* ── コマンド ─────────────────────── */
-const statusText = $('#statusText');
-function setModeButtons() {
-  document.querySelectorAll('[data-cmd]').forEach((b) => {
-    b.classList.toggle('active', (b.dataset.cmd === 'overdrive' && S.mode === 'overdrive') || (b.dataset.cmd === 'alert' && S.mode === 'alert'));
-  });
-  statusText.textContent = S.mode === 'overdrive' ? 'OVERDRIVE' : S.mode === 'alert' ? 'ALERT' : 'ONLINE';
-}
-function endMode(silent) {
-  if (S.mode === 'normal') return;
-  const was = S.mode;
-  S.mode = 'normal';
-  accGoal = PALETTE.cyan;
-  body.classList.remove('mode-od', 'mode-alert');
-  Sound.humBoost(0);
-  Sound.alarmStop();
-  setModeButtons();
-  if (silent) return;
-  if (was === 'overdrive') {
-    say(LINES.odEnd);
-    Sound.cool();
-    for (let i = 0; i < 70; i++) {
-      const a = rand(0, TAU), r = core.R * rand(0.4, 0.9);
-      spark(core.x + Math.cos(a) * r, core.y + Math.sin(a) * r, rand(-30, 30), rand(-160, -60), rand(1, 2), rand(2, 4), 0, true, 0.5);
-    }
-    log('OVERDRIVE 終了 ─ 冷却中');
-  } else if (was === 'alert') {
-    say(LINES.alertEnd);
-    Sound.blip(880); Sound.blip(1320, 0.12);
-    log('警戒態勢 解除');
-  }
-}
-
-const CMD = {
-  scan() {
-    if (S.scan) return;
-    const targets = [];
-    const n = 4 + Math.floor(Math.random() * 4);
-    for (let i = 0, tries = 0; i < n && tries < 60; tries++) {
-      const x = rand(W * 0.08, W * 0.92), y = rand(H * 0.12, H * 0.8);
-      if (Math.hypot(x - core.x, y - core.y) < core.R * 1.15) continue;
-      targets.push({ x, y, s: rand(20, 44), id: 'OBJ-' + hex(4), info: `${rand(12, 980).toFixed(1)}m  ${pick(['NEUTRAL', 'UNKNOWN', 'FRIENDLY', 'PASSIVE'])}`, seen: 0 });
-      i++;
-    }
-    S.scan = { t: 0, dur: 2, targets, done: false };
-    Sound.scan();
-    say(LINES.scanStart);
-    log('周辺スキャン 開始');
-  },
-  overdrive() {
-    if (S.mode === 'overdrive') return;
-    endMode(true);
-    S.mode = 'overdrive'; S.modeEnd = T + 7.5;
-    accGoal = PALETTE.amber;
-    body.classList.add('mode-od');
-    setModeButtons();
-    Sound.overdrive();
-    say(LINES.odStart);
-    log('OVERDRIVE 起動 ─ リミッター解除', true);
-    S.shake = Math.max(S.shake, 4);
-    later(() => {
-      if (S.mode !== 'overdrive') return;
-      Sound.boom(0.9); Sound.chord(146.83); Sound.humBoost(1);
-      flashAt(core.x, core.y, 0.8);
-      S.shake = Math.max(S.shake, 16); S.energy = 1;
-      wave(core.x, core.y, 1800, 1.1, 5, core.R * 0.5);
-      wave(core.x, core.y, 1100, 1.4, 2, core.R * 0.4);
-      burst(core.x, core.y, reduced ? 40 : 220, 1500, 1.3, 2.6);
-      banner('OVERDRIVE', '出力 300%');
-      buzz([50, 30, 100]);
-    }, 1050);
-  },
-  alert() {
-    if (S.mode === 'alert') return;
-    endMode(true);
-    S.mode = 'alert'; S.modeEnd = T + 6;
-    accGoal = PALETTE.red;
-    body.classList.add('mode-alert');
-    setModeButtons();
-    Sound.alarm(5.6);
-    say(LINES.alertStart);
-    banner('WARNING', '高エネルギー反応 接近中');
-    S.shake = Math.max(S.shake, 6);
-    buzz([200, 100, 200, 100, 200]);
-    log('警戒態勢 発令', true);
-  },
-  report() {
-    const d = new Date();
-    say(`状況報告。現在時刻、${d.getHours()}時${d.getMinutes()}分。コア出力${Math.round(S.power * 100)}パーセント、シールド100パーセント。ボスの調子も、良さそうですね。`);
-    const shown = Array.from(document.querySelectorAll('.panel')).filter((p) => p.getClientRects().length);
-    shown.forEach((p, i) => later(() => {
-      p.classList.remove('ping'); void p.offsetWidth; p.classList.add('ping');
-      Sound.blip(880 + i * 220);
-    }, 150 + i * 170));
-    wave(core.x, core.y, 600, 1.2, 1.5, core.R * 0.4);
-    log('状況報告 ─ 全項目グリーン', true);
-  },
-  sleep() {
-    if (S.sleeping) return;
-    S.sleeping = true;
-    endMode(true);
-    release();
-    say(LINES.sleep);
-    log('スリープ 移行');
-    later(() => {
-      S.awake = false; S.sleeping = false; S.revealGoal = 0; S.scan = null; locks.length = 0;
-      body.classList.remove('awake');
-      Sound.humStop(); Sound.powerDown();
-      clearInterval(typeTimer); sayEl.textContent = '';
-    }, 2600);
-  },
-};
-document.querySelectorAll('[data-cmd]').forEach((b) => b.addEventListener('click', () => {
-  if (!S.awake || S.sleeping) return;
-  Sound.init(); Sound.click(); buzz(12);
-  S.touched = true;
-  b.classList.remove('fire'); void b.offsetWidth; b.classList.add('fire');
-  CMD[b.dataset.cmd]();
-}));
-
-const tSound = $('#tSound'), tVoice = $('#tVoice'), tFull = $('#tFull');
-tSound.addEventListener('click', () => {
-  Sound.init(); Sound.set(!Sound.on);
-  tSound.setAttribute('aria-pressed', String(Sound.on));
-  if (Sound.on) Sound.click();
-});
-tVoice.addEventListener('click', () => {
-  Voice.set(!Voice.on);
-  tVoice.setAttribute('aria-pressed', String(Voice.on));
-  Sound.click();
-});
-if (!document.fullscreenEnabled) tFull.hidden = true;
-tFull.addEventListener('click', () => {
-  Sound.click();
-  const p = document.fullscreenElement ? document.exitFullscreen() : root.requestFullscreen();
-  if (p && p.catch) p.catch(() => {});
-});
-
-/* ── 起動とスリープ ────────────────── */
-function wake() {
-  if (S.awake || S.booting) return;
-  Sound.init(); Voice.unlock();
-  S.booting = true; S.touched = false;
-  body.classList.add('booting');
-  Sound.powerUp(); buzz(30);
-  bootEl.textContent = '';
-  bootEl.classList.add('on');
-  BOOT.forEach((line, i) => later(() => { bootEl.textContent += line + '\n'; Sound.tick(); }, 60 + i * 120));
-  later(() => { S.revealGoal = 1.05; }, 250);
-  later(ignite, 1550);
-  later(() => bootEl.classList.remove('on'), 2700);
-  later(() => say(greeting()), 2300);
-  later(() => { if (S.awake && !S.touched) say(LINES.hint); }, 8200);
-}
-function ignite() {
-  S.booting = false; S.awake = true;
-  body.classList.remove('booting'); body.classList.add('awake');
-  queueResize();
-  Sound.boom(0.75); Sound.chord(220, 0.05); Sound.humStart();
-  flashAt(core.x, core.y, 1);
-  S.shake = 12; S.energy = 1;
-  wave(core.x, core.y, 1400, 1.1, 3, core.R * 0.3);
-  wave(core.x, core.y, 900, 1.3, 2, core.R * 0.3);
-  burst(core.x, core.y, reduced ? 30 : 160, 900, 1.2, 2.6);
-  banner('VEGA ONLINE', 'ALL SYSTEMS GO');
-  buzz([40, 30, 80]);
-  log('VEGA 起動 ─ 全システム正常', true);
-}
-$('#wake').addEventListener('click', wake);
-
-window.addEventListener('keydown', (e) => {
-  if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
-  if (!S.awake) return;
-  const k = e.key.toLowerCase();
-  if (k === ' ' && !(document.activeElement && document.activeElement.tagName === 'BUTTON')) {
-    e.preventDefault(); Sound.init(); S.touched = true; startCharge();
-    return;
-  }
-  const map = { s: 'scan', o: 'overdrive', a: 'alert', r: 'report' };
-  if (map[k]) { const b = document.querySelector(`[data-cmd="${map[k]}"]`); if (b) b.click(); }
-});
-window.addEventListener('keyup', (e) => { if (e.key === ' ' && S.charging) release(); });
-
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { Sound.suspend(); Voice.stop(); release(); }
-  else Sound.resume();
-});
-
-/* ── パネルの中身 ──────────────────── */
-const bars = {};
-document.querySelectorAll('.bar').forEach((b) => { bars[b.dataset.k] = { s: b.querySelector('s'), b: b.querySelector('b') }; });
-let neural = 0.86;
-function updateBars() {
-  const pow = S.power;
-  bars.pow.s.style.width = Math.min(100, pow * 100) + '%';
-  bars.pow.b.textContent = (pow * 100).toFixed(1) + '%';
-  const shd = S.mode === 'alert' ? rand(0.55, 1) : 1;
-  bars.shd.s.style.width = shd * 100 + '%';
-  bars.shd.b.textContent = Math.round(shd * 100) + '%';
-  neural = clamp(neural + rand(-0.04, 0.04) + (0.85 - neural) * 0.2 + S.talk * 0.05, 0.6, 0.99);
-  bars.neu.s.style.width = neural * 100 + '%';
-  bars.neu.b.textContent = Math.round(neural * 100) + '%';
-  const tmp = 36.5 + S.energy * 18 + S.charge * 30 + (S.mode === 'overdrive' ? 62 : 0) + rand(-0.2, 0.2);
-  bars.tmp.s.style.width = Math.min(100, tmp / 1.2) + '%';
-  bars.tmp.b.textContent = tmp.toFixed(1) + '°C';
-  $('#sysCode').textContent = '0x' + hex(3);
-}
-const hexEl = $('#hex');
-let hexAddr = 0x3f00;
-const hexLines = [];
-function pushHex() {
-  hexAddr = (hexAddr + 16) & 0xffff;
-  hexLines.unshift(hexAddr.toString(16).toUpperCase().padStart(4, '0') + '  ' + Array.from({ length: 8 }, () => hex(2)).join(' '));
-  if (hexLines.length > 14) hexLines.pop();
-  hexEl.textContent = hexLines.join('\n');
-}
-const teleA = Array(80).fill(0.5), teleB = Array(80).fill(0.35);
-function pushTele() {
-  const goal = 0.42 + S.energy * 0.35 + (S.mode === 'overdrive' ? 0.3 : 0) + S.talk * 0.15 + S.charge * 0.3;
-  const a = teleA[teleA.length - 1], b = teleB[teleB.length - 1];
-  teleA.push(clamp(a + rand(-0.09, 0.09) + (goal - a) * 0.18, 0.06, 0.94)); teleA.shift();
-  teleB.push(clamp(b + rand(-0.05, 0.05) + (0.32 - b) * 0.1, 0.06, 0.94)); teleB.shift();
-}
-const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-const clockEl = $('#clock'), dateEl = $('#date');
-function updateClock() {
-  const d = new Date();
-  clockEl.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  dateEl.textContent = `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())} ${DAYS[d.getDay()]}`;
-}
-for (let i = 0; i < 14; i++) pushHex();
-for (let i = 0; i < 80; i++) pushTele();
-['ニューラル演算 負荷 12%', '軌道データ 更新', '衛星リンク 再同期 … OK', '防衛グリッド 正常'].forEach((t) => log(t));
-updateBars(); updateClock();
-
-/* ── 毎フレームの更新 ──────────────── */
-const acc_ = { clock: 0, bars: 0, hex: 0, log: 3, tele: 0, sweep: 0 };
-let talkingShown = false;
-function update(dt) {
-  tint(dt);
-  const dir = Math.sign(S.revealGoal - S.reveal);
-  if (dir) S.reveal = dir > 0 ? Math.min(S.revealGoal, S.reveal + dt / 1.4) : Math.max(S.revealGoal, S.reveal - dt / 0.9);
-
-  // リングの慣性
-  if (drag.id === null) {
-    S.spin += S.spinVel * dt;
-    S.spinVel *= Math.exp(-dt * 0.9);
-  } else if (performance.now() - drag.lastT > 60) {
-    S.spinVel *= Math.exp(-dt * 12);
-  }
-  Sound.spinSet(S.awake ? S.spinVel : 0);
-  const sp = Math.abs(S.spinVel);
-  S.spinFx = clamp((sp - 8) / 22);
-  if (S.awake && sp > 10 && !reduced) {
-    const om = -0.7 * S.spinVel, r = core.R * 0.875;
-    const n = Math.floor(Math.min(8, sp * dt * 6) + Math.random());
-    for (let i = 0; i < n; i++) {
-      const a = rand(0, TAU);
-      let vx = -om * r * Math.sin(a) * 0.5, vy = om * r * Math.cos(a) * 0.5;
-      const m = Math.hypot(vx, vy);
-      if (m > 1400) { vx *= 1400 / m; vy *= 1400 / m; }
-      spark(core.x + Math.cos(a) * r, core.y + Math.sin(a) * r, vx, vy, rand(0.3, 0.7), rand(1.2, 2.4), 0, Math.random() < 0.4, 0.3);
-    }
-    if (sp > 24 && T > S.lineAt.spin) {
-      S.lineAt.spin = T + 25;
-      say(pick(LINES.spin));
-      banner('OVERSPEED', `${Math.round(sp / TAU * 60)} RPM`);
-    }
-  }
-
-  // チャージ
-  if (S.charging) {
-    const before = S.charge;
-    S.charge = Math.min(1, S.charge + dt / 1.5);
-    Sound.chargeSet(S.charge);
-    S.shake = Math.max(S.shake, S.charge * 3.5);
-    const n = Math.floor((25 + 140 * S.charge) * dt + Math.random());
-    for (let i = 0; i < n; i++) {
-      const a = rand(0, TAU), r = core.R * rand(1.3, 2.4);
-      spark(core.x + Math.cos(a) * r, core.y + Math.sin(a) * r, -Math.sin(a) * 140, Math.cos(a) * 140, 1.6, rand(1.2, 2.6), 1, Math.random() < 0.35);
-    }
-    if (before < 1 && S.charge >= 1) {
-      banner('MAX CHARGE', '指をはなして発射');
-      Sound.blip(2640); buzz([20, 40, 20]);
-      wave(core.x, core.y, -260, 0.6, 2, core.R * 1.4);
-    }
-  }
-
-  // 全出力：コアから粒子が噴き出し続ける
-  if (S.mode === 'overdrive' && S.awake && !reduced) {
-    const n = Math.floor(90 * dt + Math.random());
-    for (let i = 0; i < n; i++) {
-      const a = rand(0, TAU), s = rand(160, 520), r = core.R * 0.3;
-      spark(core.x + Math.cos(a) * r, core.y + Math.sin(a) * r, Math.cos(a) * s, Math.sin(a) * s, rand(0.5, 1.1), rand(1, 2.4), 0, Math.random() < 0.4, 0.4);
-    }
-    S.shake = Math.max(S.shake, 1.2);
-  }
-  if (S.mode !== 'normal' && T > S.modeEnd) endMode(false);
-
-  const pGoal = S.mode === 'overdrive' ? 3 : S.mode === 'alert' ? 1.12 : 0.968 + Math.sin(T * 0.7) * 0.012;
-  S.power += (pGoal - S.power) * Math.min(1, dt * 2.5);
-  S.energy = Math.max(0, S.energy - dt * 0.8);
-
-  const talking = performance.now() < talkUntil;
-  const tgt = talking ? (0.35 + 0.65 * Math.abs(Math.sin(T * 17) * Math.sin(T * 5.3 + 1.7))) * rand(0.7, 1) : 0;
-  S.talk += (tgt - S.talk) * Math.min(1, dt * 18);
-  if (talking !== talkingShown) { talkingShown = talking; voiceBar.classList.toggle('talking', talking); }
-
-  // 揺れとフラッシュ
-  S.shake *= Math.exp(-dt * 6);
-  if (S.shake > 0.2 && !reduced) stage.style.transform = `translate(${rand(-1, 1) * S.shake}px,${rand(-1, 1) * S.shake}px)`;
-  else if (stage.style.transform) stage.style.transform = '';
-  if (S.flash > 0.003) { S.flash *= Math.exp(-dt * 4.5); flashEl.style.opacity = S.flash.toFixed(3); }
-  else if (S.flash) { S.flash = 0; flashEl.style.opacity = '0'; }
-
-  // 粒子
-  for (let i = parts.length - 1; i >= 0; i--) {
-    const p = parts[i];
-    p.life -= dt;
-    if (p.kind === 1) {
-      const dx = core.x - p.x, dy = core.y - p.y, d = Math.hypot(dx, dy) || 1;
-      p.vx += dx / d * 2600 * dt; p.vy += dy / d * 2600 * dt;
-      const k = Math.pow(0.15, dt); p.vx *= k; p.vy *= k;
-      if (d < core.R * 0.28) p.life = 0;
-    } else {
-      const k = Math.pow(p.drag, dt); p.vx *= k; p.vy *= k;
-    }
-    p.x += p.vx * dt; p.y += p.vy * dt;
-    if (p.life <= 0) { parts[i] = parts[parts.length - 1]; parts.pop(); }
-  }
-  for (let i = waves.length - 1; i >= 0; i--) {
-    const w = waves[i];
-    w.r += w.v * dt; w.life -= dt;
-    if (w.life <= 0 || w.r < 0) waves.splice(i, 1);
-  }
-
-  // パネル
-  if (S.awake || S.booting) {
-    acc_.clock += dt; acc_.bars += dt; acc_.hex += dt; acc_.log -= dt; acc_.tele += dt; acc_.sweep += dt;
-    if (acc_.clock > 0.25) { acc_.clock = 0; updateClock(); }
-    if (acc_.bars > 0.5) { acc_.bars = 0; updateBars(); }
-    if (acc_.hex > (S.mode === 'overdrive' ? 0.04 : 0.12)) { acc_.hex = 0; pushHex(); }
-    if (acc_.tele > 0.07) { acc_.tele = 0; pushTele(); $('#teleVal').textContent = 'Δ ' + (teleA[79] - teleA[78]).toFixed(2); }
-    if (acc_.log < 0) { acc_.log = rand(2, 3.6); log(pick(AMBIENT_LOG)); }
-  }
-}
-
-/* ── 描画 ─────────────────────────── */
-function stroke(r, a0, a1, w, alpha) {
-  ctx.lineWidth = w; ctx.strokeStyle = acc(alpha);
-  ctx.beginPath(); ctx.arc(0, 0, r, a0, a1); ctx.stroke();
-}
-function glow(r, a0, a1, w, alpha) { stroke(r, a0, a1, w * 3.2, alpha * 0.14); stroke(r, a0, a1, w, alpha); }
-const rev = (i) => clamp((S.reveal - i * 0.065) / 0.45);
-
-function drawDormant() {
-  const a = 1 - clamp(S.reveal * 2.2);
-  if (a <= 0) return;
-  const R = core.R, pulse = 0.5 + 0.5 * Math.sin(T * 2.2);
-  ctx.save();
-  ctx.translate(core.x, core.y);
-  for (const k of [1, 0.875, 0.79, 0.72, 0.6, 0.48]) stroke(R * k, 0, TAU, 1, 0.07 * a);
-  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 0.6);
-  g.addColorStop(0, acc(0.12 * pulse * a)); g.addColorStop(1, acc(0));
-  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R * 0.6, 0, TAU); ctx.fill();
-  stroke(R * 0.6, 0, TAU, 1.5, (0.25 + 0.35 * pulse) * a);
-  ctx.rotate(T * 0.4);
-  for (let i = 0; i < 4; i++) stroke(R * 0.6, i * TAU / 4, i * TAU / 4 + 0.28, 3, 0.75 * a);
-  ctx.restore();
-}
-
-function drawCore(dt) {
-  const R = core.R, od = S.mode === 'overdrive', spd = od ? 3 : 1, sv = S.spin;
-  const heat = clamp(0.12 + S.energy * 0.35 + S.charge * 0.5 + S.talk * 0.14 + (od ? 0.25 : 0) + S.spinFx * 0.2);
-  ctx.save();
-  ctx.translate(core.x, core.y);
-
-  // 背後の光
-  const vis = clamp(S.reveal * 1.3);
-  let g = ctx.createRadialGradient(0, 0, R * 0.1, 0, 0, R * 1.35);
-  g.addColorStop(0, acc(heat * vis)); g.addColorStop(0.4, acc(heat * 0.25 * vis)); g.addColorStop(1, acc(0));
-  ctx.fillStyle = g; ctx.fillRect(-R * 1.4, -R * 1.4, R * 2.8, R * 2.8);
-
-  // 外周の目盛り
-  let rv = rev(0);
-  if (rv > 0) {
-    ctx.save();
-    ctx.rotate(T * 0.04 * spd + sv * 0.25);
-    const n = 180, shown = Math.floor(n * rv);
-    ctx.strokeStyle = acc(0.55); ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (let i = 0; i < shown; i++) {
-      const a = i / n * TAU, len = i % 15 === 0 ? 0.065 : i % 5 === 0 ? 0.035 : 0.018;
-      const c = Math.cos(a), s = Math.sin(a);
-      ctx.moveTo(c * R, s * R); ctx.lineTo(c * R * (1 - len), s * R * (1 - len));
-    }
-    ctx.stroke();
-    if (R > 105) {
-      ctx.fillStyle = acc(0.6 * rv);
-      ctx.font = `${Math.max(9, R * 0.034) | 0}px "Share Tech Mono", monospace`;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      for (let i = 0; i < 12 && i / 12 <= rv; i++) {
-        ctx.save(); ctx.rotate(i / 12 * TAU); ctx.fillText(String(i * 30).padStart(3, '0'), 0, -R * 1.05); ctx.restore();
-      }
-    }
-    ctx.restore();
-  }
-
-  // 細い円と、その上を走る光
-  rv = rev(1);
-  if (rv > 0) {
-    stroke(R * 0.935, -Math.PI / 2, -Math.PI / 2 + TAU * rv, 1, 0.32);
-    const a = T * 1.3 * spd + sv * 1.1;
-    for (let k = 0; k < 16; k++) {
-      const aa = a - k * 0.022;
-      ctx.fillStyle = acc((1 - k / 16) * 0.95 * rv);
-      ctx.beginPath(); ctx.arc(Math.cos(aa) * R * 0.935, Math.sin(aa) * R * 0.935, 2.4 * (1 - k / 16) + 0.5, 0, TAU); ctx.fill();
-    }
-  }
-
-  // 太い3本の弧
-  rv = rev(2);
-  if (rv > 0) {
-    ctx.save();
-    ctx.rotate(-T * 0.22 * spd - sv * 0.7);
-    for (let k = 0; k < 3; k++) {
-      const a0 = k * TAU / 3, span = TAU / 3 * 0.62 * rv;
-      glow(R * 0.875, a0, a0 + span, R * 0.032, 0.6 + S.spinFx * 0.4);
-      ctx.strokeStyle = acc(0.95); ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      for (const e of [a0, a0 + span]) {
-        ctx.moveTo(Math.cos(e) * R * 0.83, Math.sin(e) * R * 0.83);
-        ctx.lineTo(Math.cos(e) * R * 0.92, Math.sin(e) * R * 0.92);
-      }
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  // データブロックの輪（光の波が流れる）
-  rv = rev(3);
-  if (rv > 0) {
-    ctx.save();
-    ctx.rotate(T * 0.1 * spd + sv * 0.45);
-    const n = 60, shown = Math.floor(n * rv), bw = TAU / n * 0.55, r0 = R * 0.765, r1 = R * 0.815;
-    for (let i = 0; i < shown; i++) {
-      const a = i / n * TAU, w = 0.5 + 0.5 * Math.sin(i * 0.55 - T * 3 * spd);
-      ctx.fillStyle = acc((w > 0.72 ? 1 : 0.16 + w * 0.15) * 0.8);
-      ctx.beginPath(); ctx.arc(0, 0, r1, a, a + bw); ctx.arc(0, 0, r0, a + bw, a, true); ctx.closePath(); ctx.fill();
-    }
-    ctx.restore();
-  }
-
-  // 破線の円
-  rv = rev(4);
-  if (rv > 0) {
-    ctx.save();
-    ctx.rotate(-T * 0.5 * spd - sv * 1.3);
-    ctx.setLineDash([2, 7]);
-    stroke(R * 0.72, 0, TAU * rv, 2, 0.5);
-    ctx.setLineDash([]);
-    ctx.restore();
-  }
-
-  // 出力ゲージ（チャージ中はチャージ量）
-  rv = rev(5);
-  if (rv > 0) {
-    stroke(R * 0.665, 0, TAU, R * 0.014, 0.1 * rv);
-    const level = S.charging || S.charge > 0.01 ? S.charge : Math.min(1, S.power);
-    const a0 = -Math.PI / 2;
-    glow(R * 0.665, a0, a0 + TAU * level * rv, R * (S.charging ? 0.022 : 0.014), S.charging ? 1 : 0.65);
-  }
-
-  // 六角形2枚
-  rv = rev(6);
-  if (rv > 0) {
-    ctx.save();
-    ctx.rotate(T * 0.25 * spd + sv);
-    for (const [rot, alpha] of [[0, 0.42], [Math.PI / 6 - T * 0.5 * spd - sv * 2, 0.2]]) {
-      ctx.rotate(rot);
-      ctx.strokeStyle = acc(alpha * rv); ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      for (let i = 0; i <= 6; i++) {
-        const a = i / 6 * TAU;
-        i ? ctx.lineTo(Math.cos(a) * R * 0.6, Math.sin(a) * R * 0.6) : ctx.moveTo(Math.cos(a) * R * 0.6, Math.sin(a) * R * 0.6);
-      }
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  // コイル状の12枚
-  rv = rev(7);
-  if (rv > 0) {
-    ctx.save();
-    ctx.rotate(-T * 0.12 * spd - sv * 0.55);
-    const n = 12, shown = Math.ceil(n * rv);
-    ctx.lineWidth = 1;
-    for (let i = 0; i < shown; i++) {
-      const a = i / n * TAU, span = TAU / n * 0.72;
-      ctx.beginPath();
-      ctx.arc(0, 0, R * 0.53, a, a + span);
-      ctx.arc(0, 0, R * 0.43, a + span * 0.9, a + span * 0.1, true);
-      ctx.closePath();
-      ctx.fillStyle = acc(0.08 + 0.2 * heat); ctx.fill();
-      ctx.strokeStyle = acc(0.75); ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  // 声に合わせて揺れる輪
-  rv = rev(8);
-  if (rv > 0) {
-    const r = R * 0.37, amp = R * (0.012 + S.talk * 0.075 + S.charge * 0.03);
-    ctx.beginPath();
-    for (let i = 0; i <= 120; i++) {
-      const a = i / 120 * TAU;
-      const n = Math.sin(a * 8 + T * 9) * 0.5 + Math.sin(a * 13 - T * 13) * 0.3 + Math.sin(a * 21 + T * 5) * 0.2;
-      const x = Math.cos(a) * (r + n * amp), y = Math.sin(a) * (r + n * amp);
-      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-    }
-    ctx.closePath();
-    ctx.strokeStyle = acc(0.85 * rv); ctx.lineWidth = 1.5; ctx.stroke();
-  }
-
-  // 光の玉
-  const orbIn = easeOut(clamp(S.reveal * 1.4));
-  const orbR = R * (0.27 + 0.015 * Math.sin(T * 2.1) + S.energy * 0.06 + S.charge * 0.1 + S.talk * 0.04) * orbIn;
-  if (orbR > 1) {
-    g = ctx.createRadialGradient(0, 0, 0, 0, 0, orbR);
-    g.addColorStop(0, 'rgba(255,255,255,0.97)'); g.addColorStop(0.22, acc(0.95)); g.addColorStop(0.6, acc(0.28)); g.addColorStop(1, acc(0));
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, orbR, 0, TAU); ctx.fill();
-    ctx.save();
-    ctx.rotate(-T * 2 * spd);
-    ctx.setLineDash([3, 5]);
-    stroke(R * 0.15, 0, TAU, 1, 0.6 * orbIn);
-    ctx.setLineDash([]);
-    ctx.restore();
-  }
-
-  // 外へ伸びる光の筋（全出力・チャージ・高速回転）
-  const flare = Math.max(od ? 0.8 : 0, S.charge, S.spinFx);
-  if (flare > 0.05 && rv > 0) {
-    ctx.save();
-    ctx.rotate(T * 0.6);
-    ctx.strokeStyle = acc(0.38 * flare); ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    for (let i = 0; i < 72; i++) {
-      const a = i / 72 * TAU, len = R * (0.05 + 0.24 * flare * Math.random());
-      ctx.moveTo(Math.cos(a) * R * 1.12, Math.sin(a) * R * 1.12);
-      ctx.lineTo(Math.cos(a) * (R * 1.12 + len), Math.sin(a) * (R * 1.12 + len));
-    }
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // 周りを漂う点
-  ctx.fillStyle = acc(0.6 * vis);
-  for (const o of orbiters) {
-    o.a += o.v * dt * spd;
-    const x = Math.cos(o.a) * R * o.r, y = Math.sin(o.a) * R * o.r;
-    ctx.fillRect(x - o.s / 2, y - o.s / 2, o.s, o.s);
-  }
-  ctx.restore();
-
-  drawReadouts();
-}
-
-function drawReadouts() {
-  const fa = clamp((S.reveal - 0.85) / 0.2);
-  if (fa <= 0) return;
-  const R = core.R;
-  const rpm = 0.38 * (S.mode === 'overdrive' ? 3 : 1) + Math.abs(S.spinVel) / TAU * 60;
-  const rows = [
-    ['CORE OUTPUT', (S.power * 100).toFixed(1) + '%'],
-    ['ROTATION', rpm.toFixed(1) + ' RPM'],
-    ['SYNC RATE', (99.2 + Math.sin(T * 0.9) * 0.7).toFixed(1) + '%'],
-  ];
-  const reach = R * 1.2 + 130;
-  if (core.x + reach < core.right - 4 && core.x - reach > core.left + 4) {
-    callout(-0.72, rows[0], 1, fa);
-    callout(0.78, rows[1], 1, fa);
-    callout(Math.PI + 0.6, rows[2], -1, fa);
-  } else {
-    ctx.font = '11px "Share Tech Mono", monospace';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = ink(0.85 * fa);
-    ctx.fillText(`OUT ${rows[0][1]}   ·   ${rows[1][1]}   ·   SYNC ${rows[2][1]}`, core.x, core.y + R * 1.17);
-  }
-}
-function callout(ang, [label, value], dir, fa) {
-  const R = core.R;
-  const x0 = core.x + Math.cos(ang) * R * 1.03, y0 = core.y + Math.sin(ang) * R * 1.03;
-  const x1 = core.x + Math.cos(ang) * R * 1.2, y1 = core.y + Math.sin(ang) * R * 1.2;
-  const x2 = x1 + dir * 125;
-  ctx.strokeStyle = acc(0.55 * fa); ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.lineTo(x2, y1); ctx.stroke();
-  ctx.fillStyle = acc(fa); ctx.fillRect(x0 - 2, y0 - 2, 4, 4);
-  ctx.textAlign = dir > 0 ? 'right' : 'left'; ctx.textBaseline = 'alphabetic';
-  ctx.font = '10px "Share Tech Mono", monospace';
-  ctx.fillStyle = acc(0.75 * fa); ctx.fillText(label, x2, y1 - 7);
-  ctx.font = '500 17px "Chakra Petch", sans-serif';
-  ctx.fillStyle = ink(fa); ctx.fillText(value, x2, y1 + 19);
-}
-
-function drawEffects(dt) {
-  // スキャン
-  const sc = S.scan;
-  if (sc) {
-    sc.t += dt;
-    const p = sc.t / sc.dur, y = p * H;
-    if (p <= 1) {
-      const g = ctx.createLinearGradient(0, y - 130, 0, y);
-      g.addColorStop(0, acc(0)); g.addColorStop(1, acc(0.24));
-      ctx.fillStyle = g; ctx.fillRect(0, y - 130, W, 130);
-      ctx.fillStyle = acc(0.95); ctx.fillRect(0, y - 1, W, 2);
-      ctx.fillStyle = acc(0.6);
-      for (let x = (T * 220) % 40; x < W; x += 40) ctx.fillRect(x, y - 6, 1, 12);
-      ctx.font = '11px "Share Tech Mono", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-      ctx.fillStyle = ink(0.9); ctx.fillText(`SCANNING  ${Math.round(p * 100)}%`, 18, y - 10);
-    }
-    for (const tg of sc.targets) {
-      if (!tg.seen && y >= tg.y) { tg.seen = sc.t; Sound.detect(); burst(tg.x, tg.y, 10, 140, 0.6, 1.6); }
-      if (!tg.seen) continue;
-      const age = sc.t - tg.seen, k = easeOut(clamp(age / 0.22));
-      const fade = clamp((sc.dur + 3 - sc.t) / 0.6);
-      const s = tg.s * (1.8 - 0.8 * k), c = Math.max(6, s * 0.35);
-      ctx.strokeStyle = acc(0.95 * fade); ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
-        const x = tg.x + sx * s, yy = tg.y + sy * s;
-        ctx.moveTo(x - sx * c, yy); ctx.lineTo(x, yy); ctx.lineTo(x, yy - sy * c);
-      }
-      ctx.stroke();
-      ctx.strokeStyle = acc(0.2 * fade); ctx.strokeRect(tg.x - s, tg.y - s, s * 2, s * 2);
-      if (k >= 1) {
-        ctx.font = '11px "Share Tech Mono", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-        const tx = tg.x + s + 8 > W - 150 ? tg.x - s - 150 : tg.x + s + 8;
-        ctx.fillStyle = ink(0.95 * fade); ctx.fillText(tg.id, tx, tg.y - 4);
-        ctx.fillStyle = acc(0.8 * fade); ctx.fillText(tg.info, tx, tg.y + 11);
-      }
-    }
-    if (p > 1 && !sc.done) {
-      sc.done = true;
-      const n = sc.targets.length;
-      say(`スキャン完了。未確認物体、${n}件。脅威レベルはゼロです。`);
-      banner('SCAN COMPLETE', `${n} OBJECTS · THREAT 0`);
-      log(`スキャン完了 ─ 物体 ${n}件`, true);
-    }
-    if (sc.t > sc.dur + 3) S.scan = null;
-  }
-
-  ctx.globalCompositeOperation = 'lighter';
-  // 衝撃波
-  for (const w of waves) {
-    const a = w.life / w.max;
-    ctx.beginPath(); ctx.arc(w.x, w.y, Math.max(0, w.r), 0, TAU);
-    ctx.strokeStyle = acc(a * 0.16); ctx.lineWidth = w.w * 6 * a + 1; ctx.stroke();
-    ctx.strokeStyle = acc(a * 0.9); ctx.lineWidth = w.w * (0.4 + a); ctx.stroke();
-  }
-  // 粒子（速いものは線になる）
-  ctx.lineCap = 'round';
-  for (const pass of [false, true]) {
-    ctx.strokeStyle = pass ? 'rgba(255,255,255,1)' : acc(1);
-    for (const p of parts) {
-      if (p.white !== pass) continue;
-      const a = p.life / p.max;
-      ctx.globalAlpha = a;
-      ctx.lineWidth = p.size * (0.5 + a * 0.5);
-      ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - p.vx * 0.022, p.y - p.vy * 0.022 + 0.01); ctx.stroke();
-    }
-  }
-  ctx.globalAlpha = 1;
-  ctx.lineCap = 'butt';
-
-  // ロックオン
-  for (let i = locks.length - 1; i >= 0; i--) {
-    const L = locks[i];
-    L.t += dt;
-    if (L.t > 1.7) { locks.splice(i, 1); continue; }
-    const k = easeOut(clamp(L.t / 0.26)), fade = L.t > 1.25 ? 1 - (L.t - 1.25) / 0.45 : 1;
-    const s = 72 - 48 * k, c = 10;
-    ctx.strokeStyle = acc(0.95 * fade); ctx.lineWidth = 1.6;
-    ctx.beginPath();
-    for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
-      const x = L.x + sx * s, y = L.y + sy * s;
-      ctx.moveTo(x - sx * c, y); ctx.lineTo(x, y); ctx.lineTo(x, y - sy * c);
-    }
-    ctx.stroke();
-    if (k < 1) continue;
-    ctx.save();
-    ctx.translate(L.x, L.y); ctx.rotate(L.t * 3);
-    ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(0, 0, 14, 0, TAU); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.restore();
-    ctx.fillStyle = acc(fade); ctx.fillRect(L.x - 1.5, L.y - 1.5, 3, 3);
-    const dx = L.x > W - 180 ? -1 : 1, dy = L.y < 90 ? 1 : -1;
-    const ex = L.x + dx * 46, ey = L.y + dy * 46;
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(L.x + dx * 26, L.y + dy * 26); ctx.lineTo(ex, ey); ctx.lineTo(ex + dx * 96, ey); ctx.stroke();
-    ctx.font = '11px "Share Tech Mono", monospace';
-    ctx.textAlign = dx > 0 ? 'left' : 'right'; ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = ink(fade); ctx.fillText(`LOCKED ${L.id}`, ex + dx * 2, ey - 6);
-    ctx.fillStyle = acc(0.8 * fade); ctx.fillText(`DIST ${L.dist}m`, ex + dx * 2, ey + 14);
-  }
-
-  // 指の下のカーソル
-  if (drag.id !== null && !S.charging) {
-    ctx.save();
-    ctx.translate(drag.x, drag.y);
-    ctx.rotate(-T * 4);
-    ctx.strokeStyle = acc(0.8); ctx.lineWidth = 1.5;
-    for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(0, 0, 26, i * TAU / 3, i * TAU / 3 + 1.2); ctx.stroke(); }
-    ctx.restore();
-  }
-  ctx.globalCompositeOperation = 'source-over';
-}
-
-const blips = Array.from({ length: 16 }, () => ({ a: rand(0, TAU), d: rand(0.15, 0.95), life: 0 }));
-function drawRadar(dt) {
-  const { c, w, h } = radar;
-  if (!w) return;
-  c.clearRect(0, 0, w, h);
-  c.globalCompositeOperation = 'lighter';
-  const cx = w / 2, cy = h / 2, r = Math.min(w, h) / 2 - 2, alert = S.mode === 'alert';
-  c.strokeStyle = acc(0.25); c.lineWidth = 1;
-  c.beginPath();
-  for (const k of [0.33, 0.66, 1]) { c.moveTo(cx + r * k, cy); c.arc(cx, cy, r * k, 0, TAU); }
-  c.moveTo(cx - r, cy); c.lineTo(cx + r, cy); c.moveTo(cx, cy - r); c.lineTo(cx, cy + r);
-  c.stroke();
-  const hz = alert ? 3.2 : S.mode === 'overdrive' ? 2.6 : 1.4;
-  const sweep = (T * hz) % TAU;
-  for (let k = 0; k < 22; k++) {
-    c.fillStyle = acc(0.2 * (1 - k / 22));
-    c.beginPath(); c.moveTo(cx, cy); c.arc(cx, cy, r, sweep - (k + 1) * 0.04, sweep - k * 0.04); c.closePath(); c.fill();
-  }
-  c.strokeStyle = acc(0.95);
-  c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + Math.cos(sweep) * r, cy + Math.sin(sweep) * r); c.stroke();
-  const active = alert ? 16 : 5;
-  for (let i = 0; i < blips.length; i++) {
-    const b = blips[i];
-    if (alert) { b.d -= dt * 0.06; if (b.d < 0.08) b.d = 0.95; }
-    let diff = (sweep - b.a) % TAU;
-    if (diff < 0) diff += TAU;
-    if (i < active && diff < 0.1) b.life = 1;
-    b.life = Math.max(0, b.life - dt * 0.55);
-    if (b.life <= 0) { if (Math.random() < dt * 0.3) { b.a = rand(0, TAU); b.d = rand(0.15, 0.95); } continue; }
-    const x = cx + Math.cos(b.a) * b.d * r, y = cy + Math.sin(b.a) * b.d * r;
-    c.fillStyle = acc(b.life);
-    c.beginPath(); c.arc(x, y, 2.4, 0, TAU); c.fill();
-    c.strokeStyle = acc(b.life * 0.5);
-    c.beginPath(); c.arc(x, y, 3 + (1 - b.life) * 8, 0, TAU); c.stroke();
-  }
-  c.globalCompositeOperation = 'source-over';
-}
-
-const CITIES = [[35.68, 139.76], [40.71, -74.0], [51.5, -0.12], [-33.86, 151.2], [1.35, 103.82], [37.77, -122.42], [48.86, 2.35], [-23.55, -46.63], [55.75, 37.62], [19.43, -99.13], [25.2, 55.27]];
-const LINKS = [[0, 5], [0, 4], [2, 1], [6, 8], [4, 3], [1, 7], [2, 0], [9, 1], [10, 4], [10, 2]];
-const vec = (la, lo) => [Math.cos(la * DEG) * Math.sin(lo * DEG), Math.sin(la * DEG), Math.cos(la * DEG) * Math.cos(lo * DEG)];
-const CITYV = CITIES.map(([la, lo]) => vec(la, lo));
-const PARALLELS = [-60, -30, 0, 30, 60].map((la) => Array.from({ length: 37 }, (_, i) => vec(la, i * 10)));
-const MERIDIANS = Array.from({ length: 12 }, (_, m) => Array.from({ length: 19 }, (_, i) => vec(-90 + i * 10, m * 30)));
-const ARCS = LINKS.map(([i, j]) => {
-  const a = CITYV[i], b = CITYV[j];
-  const om = Math.acos(clamp(a[0] * b[0] + a[1] * b[1] + a[2] * b[2], -1, 1)), so = Math.sin(om) || 1;
-  return Array.from({ length: 25 }, (_, k) => {
-    const t = k / 24, s1 = Math.sin((1 - t) * om) / so, s2 = Math.sin(t * om) / so, lift = 1 + Math.sin(t * Math.PI) * 0.22;
-    return [(a[0] * s1 + b[0] * s2) * lift, (a[1] * s1 + b[1] * s2) * lift, (a[2] * s1 + b[2] * s2) * lift];
-  });
-});
-function drawGlobe() {
-  const { c, w, h } = globe;
-  if (!w) return;
-  c.clearRect(0, 0, w, h);
-  c.globalCompositeOperation = 'lighter';
-  const cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.34;
-  const rot = T * 0.3 * (S.mode === 'overdrive' ? 4 : 1) + S.spin * 0.2, tilt = 0.38;
-  const cr = Math.cos(rot), sr = Math.sin(rot), ct = Math.cos(tilt), st = Math.sin(tilt);
-  const P = (v) => {
-    const x1 = v[0] * cr + v[2] * sr, z1 = -v[0] * sr + v[2] * cr;
-    return [cx + x1 * r, cy - (v[1] * ct - z1 * st) * r, v[1] * st + z1 * ct];
-  };
-  const front = new Path2D(), back = new Path2D();
-  for (const line of PARALLELS.concat(MERIDIANS)) {
-    let prev = P(line[0]);
-    for (let i = 1; i < line.length; i++) {
-      const q = P(line[i]), path = prev[2] + q[2] >= 0 ? front : back;
-      path.moveTo(prev[0], prev[1]); path.lineTo(q[0], q[1]);
-      prev = q;
-    }
-  }
-  c.lineWidth = 1;
-  c.strokeStyle = acc(0.1); c.stroke(back);
-  c.strokeStyle = acc(0.42); c.stroke(front);
-  const g = c.createRadialGradient(cx, cy, r * 0.7, cx, cy, r * 1.15);
-  g.addColorStop(0, acc(0)); g.addColorStop(0.85, acc(0.18)); g.addColorStop(1, acc(0));
-  c.fillStyle = g; c.beginPath(); c.arc(cx, cy, r * 1.15, 0, TAU); c.fill();
-  c.strokeStyle = acc(0.7); c.beginPath(); c.arc(cx, cy, r, 0, TAU); c.stroke();
-
-  ARCS.forEach((arc, n) => {
-    const pts = arc.map(P);
-    c.beginPath();
-    let on = false;
-    for (const p of pts) {
-      if (p[2] < -0.05) { on = false; continue; }
-      on ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]);
-      on = true;
-    }
-    c.strokeStyle = acc(0.35); c.stroke();
-    const p = pts[Math.round(((T * 0.45 + n * 0.29) % 1) * 24)];
-    if (p[2] > -0.05) { c.fillStyle = 'rgba(255,255,255,0.95)'; c.fillRect(p[0] - 1.5, p[1] - 1.5, 3, 3); }
-  });
-  CITYV.forEach((v, i) => {
-    const p = P(v);
-    if (p[2] < 0) return;
-    const pulse = (T * 0.8 + i * 0.13) % 1;
-    c.fillStyle = acc(0.95); c.fillRect(p[0] - 1.5, p[1] - 1.5, 3, 3);
-    c.strokeStyle = acc(0.6 * (1 - pulse)); c.beginPath(); c.arc(p[0], p[1], 2 + pulse * 8, 0, TAU); c.stroke();
-  });
-  const tiltO = -0.35, co = Math.cos(tiltO), so = Math.sin(tiltO);
-  c.strokeStyle = acc(0.25); c.beginPath(); c.ellipse(cx, cy, r * 1.36, r * 0.42, tiltO, 0, TAU); c.stroke();
-  const u = T * 0.9, ex = Math.cos(u) * r * 1.36, ey = Math.sin(u) * r * 0.42;
-  c.fillStyle = 'rgba(255,255,255,0.95)';
-  c.beginPath(); c.arc(cx + ex * co - ey * so, cy + ex * so + ey * co, 2.2, 0, TAU); c.fill();
-  c.globalCompositeOperation = 'source-over';
-}
-
-function drawTele() {
-  const { c, w, h } = tele;
-  if (!w) return;
-  c.clearRect(0, 0, w, h);
-  c.strokeStyle = acc(0.12); c.lineWidth = 1;
-  c.beginPath();
-  for (let i = 1; i < 4; i++) { const y = Math.round(h * i / 4) + 0.5; c.moveTo(0, y); c.lineTo(w, y); }
-  for (let x = w - (T * 30) % 24; x > 0; x -= 24) { c.moveTo(Math.round(x) + 0.5, 0); c.lineTo(Math.round(x) + 0.5, h); }
-  c.stroke();
-  const step = w / (teleA.length - 1);
-  c.beginPath();
-  teleA.forEach((v, i) => { const x = i * step, y = h - v * h; i ? c.lineTo(x, y) : c.moveTo(x, y); });
-  c.strokeStyle = acc(0.95); c.lineWidth = 1.5; c.stroke();
-  c.lineTo(w, h); c.lineTo(0, h); c.closePath();
-  const g = c.createLinearGradient(0, 0, 0, h);
-  g.addColorStop(0, acc(0.32)); g.addColorStop(1, acc(0));
-  c.fillStyle = g; c.fill();
-  c.beginPath();
-  teleB.forEach((v, i) => { const x = i * step, y = h - v * h; i ? c.lineTo(x, y) : c.moveTo(x, y); });
-  c.strokeStyle = ink(0.45); c.lineWidth = 1; c.setLineDash([3, 3]); c.stroke(); c.setLineDash([]);
-  c.fillStyle = acc(1);
-  c.beginPath(); c.arc(w - 3, h - teleA[teleA.length - 1] * h, 2.6, 0, TAU); c.fill();
-}
-
-/* ── ループ ────────────────────────── */
-let last = performance.now();
-function frame(now) {
-  const dt = Math.min(0.05, (now - last) / 1000);
-  last = now; T += dt;
-  update(dt);
-  ctx.clearRect(0, 0, W, H);
-  ctx.globalCompositeOperation = 'lighter';
-  drawDormant();
-  if (S.reveal > 0) drawCore(dt);
-  ctx.globalCompositeOperation = 'source-over';
-  drawEffects(dt);
-  if (S.awake || S.booting) {
-    drawRadar(dt); drawGlobe(); drawTele();
-    if (radarMode !== S.mode) {
-      radarMode = S.mode;
-      $('#contacts').textContent = S.mode === 'alert' ? '16' : '05';
-      $('#sweep').textContent = S.mode === 'alert' ? '3.2' : S.mode === 'overdrive' ? '2.6' : '1.4';
-    }
-  }
-  requestAnimationFrame(frame);
-}
-let radarMode = 'normal';
-
-window.addEventListener('resize', queueResize);
-if ('ResizeObserver' in window) {
-  const ro = new ResizeObserver(queueResize);
-  [slot, radar.el, globe.el, tele.el].forEach((el) => ro.observe(el));
-}
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueResize);
-resize();
-requestAnimationFrame(frame);
-})();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="land.js"></script>
+<script src="audio.js"></script>
+<script src="main.js"></script>
 </html>
